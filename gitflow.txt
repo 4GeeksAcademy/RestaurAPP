@@ -3,3 +3,4 @@ Rozpide
 Jose Rozpide
 Michael
 Pala
+git status
