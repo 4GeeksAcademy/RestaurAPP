@@ -33,6 +33,8 @@ class Owner(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "name" : self.name,
+            "telephone" : self.telephone,
             "email": self.email,
             # do not serialize the password, its a security breach
         }
