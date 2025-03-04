@@ -23,11 +23,16 @@ def handle_hello():
 @api.route('/restaurants', methods=['GET'])
 def get_restaurants():
     location = request.args.get('location')
-    capacity = request.args.get('capacity')
-    if not location:
-        return jsonify({"error": "El parámetro 'city' es obligatorio"}), 400
-    restaurants = Restaurant.query.filter_by(location=location).filter(Restaurant.capacity >= capacity).all()#filtrar por ciudad y capacidad
-    
+    capacity = request.args.get('capacity', type=int)  # type=int asegura que 'capacity' sea un entero
+
+    query = Restaurant.query
+
+    if location:
+        query = query.filter_by(location=location)
+    if capacity:
+        query = query.filter(Restaurant.capacity >= capacity)
+
+    restaurants = query.all()
     return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
 
 @api.route('/restaurants', methods=['POST'])
@@ -54,13 +59,7 @@ def delete_restaurant(restaurant_id):
     restaurant = Restaurant.query.get(restaurant_id)
     if not restaurant:
         return jsonify({"error": "Restaurante no encontrado"}), 404
+
     db.session.delete(restaurant)
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
-@api.route('/restaurants/<int:restaurant_id>', methods=['GET'])
-def get_restaurant_details(restaurant_id):
-    restaurant = Restaurant.query.get(restaurant_id)
-    if not restaurant:
-        return jsonify({"error": "Restaurante no encontrado"}), 404
-
-    return jsonify(restaurant.serialize()), 200

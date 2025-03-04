@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const BACKEND_URL = process.env.BACKEND_URL || 'https://zany-space-lamp-r5wg7q95j5xfw4j-3001.app.github.dev';
+
 const SearchRestaurants = () => {
-    const [location, setlocation] = useState("");
+    const [city, setCity] = useState("");
     const [capacity, setCapacity] = useState(1);
     const [restaurants, setRestaurants] = useState([]);
 
     const handleSearch = async () => {
         try {
-            const response = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/restaurants", {
-                params: { location, capacity }
+            const response = await axios.get(`${BACKEND_URL}/api/restaurants`, {
+                params: { location: city, capacity }
             });
             setRestaurants(response.data);
         } catch (error) {
@@ -19,7 +21,7 @@ const SearchRestaurants = () => {
 
     const handleDelete = async (restaurantId) => {
         try {
-            await axios.delete(import.meta.env.VITE_BACKEND_URL + `/api/restaurants/${restaurantId}`);
+            await axios.delete(`${BACKEND_URL}/api/restaurants/${restaurantId}`);
             setRestaurants(restaurants.filter(restaurant => restaurant.id !== restaurantId));
         } catch (error) {
             console.error("Error deleting restaurant:", error);
@@ -34,8 +36,8 @@ const SearchRestaurants = () => {
                 <input
                     type="text"
                     placeholder="Ingresa la ciudad"
-                    value={location}
-                    onChange={(e) => setlocation(e.target.value)}
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
                 />
             </div>
             <div>

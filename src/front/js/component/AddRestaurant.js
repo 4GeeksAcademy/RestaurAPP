@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const BACKEND_URL = process.env.BACKEND_URL || 'https://zany-space-lamp-r5wg7q95j5xfw4j-3001.app.github.dev';
+
 const AddRestaurant = () => {
     const [formData, setFormData] = useState({
         name: "",
         location: "",
         telephone: "",
-        latitude: "",
-        longitude: "",
+        latitude: "0.0000",
+        longitude: "0.0000",
         capacity: ""
     });
     const [message, setMessage] = useState("");
@@ -20,8 +22,16 @@ const AddRestaurant = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(import.meta.env.VITE_BACKEND_URL + "/api/restaurants", formData);
+            const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData);
             setMessage(response.data.message);
+            setFormData({
+                name: "",
+                location: "",
+                telephone: "",
+                latitude: "",
+                longitude: "",
+                capacity: ""
+            });
         } catch (error) {
             setMessage(error.response?.data?.error || "Hubo un error al añadir el restaurante");
         }
@@ -64,8 +74,7 @@ const AddRestaurant = () => {
                 <div>
                     <label>Latitud:</label>
                     <input
-                        type="number"
-                        step="0.000001"
+                        type="text"
                         name="latitude"
                         value={formData.latitude}
                         onChange={handleChange}
@@ -75,8 +84,7 @@ const AddRestaurant = () => {
                 <div>
                     <label>Longitud:</label>
                     <input
-                        type="number"
-                        step="0.000001"
+                        type="text"
                         name="longitude"
                         value={formData.longitude}
                         onChange={handleChange}
