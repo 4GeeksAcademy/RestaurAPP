@@ -24,10 +24,10 @@ def handle_hello():
 def get_restaurants():
     location = request.args.get('location')
     capacity = request.args.get('capacity')
-    if location:
-        restaurants = Restaurant.query.filter_by(location=location).filter(Restaurant.capacity >= capacity).all()
-    else:
-        restaurants = Restaurant.query.all()
+    if not location:
+        return jsonify({"error": "El parámetro 'city' es obligatorio"}), 400
+    restaurants = Restaurant.query.filter_by(location=location).filter(Restaurant.capacity >= capacity).all()#filtrar por ciudad y capacidad
+    
     return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
 
 @api.route('/restaurants', methods=['POST'])
@@ -57,3 +57,10 @@ def delete_restaurant(restaurant_id):
     db.session.delete(restaurant)
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
+@api.route('/restaurants/<int:restaurant_id>', methods=['GET'])
+def get_restaurant_details(restaurant_id):
+    restaurant = Restaurant.query.get(restaurant_id)
+    if not restaurant:
+        return jsonify({"error": "Restaurante no encontrado"}), 404
+
+    return jsonify(restaurant.serialize()), 200

@@ -4,7 +4,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
-from flask_swagger import swagger
+from flasgger import Swagger
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from api.utils import APIException, generate_sitemap
@@ -32,6 +32,9 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
+
+# Initialize Swagger
+Swagger(app)
 
 # add the admin
 setup_admin(app)

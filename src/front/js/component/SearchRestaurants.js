@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const SearchRestaurants = () => {
-    const [city, setCity] = useState("");
+    const [location, setlocation] = useState("");
     const [capacity, setCapacity] = useState(1);
     const [restaurants, setRestaurants] = useState([]);
 
     const handleSearch = async () => {
         try {
             const response = await axios.get(import.meta.env.VITE_BACKEND_URL + "/api/restaurants", {
-                params: { city, capacity }
+                params: { location, capacity }
             });
             setRestaurants(response.data);
         } catch (error) {
@@ -34,8 +34,8 @@ const SearchRestaurants = () => {
                 <input
                     type="text"
                     placeholder="Ingresa la ciudad"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    value={location}
+                    onChange={(e) => setlocation(e.target.value)}
                 />
             </div>
             <div>
