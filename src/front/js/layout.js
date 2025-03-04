@@ -6,6 +6,10 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
+import SearchRestaurants from "./component/SearchRestaurants";  // Importar el componente de búsqueda de restaurantes
+import  AddRestaurant  from "./component/AddRestaurant";  // Importar el componente de añadir restaurante
+//import Signup from "./pages/Signup";  // Importar el componente de registro
+//import Login from "./pages/Login";  // Importar el componente de inicio de sesión
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -28,6 +32,10 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<SearchRestaurants />} path="/search-restaurants" />  {/* Añadir ruta de búsqueda de restaurantes */}
+                        <Route element={<AddRestaurant />} path="/add-restaurant" />  {/* Añadir ruta de añadir restaurante */} 
+                        {/*<Route element={<Signup />} path="/signup" />*/}  {/* Añadir ruta de registro */}
+                        {/*<Route element={<Login />} path="/login" />*/}  {/* Añadir ruta de inicio de sesión */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />
