@@ -1,0 +1,92 @@
+import React, { useState } from "react";
+import axios from "axios";
+
+const BACKEND_URL = process.env.BACKEND_URL || 'https://zany-space-lamp-r5wg7q95j5xfw4j-3001.app.github.dev';
+
+const SearchRestaurants = () => {
+    const [city, setCity] = useState("");
+    const [capacity, setCapacity] = useState(1);
+    const [restaurants, setRestaurants] = useState([]);
+
+    const handleSearch = async () => {
+        try {
+            const response = await axios.get(`${BACKEND_URL}/api/restaurants`, {
+                params: { location: city, capacity }
+            });
+            setRestaurants(response.data);
+        } catch (error) {
+            console.error("Error fetching restaurants:", error);
+        }
+    };
+
+    const handleDelete = async (restaurantId) => {
+        try {
+            await axios.delete(`${BACKEND_URL}/api/restaurants/${restaurantId}`);
+            setRestaurants(restaurants.filter(restaurant => restaurant.id !== restaurantId));
+        } catch (error) {
+            console.error("Error deleting restaurant:", error);
+        }
+    };
+
+    return (
+        <div className="search-restaurants container mt-5">
+            <h2 className="mb-4">Buscar Restaurantes por Ciudad y Capacidad</h2>
+            <div className="mb-3">
+                <label className="form-label">Ciudad:</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Ingresa la ciudad"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                />
+            </div>
+            <div className="mb-3">
+                <label className="form-label">Capacidad de Mesa:</label>
+                <input
+                    type="number"
+                    className="form-control"
+                    min="1"
+                    value={capacity}
+                    onChange={(e) => setCapacity(e.target.value)}
+                />
+            </div>
+            <button className="btn btn-primary mb-4" onClick={handleSearch}>Buscar</button>
+            <h3>Resultados</h3>
+            {restaurants.length > 0 ? (
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Ubicación</th>
+                            <th>Teléfono</th>
+                            <th>Latitud</th>
+                            <th>Longitud</th>
+                            <th>Capacidad</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {restaurants.map((restaurant) => (
+                            <tr key={restaurant.id}>
+                                <td>{restaurant.name}</td>
+                                <td>{restaurant.location}</td>
+                                <td>{restaurant.telephone}</td>
+                                <td>{restaurant.latitude}</td>
+                                <td>{restaurant.longitude}</td>
+                                <td>{restaurant.capacity}</td>
+                                <td>
+                                    <button className="btn btn-danger" onClick={() => handleDelete(restaurant.id)}>Eliminar</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <p>No hay restaurantes disponibles en esta ciudad para la capacidad especificada</p>
+            )}
+        </div>
+    );
+};
+
+export default SearchRestaurants;

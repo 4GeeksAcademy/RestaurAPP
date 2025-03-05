@@ -4,7 +4,9 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
-from flask_swagger import swagger
+
+from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from api.utils import APIException, generate_sitemap
 from api.models import db
 from api.routes import api
@@ -12,11 +14,16 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 
 # from models import Person
+app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "https://zany-space-lamp-r5wg7q95j5xfw4j-3001.app.github.dev"}})
+
+app.config["JWT_SECRET_KEY"] = "super-secret-key"  # Cambia esto a una clave segura
+jwt = JWTManager(app)
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
-app = Flask(__name__)
+
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -30,6 +37,9 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
+
+# Initialize Swagger
+
 
 # add the admin
 setup_admin(app)
