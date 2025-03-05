@@ -29,30 +29,32 @@ const SearchRestaurants = () => {
     };
 
     return (
-        <div className="search-restaurants">
-            <h2>Buscar Restaurantes por Ciudad y Capacidad</h2>
-            <div>
-                <label>Ciudad:</label>
+        <div className="search-restaurants container mt-5">
+            <h2 className="mb-4">Buscar Restaurantes por Ciudad y Capacidad</h2>
+            <div className="mb-3">
+                <label className="form-label">Ciudad:</label>
                 <input
                     type="text"
+                    className="form-control"
                     placeholder="Ingresa la ciudad"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                 />
             </div>
-            <div>
-                <label>Capacidad de Mesa:</label>
+            <div className="mb-3">
+                <label className="form-label">Capacidad de Mesa:</label>
                 <input
                     type="number"
+                    className="form-control"
                     min="1"
                     value={capacity}
                     onChange={(e) => setCapacity(e.target.value)}
                 />
             </div>
-            <button onClick={handleSearch}>Buscar</button>
+            <button className="btn btn-primary mb-4" onClick={handleSearch}>Buscar</button>
             <h3>Resultados</h3>
             {restaurants.length > 0 ? (
-                <table>
+                <table className="table table-striped">
                     <thead>
                         <tr>
                             <th>Nombre</th>
@@ -74,7 +76,7 @@ const SearchRestaurants = () => {
                                 <td>{restaurant.longitude}</td>
                                 <td>{restaurant.capacity}</td>
                                 <td>
-                                    <button onClick={() => handleDelete(restaurant.id)}>Eliminar</button>
+                                    <button className="btn btn-danger" onClick={() => handleDelete(restaurant.id)}>Eliminar</button>
                                 </td>
                             </tr>
                         ))}
