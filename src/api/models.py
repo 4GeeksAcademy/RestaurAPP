@@ -21,7 +21,6 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-<<<<<<< HEAD
             # do not serialize the password, its a security breach
         }
 
@@ -45,10 +44,7 @@ class Owner(db.Model):
             "email": self.email,
             # do not serialize the password, its a security breach
         }
-=======
-            "name": self.name,
-            "is_active": self.is_active
-        }
+           
 
 class Restaurant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -69,4 +65,3 @@ class Restaurant(db.Model):
             "longitude": self.longitude,
             "capacity": self.capacity
         }
->>>>>>> develop

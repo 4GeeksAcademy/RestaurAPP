@@ -22,7 +22,6 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
-<<<<<<< HEAD
 @api.route('/owners', methods=['GET'])
 def get_all_owners():
 
@@ -104,7 +103,7 @@ def modify_owner(owner_id):
     db.session.commit()
 
     return jsonify({"message": "Owner successfully modified"}), 200
-=======
+
 @api.route('/restaurants', methods=['GET'])
 def get_restaurants():
     location = request.args.get('location')
@@ -148,4 +147,3 @@ def delete_restaurant(restaurant_id):
     db.session.delete(restaurant)
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
->>>>>>> develop
