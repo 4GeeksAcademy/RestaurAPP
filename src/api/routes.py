@@ -86,7 +86,7 @@ def modify_owner(owner_id):
     if not single_owner : 
         return jsonify({"message" : "Owner not found"}), 404
 
-    name= request.json.get("name", single_owner.name)            #single_owner.name/Location/tel/email/pwd Se il campo è presente nella richiesta, viene aggiornato. Se  manca, rimane quello già esistente nel database.
+    name= request.json.get("name", single_owner.name)
     location= request.json.get("location", single_owner.location)
     telephone= request.json.get("telephone", single_owner.telephone)
     email= request.json.get("email", single_owner.email)

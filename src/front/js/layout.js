@@ -30,11 +30,11 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<OwnerList/>} path="/owners" />
                         <Route element={<OwnerForm />} path="/owners/new" />
+                        <Route element={<OwnerForm />} path="/owners/:ownerId" />
                         <Route element={<Demo />} path="/demo" />
-                        <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    <Footer />
+                    {/* <Footer /> */}
                 </ScrollToTop>
             </BrowserRouter>
         </div>

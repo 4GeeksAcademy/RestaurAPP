@@ -25,8 +25,13 @@ const OwnerList = () => {
                             <span><strong>Telephone:</strong> {owner.telephone}</span>
                             <span><strong> Email:</strong> {owner.email}</span>
                             <div className="gap-3">
-                                <button onClick={() => actions.modifyOwner(owner.id, { name: "Updated Name", telephone: owner.telephone, email: owner.email })}>Modify owner</button>
-                                <button onClick={()=> actions.deleteOwner(owner.id)}>Delete owner</button>
+                                <button 
+                                    onClick={() => navigate(`/owners/${owner.id}`)}
+                                    className="btn btn-warning me-4"
+                                >
+                                    Modify owner
+                                </button>
+                                <button onClick={()=> actions.deleteOwner(owner.id)} className="btn btn-danger">Delete owner</button>
                             </div>
                         </li>
                     )

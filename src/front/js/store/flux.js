@@ -24,7 +24,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			getAllOwners: () => {
-				console.log("getallOwners from actions");
 				fetch(process.env.BACKEND_URL +"/api/owners")
 				.then((response) => response.json())
 				.then((data) => {
@@ -34,7 +33,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			getSpecificOwner : (ownerId) => { 
-				console.log("getOwners from flux")
 				fetch(process.env.BACKEND_URL +"/api/owners/" + ownerId)
 				.then((response) => response.json())
 				.then((data) => {
@@ -44,7 +42,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			addOwner: (newOwner) => {
-				console.log("addOwner from actions");
 
 				const requestOptions = {
 					method : "POST",
@@ -57,6 +54,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then((data) => {	
 					const store = getStore();
 					setStore({owners: [...store.owners, data]})
+
+					const actions = getActions();
+					actions.getAllOwners();
 				});
 			},
 
@@ -68,9 +68,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL +"/api/owners/" + ownerId, requestOptions)
 				.then((response) => response.json())
 				.then((data) => {
-					console.log("Owner to delete:", data);
 					const store = getStore();
 					setStore({owners : store.owners.filter(owner => owner.id !== ownerId)})
+
+					const actions = getActions();
+					actions.getAllOwners();
 				})	
 			},
 
@@ -78,13 +80,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const requestOptions = {
 					method : "PUT",
 					headers: {"Content-Type" : "application/json"},
-					body: JSON.stringify(updatedOwner)                               // Usa i dati aggiornati
+					body: JSON.stringify(updatedOwner)
 				};
 
 				fetch(process.env.BACKEND_URL +"/api/owners/" + ownerId, requestOptions)
 				.then((response) => response.json())            
 				.then((data) => {
-					console.log("Owner updated:", data);
 
 					const store = getStore();
 					// Aggiorna la lista sostituendo l'attore modificato:
@@ -92,6 +93,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 						owner.id === ownerId ? data : owner
 					);
 					setStore({ owners: updatedOwners });
+
+					const actions = getActions();
+					actions.getAllOwners();
 				})	
 			},
 

@@ -1,6 +1,6 @@
-import React, {useState, useContext,} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const OwnerForm = () => {
     const [name, setName] = useState("");
@@ -11,34 +11,60 @@ const OwnerForm = () => {
 
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
+    const { ownerId } = useParams();
+
     
+    useEffect(() => {  
+        if (ownerId) {
+
+            const owner = store.owners.find(owner => owner.id === parseInt(ownerId));
+            if (owner) {
+            setName(owner.name || "");
+            setLocation(owner.location || "");
+            setTelephone(owner.telephone || "");
+            setEmail(owner.email || "");
+            setPassword(owner.password || "");
+        }
+        }else {
+            setName("");
+            setLocation("");
+            setTelephone("");
+            setEmail("");
+            setPassword("")
+        }
+    }, [ownerId, store.owners]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        actions.addOwner({ name, telephone, email, location, password });
-        navigate("/owners");           // Dopo aver aggiunto l'owner, reindirizza alla lista degli owner
+        if (ownerId) {
+            actions.modifyOwner(ownerId, { name, telephone, email, location, password });
+        } else {
+            actions.addOwner({ name, telephone, email, location, password });
+        }
+        navigate("/owners");
     };
 
     return (
         <form className="container mt-5" onSubmit={handleSubmit}>
             <div className="mb-3">
-                <label for="exampleInputEmail1" className="form-label">Full name</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="exampleInputtext1" aria-describedby="textHelp"/>
+                <label htmlFor="exampleInputname" className="form-label">Full name</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="exampleInputname" aria-describedby="textHelp"/>
             </div>
             <div className="mb-3">
-                <label for="exampleInputtext1" className="form-label">Location</label>
-                <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} className="form-control" id="exampleInputtext1" aria-describedby="textHelp"/>
+                <label htmlFor="exampleInputtext1" className="form-label">Location</label>
+                <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} className="form-control" id="exampleInputlocation" aria-describedby="textHelp"/>
             </div>
             <div className="mb-3">
-                <label for="exampleInputtext1" className="form-label">Telephone</label>
-                <input type="text" value={telephone} onChange={(e) => setTelephone(e.target.value)} className="form-control" id="exampleInputtext1" aria-describedby="textHelp"/>
+                <label htmlFor="exampleInputtelephone" className="form-label">Telephone</label>
+                <input type="text" value={telephone} onChange={(e) => setTelephone(e.target.value)} className="form-control" id="exampleInputtelephone" aria-describedby="textHelp"/>
             </div>
             <div className="mb-3">
-                <label for="exampleInputEmail1" className="form-label">Email address</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"/>
+                <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control" id="exampleInputEmail" aria-describedby="emailHelp"/>
             </div>
             <div className="mb-3">
-                <label for="exampleInputPassword1" className="form-label">Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" id="exampleInputPassword1"/>
+                <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" id="exampleInputPassword"/>
             </div>
             <button type="submit" className="btn btn-primary">Submit</button>
         </form>
