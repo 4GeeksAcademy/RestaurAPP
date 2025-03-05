@@ -28,8 +28,8 @@ const AddRestaurant = () => {
                 name: "",
                 location: "",
                 telephone: "",
-                latitude: "",
-                longitude: "",
+                latitude: "0.0000",
+                longitude: "0.0000",
                 capacity: ""
             });
         } catch (error) {
@@ -38,72 +38,78 @@ const AddRestaurant = () => {
     };
 
     return (
-        <div className="add-restaurant">
-            <h2>Añadir Nuevo Restaurante</h2>
+        <div className="add-restaurant container mt-5">
+            <h2 className="mb-4">Añadir Nuevo Restaurante</h2>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Nombre:</label>
+                <div className="mb-3">
+                    <label className="form-label">Nombre:</label>
                     <input
                         type="text"
                         name="name"
+                        className="form-control"
                         value={formData.name}
                         onChange={handleChange}
                         required
                     />
                 </div>
-                <div>
-                    <label>Ubicación:</label>
+                <div className="mb-3">
+                    <label className="form-label">Ubicación:</label>
                     <input
                         type="text"
                         name="location"
+                        className="form-control"
                         value={formData.location}
                         onChange={handleChange}
                         required
                     />
                 </div>
-                <div>
-                    <label>Teléfono:</label>
+                <div className="mb-3">
+                    <label className="form-label">Teléfono:</label>
                     <input
                         type="text"
                         name="telephone"
+                        className="form-control"
                         value={formData.telephone}
                         onChange={handleChange}
                         required
                     />
                 </div>
-                <div>
-                    <label>Latitud:</label>
+                <div className="mb-3">
+                    <label className="form-label">Latitud:</label>
                     <input
                         type="text"
                         name="latitude"
+                        className="form-control"
                         value={formData.latitude}
                         onChange={handleChange}
                         required
                     />
                 </div>
-                <div>
-                    <label>Longitud:</label>
+                <div className="mb-3">
+                    <label className="form-label">Longitud:</label>
                     <input
                         type="text"
                         name="longitude"
+                        className="form-control"
                         value={formData.longitude}
                         onChange={handleChange}
                         required
                     />
                 </div>
-                <div>
-                    <label>Capacidad:</label>
+                <div className="mb-3">
+                    <label className="form-label">Capacidad:</label>
                     <input
                         type="number"
                         name="capacity"
+                        className="form-control"
                         value={formData.capacity}
                         onChange={handleChange}
                         required
                     />
                 </div>
-                <button type="submit">Añadir Restaurante</button>
+                <button type="submit" className="btn btn-success">Añadir Restaurante</button>
             </form>
-            {message && <p>{message}</p>}
+            {message && <p className="mt-3">{message}</p>}
         </div>
     );
 };

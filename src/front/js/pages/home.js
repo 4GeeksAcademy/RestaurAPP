@@ -8,7 +8,7 @@ export const Home = () => {
 
 	return (
 		<div className="text-center mt-5">
-			<h1>Hello Rigo!!</h1>
+			{/*<h1>Hello Rigo!!</h1>
 			<p>
 				<img src={rigoImageUrl} />
 			</p>
@@ -20,7 +20,7 @@ export const Home = () => {
 				<a href="https://start.4geeksacademy.com/starters/react-flask">
 					Read documentation
 				</a>
-			</p>
+			</p>*/}
 		</div>
 	);
 };

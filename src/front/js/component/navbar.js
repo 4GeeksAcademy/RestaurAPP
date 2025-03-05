@@ -6,7 +6,7 @@ export const Navbar = () => {
         <nav className="navbar navbar-light bg-light">
             <div className="container">
                 <Link to="/">
-                    <span className="navbar-brand mb-0 h1">React Boilerplate</span>
+                    <span className="navbar-brand mb-0 h1">Volver a Home</span>
                 </Link>
                 <div className="ml-auto">
                     <Link to="/search-restaurants">
@@ -16,7 +16,7 @@ export const Navbar = () => {
                         <button className="btn btn-secondary">Añadir Restaurante</button>
                     </Link>
                     <Link to="/demo">
-                        <button className="btn btn-info">Check the Context in action</button>
+                        <button className="btn btn-info">Otras funcionalidades RestaurAPP</button>
                     </Link>
                 </div>
             </div>
