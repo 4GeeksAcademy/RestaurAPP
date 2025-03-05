@@ -14,6 +14,8 @@ import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+import OwnerList from "./component/ownerList";
+import OwnerForm from "./component/ownerForm";
 
 //create your first component
 const Layout = () => {
@@ -30,15 +32,21 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
+                        <Route element={<OwnerList/>} path="/owners" />
+                        <Route element={<OwnerForm />} path="/owners/new" />
+                        <Route element={<OwnerForm />} path="/owners/:ownerId" />
                         <Route element={<Demo />} path="/demo" />
+<<<<<<< HEAD
+=======
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<SearchRestaurants />} path="/search-restaurants" />  {/* Añadir ruta de búsqueda de restaurantes */}
                         <Route element={<AddRestaurant />} path="/add-restaurant" />  {/* Añadir ruta de añadir restaurante */} 
                         {/*<Route element={<Signup />} path="/signup" />*/}  {/* Añadir ruta de registro */}
                         {/*<Route element={<Login />} path="/login" />*/}  {/* Añadir ruta de inicio de sesión */}
+>>>>>>> develop
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    <Footer />
+                    {/* <Footer /> */}
                 </ScrollToTop>
             </BrowserRouter>
         </div>

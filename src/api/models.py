@@ -21,6 +21,31 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+<<<<<<< HEAD
+            # do not serialize the password, its a security breach
+        }
+
+
+class Owner(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=False, nullable=False)
+    location = db.Column(db.String(120), unique=False, nullable=True)
+    telephone = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Owner {self.email}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name" : self.name,
+            "telephone" : self.telephone,
+            "email": self.email,
+            # do not serialize the password, its a security breach
+        }
+=======
             "name": self.name,
             "is_active": self.is_active
         }
@@ -44,3 +69,4 @@ class Restaurant(db.Model):
             "longitude": self.longitude,
             "capacity": self.capacity
         }
+>>>>>>> develop
