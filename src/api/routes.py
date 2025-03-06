@@ -2,11 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-<<<<<<< HEAD
-from api.models import db, User, Owner
-=======
-from api.models import db, User, Restaurant
->>>>>>> develop
+from api.models import db, User, Owner, Restaurant
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,7 +20,6 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
-<<<<<<< HEAD
 @api.route('/owners', methods=['GET'])
 def get_all_owners():
 
@@ -106,7 +101,8 @@ def modify_owner(owner_id):
     db.session.commit()
 
     return jsonify({"message": "Owner successfully modified"}), 200
-=======
+
+
 @api.route('/restaurants', methods=['GET'])
 def get_restaurants():
     location = request.args.get('location')
@@ -150,4 +146,3 @@ def delete_restaurant(restaurant_id):
     db.session.delete(restaurant)
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
->>>>>>> develop
