@@ -10,14 +10,16 @@ export const Dinerlist = () => {
         actions.getDinerList();
     }, []);
 
-    function handleDelete(e){ 
+    function handleDelete(id){ 
+        actions.handleDelete(id)
         console.log('se elimino')
     }
 
-    function handleEdit(id, fullname, email, telephone, password){ 
-        console.log('se edito')
-        navigate(`/dinerform/${id}`, { state: { id, fullname, email, telephone, password } });
+    function handleEdit(id, fullname, email, telephone, password) {
+        console.log('se edito');
+        navigate(`/dineredit/${id}`, { state: { id, fullname, email, telephone, password } });
     }
+    
 
     return (
         <>
@@ -31,7 +33,7 @@ export const Dinerlist = () => {
                                 <p>{diner.email}</p>
                                 <p>{diner.telephone}</p>
                                 <button onClick={(e)=>handleEdit(diner.id, diner.fullname, diner.email, diner.telephone, diner.password)}>Edit</button>
-                                <button onClick={(e)=>handleDelete()}>Delete</button>
+                                <button onClick={(e)=>handleDelete(diner.id)}>Delete</button>
                             </li>
 
                         ))
@@ -40,8 +42,8 @@ export const Dinerlist = () => {
                     )}
                 </ul>
                 <br />
-                <Link to="/">
-                    <button className="btn btn-primary">Back home</button>
+                <Link to="/dinerform">
+                    <button className="btn btn-primary">Diner form</button>
                 </Link>
             </div>
         </>

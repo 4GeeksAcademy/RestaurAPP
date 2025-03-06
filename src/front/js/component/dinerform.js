@@ -20,7 +20,7 @@ export const Dinerform = () => {
                 <div className="d-flex align-items-center mt-3 bg-body-tertiary">
                     <div className="form-signin w-100 m-auto">
                         <form onSubmit={handleSignup}>
-                            <h1 className="h3 mb-3 fw-normal"><strong>Sign up Diner</strong></h1>
+                            <h1 className="h3 mb-3 fw-normal"><strong>Diner Sign up </strong></h1>
 
                             <div className="form-floating mb-2">
                                 <input
