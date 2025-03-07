@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export const Navbar = () => {
+
     return (
         <nav className="navbar navbar-light bg-light">
             <div className="container">
@@ -24,8 +25,12 @@ export const Navbar = () => {
                     <Link to="/owners">
                         <button className="btn btn-primary">Check owners</button>
                     </Link>
+                    <Link to="/dinerlist">
+						            <button className="btn btn-primary">Diner list</button>
+					          </Link
                 </div>
             </div>
         </nav>
     );
+
 };

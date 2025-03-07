@@ -43,6 +43,28 @@ class Owner(db.Model):
             "telephone" : self.telephone,
             "email": self.email,
             # do not serialize the password, its a security breach
+
+        }  
+
+class Diner(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fullname = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    telephone = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
+    
+    def __repr__(self):
+        return f'<Diner {self.fullname}>'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'fullname': self.fullname,
+            'email': self.email,  
+            'telephone': self.telephone,
+            'password': self.password,         
+        }
+
         }
            
 
@@ -65,3 +87,4 @@ class Restaurant(db.Model):
             "longitude": self.longitude,
             "capacity": self.capacity
         }
+
