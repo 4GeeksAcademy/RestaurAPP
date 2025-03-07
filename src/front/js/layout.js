@@ -15,6 +15,14 @@ import injectContext from "./store/appContext";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
+import { Dinerform } from "./component/dinerform";
+import { Dinerlist } from "./component/dinerlist";
+import { DinerEdit } from "./component/dineredit";
+
+import OwnerList from "./component/ownerList";
+import OwnerForm from "./component/ownerForm";
+
+
 //create your first component
 const Layout = () => {
     //the basename is used when your project is published in a subdirectory and not in the root of the domain
@@ -30,6 +38,15 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
+
+                        <Route element={<Dinerform />} path="/dinerform" />
+                        <Route element={<Dinerlist />} path="/dinerlist" />
+                        <Route element={<DinerEdit />} path="/dineredit/:id" />
+
+                        <Route element={<OwnerList/>} path="/owners" />
+                        <Route element={<OwnerForm />} path="/owners/new" />
+                        <Route element={<OwnerForm />} path="/owners/:ownerId" />
+
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<SearchRestaurants />} path="/search-restaurants" />  {/* Añadir ruta de búsqueda de restaurantes */}
@@ -38,7 +55,7 @@ const Layout = () => {
                         {/*<Route element={<Login />} path="/login" />*/}  {/* Añadir ruta de inicio de sesión */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    <Footer />
+                    {/* <Footer /> */}
                 </ScrollToTop>
             </BrowserRouter>
         </div>
