@@ -107,7 +107,7 @@ def delete_diner(id):
     
     return jsonify({"message": "Diner deleted"}), 200
      
-=======
+
 @api.route('/owners', methods=['GET'])
 def get_all_owners():
 
