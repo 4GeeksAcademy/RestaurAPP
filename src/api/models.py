@@ -66,7 +66,7 @@ class Diner(db.Model):
             'password': self.password,         
         }
 
-        }
+        
            
 
 class Restaurant(db.Model):
