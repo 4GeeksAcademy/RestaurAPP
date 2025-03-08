@@ -294,7 +294,10 @@ def add_restaurant():
 
     return jsonify({"message": "Restaurante añadido exitosamente"}), 201
 """
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 @api.route('/restaurants/<int:restaurant_id>', methods=['PUT'])
+@jwt_required()  # Protege la ruta para usuarios autenticados
 def update_restaurant(restaurant_id):
     try:
         data = request.get_json()
@@ -302,12 +305,22 @@ def update_restaurant(restaurant_id):
         # Busca el restaurante por ID
         restaurant = Restaurant.query.get(restaurant_id)
         if not restaurant:
-            return jsonify({"error": "Restaurante no encontrado"}), 404
+            return jsonify({"error": "Restaurante no encontrado."}), 404
 
-        # Validar el propietario del restaurante
-        owner_id = data.get('owner_id')
-        if not owner_id or owner_id != restaurant.owner_id:
-            return jsonify({"error": "No tienes permisos para modificar este restaurante"}), 403
+        # Obtén el owner_id del usuario autenticado
+        current_user = get_jwt_identity()  # Extrae la identidad del token
+        owner_id = current_user.get('owner_id')  # Asegúrate de que el token tenga el owner_id
+
+        # Validar que el usuario logueado es el propietario
+        if restaurant.owner_id != owner_id:
+            return jsonify({"error": "No tienes permisos para modificar este restaurante."}), 403
+
+        # Validar datos de entrada
+        if 'capacity' in data and not isinstance(data['capacity'], int):
+            return jsonify({"error": "La capacidad debe ser un número entero."}), 400
+
+        if 'latitude' in data and not isinstance(data['latitude'], (float, int)):
+            return jsonify({"error": "La latitud debe ser un número."}), 400
 
         # Actualizar los datos del restaurante
         restaurant.name = data.get('name', restaurant.name)
@@ -319,9 +332,14 @@ def update_restaurant(restaurant_id):
 
         db.session.commit()
 
-        return jsonify({"message": "Restaurante modificado exitosamente", "restaurant": restaurant.serialize()}), 200
+        return jsonify({"message": "Restaurante modificado exitosamente.", "restaurant": restaurant.serialize()}), 200
+
     except Exception as e:
-        return jsonify({"error": "Server error: " + str(e)}), 500
+        # Registra el error para propósitos de depuración
+        import logging
+        logging.error(f"Error actualizando restaurante {restaurant_id}: {str(e)}")
+        return jsonify({"error": "Server error"}), 500
+
 
 
 @api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
