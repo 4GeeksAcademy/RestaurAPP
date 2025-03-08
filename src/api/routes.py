@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Diner
 
 
+
 from api.models import  Restaurant, Owner
 
 
@@ -208,6 +209,33 @@ def get_restaurants():
 @api.route('/restaurants', methods=['POST'])
 def add_restaurant():
     data = request.json
+
+    # Valida que todos los campos requeridos estén presentes, incluyendo owner_id
+    if not data.get('name') or not data.get('location') or not data.get('telephone') or \
+       not data.get('latitude') or not data.get('longitude') or not data.get('capacity') or \
+       not data.get('owner_id'):  # Aquí validamos que owner_id no sea nulo
+        return jsonify({"error": "Todos los campos son obligatorios"}), 400
+
+    new_restaurant = Restaurant(
+        name=data['name'],
+        location=data['location'],
+        telephone=data['telephone'],
+        latitude=data['latitude'],
+        longitude=data['longitude'],
+        capacity=data['capacity'],
+        owner_id=data['owner_id']  # Asegúrate de que el valor se esté asignando aquí
+    )
+    
+    db.session.add(new_restaurant)
+    db.session.commit()
+
+    return jsonify({"message": "Restaurante añadido exitosamente"}), 201
+
+
+"""
+@api.route('/restaurants', methods=['POST'])
+def add_restaurant():
+    data = request.json
     if not data.get('name') or not data.get('location') or not data.get('telephone') or not data.get('latitude') or not data.get('longitude') or not data.get('capacity'):
         return jsonify({"error": "Todos los campos son obligatorios"}), 400
 
@@ -223,6 +251,36 @@ def add_restaurant():
     db.session.commit()
 
     return jsonify({"message": "Restaurante añadido exitosamente"}), 201
+"""
+@api.route('/restaurants/<int:restaurant_id>', methods=['PUT'])
+def update_restaurant(restaurant_id):
+    try:
+        data = request.get_json()
+
+        # Busca el restaurante por ID
+        restaurant = Restaurant.query.get(restaurant_id)
+        if not restaurant:
+            return jsonify({"error": "Restaurante no encontrado"}), 404
+
+        # Validar el propietario del restaurante
+        owner_id = data.get('owner_id')
+        if not owner_id or owner_id != restaurant.owner_id:
+            return jsonify({"error": "No tienes permisos para modificar este restaurante"}), 403
+
+        # Actualizar los datos del restaurante
+        restaurant.name = data.get('name', restaurant.name)
+        restaurant.location = data.get('location', restaurant.location)
+        restaurant.telephone = data.get('telephone', restaurant.telephone)
+        restaurant.latitude = data.get('latitude', restaurant.latitude)
+        restaurant.longitude = data.get('longitude', restaurant.longitude)
+        restaurant.capacity = data.get('capacity', restaurant.capacity)
+
+        db.session.commit()
+
+        return jsonify({"message": "Restaurante modificado exitosamente", "restaurant": restaurant.serialize()}), 200
+    except Exception as e:
+        return jsonify({"error": "Server error: " + str(e)}), 500
+
 
 @api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
 def delete_restaurant(restaurant_id):
@@ -233,4 +291,9 @@ def delete_restaurant(restaurant_id):
     db.session.delete(restaurant)
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
+
+from api.routes import api
+
+app = Flask(__name__)
+app.register_blueprint(api, url_prefix='/api')
 
