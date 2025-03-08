@@ -343,14 +343,21 @@ def update_restaurant(restaurant_id):
 
 
 @api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
+@jwt_required()  # Protege la ruta para usuarios autenticados
 def delete_restaurant(restaurant_id):
+    current_user = get_jwt_identity()  # Obtén el usuario logueado
     restaurant = Restaurant.query.get(restaurant_id)
     if not restaurant:
         return jsonify({"error": "Restaurante no encontrado"}), 404
 
+    # Verifica que el usuario sea el propietario
+    if restaurant.owner_id != current_user.get('owner_id'):
+        return jsonify({"error": "No tienes permisos para eliminar este restaurante."}), 403
+
     db.session.delete(restaurant)
     db.session.commit()
-    return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
+    return jsonify({"message": "Restaurante eliminado exitosamente."}), 200
+
 
 from api.routes import api
 
