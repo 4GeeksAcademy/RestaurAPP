@@ -63,7 +63,7 @@ export const Navbar = () => {
                         <span className="navbar-brand mb-0 h1">Create owner</span>
                     </Link>
                     <Link to="/owners">
-                        <button className="btn btn-primary">Check owners</button>
+                        <button className="btn btn-primary">Owners list</button>
                     </Link>
                     <Link to="/dinerlist">
                         <button className="btn btn-primary">Diner list</button>
