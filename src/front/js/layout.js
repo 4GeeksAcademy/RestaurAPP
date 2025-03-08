@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
@@ -7,9 +8,8 @@ import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import SearchRestaurants from "./component/SearchRestaurants";  // Importar el componente de búsqueda de restaurantes
-import  AddRestaurant  from "./component/AddRestaurant";  // Importar el componente de añadir restaurante
-//import Signup from "./pages/Signup";  // Importar el componente de registro
-//import Login from "./pages/Login";  // Importar el componente de inicio de sesión
+import AddRestaurant from "./component/AddRestaurant";  // Importar el componente de añadir restaurante
+import MyRestaurants from "./component/MyRestaurants";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -21,15 +21,17 @@ import { DinerEdit } from "./component/dineredit";
 
 import OwnerList from "./component/ownerList";
 import OwnerForm from "./component/ownerForm";
+import OwnerRestaurants from "./component/OwnerRestaurants";
 
+import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 
 //create your first component
 const Layout = () => {
-    //the basename is used when your project is published in a subdirectory and not in the root of the domain
+    // the basename is used when your project is published in a subdirectory and not in the root of the domain
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
 
-    if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
+    if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
 
     return (
         <div>
@@ -43,16 +45,28 @@ const Layout = () => {
                         <Route element={<Dinerlist />} path="/dinerlist" />
                         <Route element={<DinerEdit />} path="/dineredit/:id" />
 
-                        <Route element={<OwnerList/>} path="/owners" />
+                        <Route element={<OwnerList />} path="/owners" />
+                        <Route element={<OwnerRestaurants />} path="/owners/:owner_id/restaurants" />
                         <Route element={<OwnerForm />} path="/owners/new" />
                         <Route element={<OwnerForm />} path="/owners/:ownerId" />
 
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
-                        <Route element={<SearchRestaurants />} path="/search-restaurants" />  {/* Añadir ruta de búsqueda de restaurantes */}
-                        <Route element={<AddRestaurant />} path="/add-restaurant" />  {/* Añadir ruta de añadir restaurante */} 
-                        {/*<Route element={<Signup />} path="/signup" />*/}  {/* Añadir ruta de registro */}
-                        {/*<Route element={<Login />} path="/login" />*/}  {/* Añadir ruta de inicio de sesión */}
+                        <Route element={<SearchRestaurants />} path="/search-restaurants" />  {/* Ruta de búsqueda de restaurantes */}
+                        <Route element={<AddRestaurant />} path="/add-restaurant" />  {/* Ruta de añadir restaurante */}
+
+                        {/* Ruta protegida para propietarios */}
+                        <Route
+                            path="/my-restaurants"
+                            element={
+                                <PrivateRoute requiredRole="owner"> {/* Verifica que el usuario sea propietario */}
+                                    <MyRestaurants />
+                                </PrivateRoute>
+                            }
+                        />
+
+                        {/*<Route element={<Signup />} path="/signup" />*/}  {/* Ruta de registro */}
+                        {/*<Route element={<Login />} path="/login" />*/}  {/* Ruta de inicio de sesión */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}

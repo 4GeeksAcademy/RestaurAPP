@@ -1,6 +1,5 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
+
+
 from flask import Flask, request, jsonify, url_for, Blueprint
 
 from api.models import db, User, Diner
@@ -131,6 +130,17 @@ def get_single_owner(owner_id):
 
     return jsonify(single_owner.serialize()), 200
 
+@api.route('/owners/<int:owner_id>/restaurants', methods=['GET'])
+def get_restaurants_by_owner(owner_id):
+    # Filtra los restaurantes por owner_id
+    restaurants = Restaurant.query.filter_by(owner_id=owner_id).all()
+
+    if not restaurants:
+        return jsonify({"message": "No se encontraron restaurantes para este propietario."}), 404
+
+    # Devuelve los restaurantes serializados
+    return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
+
 
 @api.route('/owners', methods=['POST'])
 def add_owner():
@@ -191,6 +201,38 @@ def modify_owner(owner_id):
 
     return jsonify({"message": "Owner successfully modified"}), 200
 
+"""/////////////////////////////////// RESTAURANTS ////////////////////////////////////////"""
+
+@api.route('/restaurants', methods=['GET'])
+def get_restaurants():
+    # Obtén los parámetros de la solicitud
+    location = request.args.get('location')
+    capacity = request.args.get('capacity', type=int)  # Asegura que 'capacity' sea un entero
+    owner_id = request.args.get('owner_id', type=int)  # Nuevo filtro por propietario
+
+    # Inicializa la consulta base
+    query = Restaurant.query
+
+    # Filtrar por ubicación si se proporciona
+    if location:
+        query = query.filter_by(location=location)
+
+    # Filtrar por capacidad si se proporciona
+    if capacity:
+        query = query.filter(Restaurant.capacity >= capacity)
+
+    # Filtrar por owner_id si se proporciona
+    if owner_id:
+        query = query.filter_by(owner_id=owner_id)
+
+    # Obtener los resultados filtrados
+    restaurants = query.all()
+
+    # Serializar y devolver los resultados
+    return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
+
+
+"""
 @api.route('/restaurants', methods=['GET'])
 def get_restaurants():
     location = request.args.get('location')
@@ -205,7 +247,7 @@ def get_restaurants():
 
     restaurants = query.all()
     return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
-
+"""
 @api.route('/restaurants', methods=['POST'])
 def add_restaurant():
     data = request.json
