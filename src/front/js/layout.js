@@ -56,14 +56,8 @@ const Layout = () => {
                         <Route element={<AddRestaurant />} path="/add-restaurant" />  {/* Ruta de añadir restaurante */}
 
                         {/* Ruta protegida para propietarios */}
-                        <Route
-                            path="/my-restaurants"
-                            element={
-                                <PrivateRoute requiredRole="owner"> {/* Verifica que el usuario sea propietario */}
-                                    <MyRestaurants />
-                                </PrivateRoute>
-                            }
-                        />
+                        <Route path="/my-restaurants" element={<MyRestaurants />} />
+
 
                         {/*<Route element={<Signup />} path="/signup" />*/}  {/* Ruta de registro */}
                         {/*<Route element={<Login />} path="/login" />*/}  {/* Ruta de inicio de sesión */}
