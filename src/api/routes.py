@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 
-from api.models import db, User, Diner
+from api.models import db, User, Diner, Origin
 
 
 from api.models import  Restaurant, Owner
@@ -234,3 +234,44 @@ def delete_restaurant(restaurant_id):
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
 
+@api.route('/origin', methods=['POST'])
+def add_origin():
+    data = request.get_json() 
+    new_origin = Origin( 
+        name=data ['name']
+    )
+
+    db.session.add(new_origin)
+    db.session.commit()
+
+    return jsonify({"message": "New Food Origin Created"}), 201
+
+@api.route('/origins', methods=['GET'])
+def get_origins():
+
+    Origins = Origin.query.all()
+
+    response_body = [Origin.serialize() for Origin in Origins]
+        
+    return jsonify(response_body), 200
+
+@api.route('/origin/<int:id>', methods=['GET'])
+def get_single_origin(id):
+    
+    origin = Origin.query.get(id)  
+
+    if not origin:
+        return jsonify({"error": "Origin not found"}), 404
+        
+    response_body = origin.serialize()  
+    return jsonify(response_body), 200
+
+@api.route('/origin/<int:id>', methods=['DELETE'])
+def delete_origin(id):
+    origin = Origin.query.get(id)
+    if not origin:
+        return jsonify({"error": "origin not found"}), 404
+
+    db.session.delete(origin)
+    db.session.commit()
+    return jsonify({"message": "origin deleted"}), 200

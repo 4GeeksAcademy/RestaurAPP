@@ -22,6 +22,10 @@ import { DinerEdit } from "./component/dineredit";
 import OwnerList from "./component/ownerList";
 import OwnerForm from "./component/ownerForm";
 
+import { OriginList } from "./component/originList";
+
+
+
 
 //create your first component
 const Layout = () => {
@@ -42,6 +46,8 @@ const Layout = () => {
                         <Route element={<Dinerform />} path="/dinerform" />
                         <Route element={<Dinerlist />} path="/dinerlist" />
                         <Route element={<DinerEdit />} path="/dineredit/:id" />
+
+                        <Route element={<OriginList />} path="/origins" />
 
                         <Route element={<OwnerList/>} path="/owners" />
                         <Route element={<OwnerForm />} path="/owners/new" />

@@ -18,6 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             auth: true,
             owners: [],
             specificOwner: null,
+            origins: [],
         },
         actions: {
             // Use getActions to call a function within a function
@@ -169,6 +170,54 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+            getOriginList: () => {
+                const requestOptions = {
+                    method: "GET",
+                    headers: { "content-type": "application/json" },
+                };
+
+                fetch(process.env.BACKEND_URL + "/api/origins", requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        setStore({ origins: result });
+                    });
+            },
+
+            originDelete: (id) => {
+                const requestOptions = {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                };
+
+                fetch(process.env.BACKEND_URL + "/api/origin/" + id, requestOptions)
+                    .then((response) => response.json())
+                    .then(() => {
+                        const updatedOrigins = getStore().origins.filter((origin) => origin.id !== id);
+                        setStore({ origins: updatedOrigins });
+                    });
+            },
+
+            createOrigin: (name) => {
+                const requestOptions = {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ name }),
+                };
+
+                fetch(process.env.BACKEND_URL + "/api/origin", requestOptions)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Failed to create new origin.");
+                        }
+                        return response.json();
+                    })
+                    .then((result) => {
+                        const store = getStore();
+                        setStore({ origins: [...store.origins, result] });
+                        getActions().getOriginList();
+                    });
+            },
+
             changeColor: (index, color) => {
                 const store = getStore();
                 const demo = store.demo.map((elm, i) => {
@@ -176,7 +225,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return elm;
                 });
                 setStore({ demo });
+
             },
+
         },
     };
 };
