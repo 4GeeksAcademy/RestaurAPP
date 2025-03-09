@@ -1,18 +1,15 @@
 
 
 from flask import Flask, request, jsonify, url_for, Blueprint
-
 from api.models import db, User, Diner
-
-
-
 from api.models import  Restaurant, Owner
-
-
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
 
 api = Blueprint('api', __name__)
 
@@ -200,6 +197,26 @@ def modify_owner(owner_id):
     db.session.commit()
 
     return jsonify({"message": "Owner successfully modified"}), 200
+
+@api.route("/owners/login", methods=["POST"])
+def ownerLogin():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+
+    print(f"Email: {email}")
+
+    owner = Owner.query.filter_by(email = email).first()
+    print(owner)
+
+    if owner is None :                                             #si el correo no existe en la db
+        return jsonify({"msg": "Could not find email"}), 401
+
+    if password != owner.password :
+        return jsonify({"msg": "Bad email or password"}), 401
+
+    access_token = create_access_token(identity=email)
+    return jsonify({"access_token": access_token, "owner_name": owner.name}), 200
+
 
 """/////////////////////////////////// RESTAURANTS ////////////////////////////////////////"""
 

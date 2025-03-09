@@ -100,10 +100,6 @@ from api.commands import setup_commands
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "https://zany-space-lamp-r5wg7q95j5xfw4j-3001.app.github.dev"}})
 
-# Configuración de clave secreta para JWT
-app.config["JWT_SECRET_KEY"] = "your-secure-secret-key"  # Cambia "your-secure-secret-key" por una clave segura
-jwt = JWTManager(app)
-
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
@@ -125,6 +121,10 @@ db.init_app(app)
 # Inicializa la administración de comandos y panel de administración
 setup_admin(app)
 setup_commands(app)
+
+# Configuración de clave secreta para JWT
+app.config["JWT_SECRET_KEY"] = "your-secure-secret-keyasdfghjklzxcvbnm"  # Cambia "your-secure-secret-key" por una clave segura
+jwt = JWTManager(app)
 
 # Registrar el blueprint de la API
 app.register_blueprint(api, url_prefix='/api')

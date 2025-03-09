@@ -22,6 +22,8 @@ import { DinerEdit } from "./component/dineredit";
 import OwnerList from "./component/ownerList";
 import OwnerForm from "./component/ownerForm";
 import OwnerRestaurants from "./component/OwnerRestaurants";
+import OwnerLogin from "./component/ownerLogin";
+import OwnerDashboard from "./pages/ownerDashboard";
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 
@@ -49,6 +51,8 @@ const Layout = () => {
                         <Route element={<OwnerRestaurants />} path="/owners/:owner_id/restaurants" />
                         <Route element={<OwnerForm />} path="/owners/new" />
                         <Route element={<OwnerForm />} path="/owners/:ownerId" />
+                        <Route element={<OwnerLogin/>} path="/owners/login" />
+                        <Route element={<OwnerDashboard/>} path="/owners/dashboard" />
 
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
