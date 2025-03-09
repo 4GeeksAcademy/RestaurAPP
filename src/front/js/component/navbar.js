@@ -56,14 +56,17 @@ export const Navbar = () => {
                     <Link to="/add-restaurant">
                         <button className="btn btn-secondary">Añadir Restaurante</button>
                     </Link>
-                    <Link to="/demo">
+                    {/* <Link to="/demo">
                         <button className="btn btn-info">Otras funcionalidades RestaurAPP</button>
-                    </Link>
+                    </Link> */}
                     <Link to="/owners/new">
-                        <span className="navbar-brand mb-0 h1">Create owner</span>
+                    <button type="button" class="btn btn-light">Owner signup</button>
                     </Link>
                     <Link to="/owners">
-                        <button className="btn btn-primary">Owners list</button>
+                    <Link to="/owners/login">
+                        <button className="btn btn-light">Owner login</button>
+                    </Link>
+                        <button className="btn btn-light">Owners list</button>
                     </Link>
                     <Link to="/dinerlist">
                         <button className="btn btn-primary">Diner list</button>
