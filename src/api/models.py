@@ -15,31 +15,6 @@ class ReservationState(enum.Enum):
     def list_values(cls):
         return [state.value for state in cls]
 
-# Modelo de Reserva
-class Reservation(db.Model):  # Cambia de Reservations a Reservation
-    __tablename__ = 'reservations'  # Asegúrate de que el nombre de la tabla sea correcto
-    id = db.Column(db.Integer, primary_key=True)
-    id_fk_restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
-    id_fk_diner = db.Column(db.Integer, db.ForeignKey('diner.id'), nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    hour = db.Column(db.Time, nullable=False)
-    state = db.Column(db.Enum(ReservationState), default=ReservationState.PENDING, nullable=False)
-    people = db.Column(db.Integer, nullable=False)
-
-    restaurant = relationship("Restaurant", back_populates="reservations")
-    diner = relationship("Diner", back_populates="reservations")
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "restaurant_id": self.id_fk_restaurant,
-            "diner_id": self.id_fk_diner,
-            "date": self.date.strftime('%d/%m/%Y'),
-            "hour": self.hour.strftime('%H:%M'),
-            "state": self.state.value,
-            "people": self.people
-        }
-
 
 # Modelo de Usuario
 class User(db.Model):
@@ -122,4 +97,29 @@ class Restaurant(db.Model):
             "longitude": self.longitude,
             "capacity": self.capacity,
             "owner_id": self.owner_id
+            
+        }
+# Modelo de Reserva
+class Reservation(db.Model):  # Cambia de Reservations a Reservation
+    __tablename__ = 'reservations'  # Asegúrate de que el nombre de la tabla sea correcto
+    id = db.Column(db.Integer, primary_key=True)
+    id_fk_restaurant = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
+    id_fk_diner = db.Column(db.Integer, db.ForeignKey('diner.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    hour = db.Column(db.Time, nullable=False)
+    state = db.Column(db.Enum(ReservationState), default=ReservationState.PENDING, nullable=False)
+    people = db.Column(db.Integer, nullable=False)
+
+    restaurant = relationship("Restaurant", back_populates="reservations")
+    diner = relationship("Diner", back_populates="reservations")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "restaurant_id": self.id_fk_restaurant,
+            "diner_id": self.id_fk_diner,
+            "date": self.date.strftime('%d/%m/%Y'),
+            "hour": self.hour.strftime('%H:%M'),
+            "state": self.state.value,
+            "people": self.people
         }

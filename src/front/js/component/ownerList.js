@@ -8,6 +8,8 @@ const OwnerList = () => {
   useEffect(() => {
     actions.getAllOwners(); // Llama a la acción para obtener la lista de propietarios
   }, []);
+  console.log("Propietarios en el store:", store.owners);
+
 
   const navigate = useNavigate();
 

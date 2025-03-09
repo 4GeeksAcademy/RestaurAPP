@@ -83,3 +83,7 @@ def delete_restaurant(restaurant_id):
     db.session.delete(restaurant)
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
+
+@api.route('/hello', methods=['GET'])
+def hello():
+    return jsonify({"message": "Hello from the backend!"}), 200

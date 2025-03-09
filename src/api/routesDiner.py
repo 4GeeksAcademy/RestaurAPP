@@ -7,7 +7,7 @@ diner_api = Blueprint('diner_api', __name__)  # Cambiado a 'diner_api'
 # Rutas CRUD para Diner
 
 # Obtener todos los comensales
-@diner_api.route('/diners', methods=['GET'])
+@diner_api.route('/', methods=['GET'])
 def get_diners():
     try:
         diners = Diner.query.all()  # Obtener todos los comensales

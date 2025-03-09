@@ -41,8 +41,15 @@ setup_commands(app)
 # Registro de Blueprints
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(reservations, url_prefix='/api/reservations')
-app.register_blueprint(owner_api, url_prefix='/api/owners')
-app.register_blueprint(diner_api, url_prefix='/api/diners')
+app.register_blueprint(owner_api, url_prefix='/api/owners', strict_slashes=False)
+app.register_blueprint(diner_api, url_prefix='/api/diners', strict_slashes=False)
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
 
 for rule in app.url_map.iter_rules():
     print(rule)
