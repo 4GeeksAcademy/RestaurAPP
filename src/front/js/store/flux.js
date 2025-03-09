@@ -20,152 +20,199 @@ const getState = ({ getStore, getActions, setStore }) => {
             specificOwner: null,
         },
         actions: {
-            // Use getActions to call a function within a function
+            // Ejemplo de función (sin cambios)
             exampleFunction: () => {
                 getActions().changeColor(0, "green");
             },
 
-            getDinerList: () => {
+            getDinerList: async () => {
                 const requestOptions = {
                     method: "GET",
                     headers: { "content-type": "application/json" },
                 };
 
-                fetch(process.env.BACKEND_URL + "/api/diners", requestOptions)
-                    .then((response) => response.json())
-                    .then((result) => {
-                        setStore({ diners: result });
-                    });
+                try {
+                    const response = await fetch(
+                        process.env.BACKEND_URL + "/api/diners",
+                        requestOptions
+                    );
+                    if (!response.ok) throw new Error("Error al obtener la lista de comensales.");
+                    const result = await response.json();
+                    setStore({ diners: result });
+                } catch (error) {
+                    console.error(error.message);
+                }
             },
 
-            handleDelete: (id) => {
+            handleDelete: async (id) => {
                 const requestOptions = {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
                 };
 
-                fetch(process.env.BACKEND_URL + "/api/diner/" + id, requestOptions)
-                    .then((response) => response.json())
-                    .then(() => {
-                        const updatedDiners = getStore().diners.filter((diner) => diner.id !== id);
-                        setStore({ diners: updatedDiners });
-                    });
+                try {
+                    const response = await fetch(
+                        process.env.BACKEND_URL + "/api/diner/" + id,
+                        requestOptions
+                    );
+                    if (!response.ok) throw new Error("Error al eliminar el comensal.");
+                    const updatedDiners = getStore().diners.filter((diner) => diner.id !== id);
+                    setStore({ diners: updatedDiners });
+                } catch (error) {
+                    console.error(error.message);
+                }
             },
 
-            handleEdit: (id, fullname, email, telephone, password) => {
-                fetch(process.env.BACKEND_URL + "/api/diner/" + id, {
-                    method: "PUT",
-                    body: JSON.stringify({ id, fullname, email, telephone, password }),
-                    headers: { "Content-Type": "application/json" },
-                })
-                    .then((response) => response.json())
-                    .then((updatedDiner) => {
-                        const updatedDiners = getStore().diners.map((diner) =>
-                            diner.id === updatedDiner.id ? updatedDiner : diner
-                        );
-                        setStore({ diners: updatedDiners });
+            handleEdit: async (id, fullname, email, telephone, password) => {
+                try {
+                    const response = await fetch(process.env.BACKEND_URL + "/api/diner/" + id, {
+                        method: "PUT",
+                        body: JSON.stringify({ id, fullname, email, telephone, password }),
+                        headers: { "Content-Type": "application/json" },
                     });
+                    if (!response.ok) throw new Error("Error al actualizar el comensal.");
+                    const updatedDiner = await response.json();
+                    const updatedDiners = getStore().diners.map((diner) =>
+                        diner.id === updatedDiner.id ? updatedDiner : diner
+                    );
+                    setStore({ diners: updatedDiners });
+                } catch (error) {
+                    console.error(error.message);
+                }
             },
 
-            DinerForm: (fullname, email, telephone, password) => {
+            DinerForm: async (fullname, email, telephone, password) => {
                 const requestOptions = {
                     method: "POST",
                     headers: { "content-type": "application/json" },
                     body: JSON.stringify({ fullname, email, telephone, password }),
                 };
 
-                fetch(process.env.BACKEND_URL + "/api/diner", requestOptions)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error("Error al crear el usuario. Verifica los datos o intenta más tarde.");
-                        }
-                        return response.json();
-                    })
-                    .then((result) => {
-                        setStore({ auth: true });
-                        localStorage.setItem("token", result.access_token);
-                    });
+                try {
+                    const response = await fetch(
+                        process.env.BACKEND_URL + "/api/diner",
+                        requestOptions
+                    );
+                    if (!response.ok) throw new Error("Error al crear el usuario.");
+                    const result = await response.json();
+                    setStore({ auth: true });
+                    localStorage.setItem("token", result.access_token);
+                } catch (error) {
+                    console.error(error.message);
+                }
             },
 
-            getAllOwners: () => {
-                fetch(process.env.BACKEND_URL + "/api/owners")
-                    .then((response) => response.json())
-                    .then((data) => {
-                        console.log("Datos recibidos:", data);
-                        setStore({ owners: data });
-                    });
+            // Obtener todos los propietarios
+            getAllOwners: async () => {
+                try {
+                    const response = await fetch(process.env.BACKEND_URL + "/api/owners");
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
+                    const data = await response.json();
+                    console.log("Datos recibidos:", data);
+                    setStore({ owners: data });
+                } catch (error) {
+                    console.error("Error al obtener propietarios:", error.message);
+                }
             },
 
-            getSpecificOwner: (ownerId) => {
-                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        console.log("Datos recibidos:", data);
-                        setStore({ specificOwner: data });
-                    });
+            // Obtener un propietario específico
+            getSpecificOwner: async (ownerId) => {
+                try {
+                    const response = await fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
+                    const data = await response.json();
+                    console.log("Datos recibidos:", data);
+                    setStore({ specificOwner: data });
+                } catch (error) {
+                    console.error("Error al obtener propietario específico:", error.message);
+                }
             },
 
-            addOwner: (newOwner) => {
-                const requestOptions = {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newOwner),
-                };
+            // Agregar un propietario
+            addOwner: async (newOwner) => {
+                try {
+                    const requestOptions = {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(newOwner),
+                    };
 
-                fetch(process.env.BACKEND_URL + "/api/owners", requestOptions)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        const store = getStore();
-                        setStore({ owners: [...store.owners, data] });
+                    const response = await fetch(process.env.BACKEND_URL + "/api/owners", requestOptions);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
 
-                        getActions().getAllOwners();
-                    });
+                    const data = await response.json();
+                    setStore({ owners: [...getStore().owners, data] });
+                } catch (error) {
+                    console.error("Error al agregar propietario:", error.message);
+                }
             },
 
-            deleteOwner: (ownerId) => {
-                const requestOptions = {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                };
+            // Eliminar un propietario
+            deleteOwner: async (ownerId) => {
+                try {
+                    const requestOptions = {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                    };
 
-                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, requestOptions)
-                    .then((response) => response.json())
-                    .then(() => {
-                        const store = getStore();
-                        setStore({ owners: store.owners.filter((owner) => owner.id !== ownerId) });
+                    const response = await fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, requestOptions);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
 
-                        getActions().getAllOwners();
+                    setStore({
+                        owners: getStore().owners.filter((owner) => owner.id !== ownerId),
                     });
+                } catch (error) {
+                    console.error("Error al eliminar propietario:", error.message);
+                }
             },
 
-            modifyOwner: (ownerId, updatedOwner) => {
-                const requestOptions = {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(updatedOwner),
-                };
+            // Modificar un propietario
+            modifyOwner: async (ownerId, updatedOwner) => {
+                try {
+                    const requestOptions = {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updatedOwner),
+                    };
 
-                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, requestOptions)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        const store = getStore();
-                        const updatedOwners = store.owners.map((owner) =>
+                    const response = await fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, requestOptions);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
+
+                    const data = await response.json();
+                    setStore({
+                        owners: getStore().owners.map((owner) =>
                             owner.id === ownerId ? data : owner
-                        );
-                        setStore({ owners: updatedOwners });
-
-                        getActions().getAllOwners();
+                        ),
                     });
+                } catch (error) {
+                    console.error("Error al modificar propietario:", error.message);
+                }
             },
 
             getMessage: async () => {
                 try {
-                    const resp = await fetch(process.env.BACKEND_URL + "/api/hello");
-                    const data = await resp.json();
+                    const response = await fetch(process.env.BACKEND_URL + "/api/hello");
+                    if (!response.ok) throw new Error("Error al obtener el mensaje.");
+                    const data = await response.json();
                     setStore({ message: data.message });
                     return data;
                 } catch (error) {
-                    console.log("Error loading message from backend", error);
+                    console.log("Error loading message from backend:", error.message);
                 }
             },
 

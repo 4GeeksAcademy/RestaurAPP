@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BACKEND_URL =
   process.env.BACKEND_URL ||
-  "https://glorious-space-capybara-575qvj6jgqqh767x-3001.app.github.dev/";
+  "https://glorious-space-capybara-575qvj6jgqqh767x-3001.app.github.dev";
 
 const SearchRestaurants = () => {
   const [city, setCity] = useState("");

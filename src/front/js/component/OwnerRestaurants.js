@@ -8,15 +8,24 @@ const OwnerRestaurants = () => {
     const { owner_id } = useParams(); // Extraemos el owner_id de la URL
     const [restaurants, setRestaurants] = useState([]);
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(true); // Indicador de carga
 
     useEffect(() => {
         const fetchRestaurants = async () => {
             try {
                 const response = await axios.get(`${BACKEND_URL}/api/owners/${owner_id}/restaurants`);
-                setRestaurants(response.data);
+                if (response.data.length > 0) {
+                    setRestaurants(response.data);
+                } else {
+                    setMessage("No se encontraron restaurantes para este propietario.");
+                }
             } catch (error) {
-                setMessage("No se encontraron restaurantes para este propietario.");
-                console.error("Error fetching restaurants:", error);
+                const errorMessage =
+                    error.response?.data?.error || "Hubo un problema al obtener los restaurantes.";
+                setMessage(errorMessage);
+                console.error("Error fetching restaurants:", error.message);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -25,17 +34,22 @@ const OwnerRestaurants = () => {
 
     return (
         <div className="container mt-5">
-            <h2>Restaurantes del Propietario</h2>
-            {message && <p className="text-danger">{message}</p>}
-            <ul>
-                {restaurants.map((restaurant) => (
-                    <li key={restaurant.id}>
-                        <span><strong>Nombre:</strong> {restaurant.name}</span> <br />
-                        <span><strong>Ubicación:</strong> {restaurant.location}</span> <br />
-                        <span><strong>Capacidad:</strong> {restaurant.capacity}</span>
-                    </li>
-                ))}
-            </ul>
+            <h2 className="mb-4">Restaurantes del Propietario</h2>
+            {loading ? (
+                <p className="text-center">Cargando restaurantes...</p>
+            ) : message ? (
+                <p className="text-danger">{message}</p>
+            ) : (
+                <ul>
+                    {restaurants.map((restaurant) => (
+                        <li key={restaurant.id} className="mb-3">
+                            <span><strong>Nombre:</strong> {restaurant.name}</span> <br />
+                            <span><strong>Ubicación:</strong> {restaurant.location}</span> <br />
+                            <span><strong>Capacidad:</strong> {restaurant.capacity}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 };
