@@ -2,171 +2,162 @@ import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 
 const RequestReservation = () => {
-    const { store } = useContext(Context); // Obtenemos información del usuario logueado
-    const [reservations, setReservations] = useState([]); // Lista de reservas
-    const [formData, setFormData] = useState({
-        id_fk_restaurant: "",
-        date: "",
-        hour: "",
-        people: "",
-    }); // Datos del formulario
-    const [message, setMessage] = useState(""); // Mensajes de éxito/error
+  const { store, actions } = useContext(Context);
+  const [searchData, setSearchData] = useState({ city: "", people: "" });
+  const [phoneNumber, setPhoneNumber] = useState(""); // Para identificar al diner
+  const [selectedRestaurant, setSelectedRestaurant] = useState(""); // ID del restaurante
+  const [reservationData, setReservationData] = useState({
+    date: "",
+    hour: "",
+    name: "",
+    email: ""
+  });
+  const [message, setMessage] = useState("");
 
-    // Cargar las reservas realizadas por el diner logueado
-    useEffect(() => {
-        const fetchReservations = async () => {
-            if (!store.user?.id || store.user.role !== "diner") return; // Verificación adicional
-            try {
-                console.log("Obteniendo reservas del diner:", store.user.id);
-                const response = await fetch(`/api/reservations/diner?diner_id=${store.user.id}`);
-                const data = await response.json();
-                if (!response.ok) {
-                    setMessage(data.error || "Error al cargar reservas.");
-                    return;
-                }
-                setReservations(data.reservations);
-            } catch (error) {
-                console.error("Error al cargar reservas:", error);
-                setMessage("Error al cargar reservas.");
-            }
-        };
+  const handleSearchChange = (e) => {
+    const { name, value } = e.target;
+    setSearchData({ ...searchData, [name]: value });
+  };
 
-        fetchReservations();
-    }, [store.user]);
+  const handlePhoneChange = (e) => {
+    setPhoneNumber(e.target.value);
+  };
 
-    // Manejar cambios en el formulario
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const handleReservationDataChange = (e) => {
+    const { name, value } = e.target;
+    setReservationData({ ...reservationData, [name]: value });
+  };
 
-    // Validar el formulario antes de enviarlo
-    const validateForm = () => {
-        if (!formData.id_fk_restaurant || !formData.date || !formData.hour || !formData.people) {
-            setMessage("Todos los campos son obligatorios.");
-            return false;
-        }
-        if (isNaN(Number(formData.people)) || Number(formData.people) <= 0) {
-            setMessage("El número de personas debe ser un número positivo.");
-            return false;
-        }
-        return true;
-    };
+  const searchRestaurants = async () => {
+    if (!searchData.city || !searchData.people) {
+      setMessage("Por favor ingresa localidad y número de personas.");
+      return;
+    }
 
-    // Crear una nueva reserva
-    const handleCreateReservation = async () => {
-        if (!validateForm()) return; // Detener si el formulario no es válido
+    await actions.getAvailableRestaurants(searchData.city, parseInt(searchData.people));
+  };
 
-        try {
-            console.log("Enviando solicitud de reserva:", formData);
-            const response = await fetch("/api/reservations/request", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    id_fk_diner: store.user.id,
-                    ...formData,
-                }),
-            });
+  const handleReservation = async () => {
+    if (!selectedRestaurant || !phoneNumber) {
+      setMessage("Selecciona un restaurante y proporciona tu número de teléfono.");
+      return;
+    }
 
-            console.log("Respuesta del servidor:", response);
+    // Verificar si el usuario ya está registrado en la base de datos
+    const diner = store.diners.find(d => d.telephone === phoneNumber);
 
-            if (!response.ok) {
-                const error = await response.json();
-                setMessage(error.error || "Error al crear la reserva.");
-                return;
-            }
-            const newReservation = await response.json();
-            setMessage("Reserva creada exitosamente!");
-            setFormData({ id_fk_restaurant: "", date: "", hour: "", people: "" }); // Limpiar el formulario
-            setReservations((prev) => [...prev, newReservation.reservation]);
-        } catch (error) {
-            console.error("Error al crear la reserva:", error);
-            setMessage("Error al crear la reserva.");
-        }
-    };
+    if (diner) {
+      // Diner registrado: solo pedir fecha y hora
+      await actions.createReservation({
+        id_fk_restaurant: selectedRestaurant,
+        id_fk_diner: diner.id,
+        date: reservationData.date,
+        hour: reservationData.hour,
+        people: parseInt(searchData.people)
+      });
+    } else {
+      // Diner no registrado: pedir nombre, correo electrónico, fecha y hora
+      await actions.createReservation({
+        id_fk_restaurant: selectedRestaurant,
+        phone: phoneNumber,
+        name: reservationData.name,
+        email: reservationData.email,
+        date: reservationData.date,
+        hour: reservationData.hour,
+        people: parseInt(searchData.people)
+      });
+    }
 
-    // Eliminar una reserva
-    const handleDeleteReservation = async (reservationId) => {
-        try {
-            console.log("Eliminando reserva:", reservationId);
-            const response = await fetch(`/api/reservations/${reservationId}`, {
-                method: "DELETE",
-            });
-            if (!response.ok) {
-                setMessage("Error al eliminar la reserva.");
-                return;
-            }
-            setMessage("Reserva eliminada exitosamente!");
-            setReservations((prev) => prev.filter((r) => r.id !== reservationId));
-        } catch (error) {
-            console.error("Error al eliminar la reserva:", error);
-            setMessage("Error al eliminar la reserva.");
-        }
-    };
+    setMessage("Reserva realizada exitosamente.");
+  };
 
-    return (
-        <div className="container">
-            <h1>Mis Reservas</h1>
+  return (
+    <div className="container">
+      <h1>Buscar Restaurante y Reservar</h1>
 
-            {/* Lista de Reservas */}
-            {reservations.length > 0 ? (
-                <ul>
-                    {reservations.map((reservation) => (
-                        <li key={reservation.id}>
-                            {reservation.people} personas, el {reservation.date} a las {reservation.hour} - Estado: {reservation.state}
-                            <button
-                                className="btn btn-danger"
-                                onClick={() => handleDeleteReservation(reservation.id)}
-                            >
-                                Eliminar
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No tienes reservas realizadas.</p>
-            )}
+      {/* Formulario de Búsqueda */}
+      <input
+        type="text"
+        name="city"
+        placeholder="Localidad"
+        value={searchData.city}
+        onChange={handleSearchChange}
+      />
+      <input
+        type="number"
+        name="people"
+        placeholder="Número de Personas"
+        value={searchData.people}
+        onChange={handleSearchChange}
+      />
+      <input
+        type="text"
+        placeholder="Teléfono"
+        value={phoneNumber}
+        onChange={handlePhoneChange}
+      />
+      <button onClick={searchRestaurants}>Buscar Restaurantes</button>
 
-            {/* Formulario de Nueva Reserva */}
-            <div>
-                <h2>Solicitar Nueva Reserva</h2>
-                <input
-                    type="text"
-                    name="id_fk_restaurant"
-                    placeholder="ID Restaurante"
-                    onChange={handleInputChange}
-                    value={formData.id_fk_restaurant}
-                />
-                <input
-                    type="date"
-                    name="date"
-                    placeholder="Fecha"
-                    onChange={handleInputChange}
-                    value={formData.date}
-                />
-                <input
-                    type="time"
-                    name="hour"
-                    placeholder="Hora"
-                    onChange={handleInputChange}
-                    value={formData.hour}
-                />
-                <input
-                    type="number"
-                    name="people"
-                    placeholder="Número de Personas"
-                    onChange={handleInputChange}
-                    value={formData.people}
-                />
-                <button className="btn btn-primary" onClick={handleCreateReservation}>
-                    Solicitar Reserva
+      {/* Lista de Restaurantes Disponibles */}
+      {store.availableRestaurants?.length > 0 && (
+        <div>
+          <h2>Restaurantes Disponibles</h2>
+          <ul>
+            {store.availableRestaurants.map((restaurant) => (
+              <li key={restaurant.id}>
+                {restaurant.name} - {restaurant.location}
+                <button onClick={() => setSelectedRestaurant(restaurant.id)}>
+                  Seleccionar
                 </button>
-            </div>
-
-            {/* Mensajes */}
-            {message && <p>{message}</p>}
+              </li>
+            ))}
+          </ul>
         </div>
-    );
+      )}
+
+      {/* Formulario de Reserva */}
+      {selectedRestaurant && (
+        <div>
+          <h2>Completar Reserva</h2>
+          <input
+            type="date"
+            name="date"
+            placeholder="Fecha"
+            value={reservationData.date}
+            onChange={handleReservationDataChange}
+          />
+          <input
+            type="time"
+            name="hour"
+            placeholder="Hora"
+            value={reservationData.hour}
+            onChange={handleReservationDataChange}
+          />
+          {!store.diners.find(d => d.telephone === phoneNumber) && (
+            <>
+              <input
+                type="text"
+                name="name"
+                placeholder="Nombre"
+                value={reservationData.name}
+                onChange={handleReservationDataChange}
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Correo Electrónico"
+                value={reservationData.email}
+                onChange={handleReservationDataChange}
+              />
+            </>
+          )}
+          <button onClick={handleReservation}>Reservar</button>
+        </div>
+      )}
+
+      {message && <p>{message}</p>}
+    </div>
+  );
 };
 
 export default RequestReservation;

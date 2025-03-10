@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from src.api.models import Owner, db
+from src.api.models import Owner, Restaurant, db
 from sqlalchemy.exc import IntegrityError
 
 owner_api = Blueprint('owner_api', __name__)  # Nombre único para el Blueprint
@@ -85,3 +85,13 @@ def delete_owner(owner_id):
         db.session.rollback()
         print(f"Error: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
+
+# Obtener restaurantes de un propietario
+@owner_api.route('/<int:owner_id>/restaurants', methods=['GET'])
+def get_owner_restaurants(owner_id):
+    owner = Owner.query.get(owner_id)
+    if not owner:
+        return jsonify({"error": "Propietario no encontrado"}), 404
+
+    restaurants = Restaurant.query.filter_by(owner_id=owner_id).all()
+    return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
