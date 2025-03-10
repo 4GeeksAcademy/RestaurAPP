@@ -98,4 +98,14 @@ class Restaurant(db.Model):
             "capacity": self.capacity,
             "owner_id": self.owner_id  # Incluye el ID del propietario en la serialización
         }
+    
+class Origin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,      
+        }
 

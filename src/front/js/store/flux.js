@@ -1,242 +1,246 @@
 const getState = ({ getStore, getActions, setStore }) => {
-  return {
-    store: {
-      message: null,
-      demo: [
-        {
-          title: "FIRST",
-          background: "white",
-          initial: "white",
+    return {
+        store: {
+            message: null,
+            demo: [
+                {
+                    title: "FIRST",
+                    background: "white",
+                    initial: "white",
+                },
+                {
+                    title: "SECOND",
+                    background: "white",
+                    initial: "white",
+                },
+            ],
+            diners: [],
+            auth: true,
+            owners: [],
+            specificOwner: null,
+            origins: [],
         },
-        {
-          title: "SECOND",
-          background: "white",
-          initial: "white",
-        },
-      ],
-      diners: [],
-      auth: false,
-      owners: [],
-      specificOwner: null,
-      ownerName: null,
-    },
-    actions: {
-      // Use getActions to call a function within a function
-      exampleFunction: () => {
-        getActions().changeColor(0, "green");
-      },
+        actions: {
+            // Use getActions to call a function within a function
+            exampleFunction: () => {
+                getActions().changeColor(0, "green");
+            },
 
-      getDinerList: () => {
-        const requestOptions = {
-          method: "GET",
-          headers: { "content-type": "application/json" },
-        };
+            getDinerList: () => {
+                const requestOptions = {
+                    method: "GET",
+                    headers: { "content-type": "application/json" },
+                };
 
-        fetch(process.env.BACKEND_URL + "/api/diners", requestOptions)
-          .then((response) => response.json())
-          .then((result) => {
-            setStore({ diners: result });
-          });
-      },
+                fetch(process.env.BACKEND_URL + "/api/diners", requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        setStore({ diners: result });
+                    });
+            },
 
-      handleDelete: (id) => {
-        const requestOptions = {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        };
+            handleDelete: (id) => {
+                const requestOptions = {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                };
 
-        fetch(process.env.BACKEND_URL + "/api/diner/" + id, requestOptions)
-          .then((response) => response.json())
-          .then(() => {
-            const updatedDiners = getStore().diners.filter(
-              (diner) => diner.id !== id
-            );
-            setStore({ diners: updatedDiners });
-          });
-      },
+                fetch(process.env.BACKEND_URL + "/api/diner/" + id, requestOptions)
+                    .then((response) => response.json())
+                    .then(() => {
+                        const updatedDiners = getStore().diners.filter((diner) => diner.id !== id);
+                        setStore({ diners: updatedDiners });
+                    });
+            },
 
-      handleEdit: (id, fullname, email, telephone, password) => {
-        fetch(process.env.BACKEND_URL + "/api/diner/" + id, {
-          method: "PUT",
-          body: JSON.stringify({ id, fullname, email, telephone, password }),
-          headers: { "Content-Type": "application/json" },
-        })
-          .then((response) => response.json())
-          .then((updatedDiner) => {
-            const updatedDiners = getStore().diners.map((diner) =>
-              diner.id === updatedDiner.id ? updatedDiner : diner
-            );
-            setStore({ diners: updatedDiners });
-          });
-      },
+            handleEdit: (id, fullname, email, telephone, password) => {
+                fetch(process.env.BACKEND_URL + "/api/diner/" + id, {
+                    method: "PUT",
+                    body: JSON.stringify({ id, fullname, email, telephone, password }),
+                    headers: { "Content-Type": "application/json" },
+                })
+                    .then((response) => response.json())
+                    .then((updatedDiner) => {
+                        const updatedDiners = getStore().diners.map((diner) =>
+                            diner.id === updatedDiner.id ? updatedDiner : diner
+                        );
+                        setStore({ diners: updatedDiners });
+                    });
+            },
 
-      DinerForm: (fullname, email, telephone, password) => {
-        const requestOptions = {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ fullname, email, telephone, password }),
-        };
+            DinerForm: (fullname, email, telephone, password) => {
+                const requestOptions = {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ fullname, email, telephone, password }),
+                };
 
-        fetch(process.env.BACKEND_URL + "/api/diner", requestOptions)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(
-                "Error al crear el usuario. Verifica los datos o intenta más tarde."
-              );
-            }
-            return response.json();
-          })
-          .then((result) => {
-            setStore({ auth: true });
-            localStorage.setItem("token", result.access_token);
-          });
-      },
+                fetch(process.env.BACKEND_URL + "/api/diner", requestOptions)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Error al crear el usuario. Verifica los datos o intenta más tarde.");
+                        }
+                        return response.json();
+                    })
+                    .then((result) => {
+                        setStore({ auth: true });
+                        localStorage.setItem("token", result.access_token);
+                    });
+            },
 
-      getAllOwners: () => {
-        fetch(process.env.BACKEND_URL + "/api/owners")
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Datos recibidos:", data);
-            setStore({ owners: data });
-          });
-      },
+            getAllOwners: () => {
+                fetch(process.env.BACKEND_URL + "/api/owners")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Datos recibidos:", data);
+                        setStore({ owners: data });
+                    });
+            },
 
-      getSpecificOwner: (ownerId) => {
-        fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Datos recibidos:", data);
-            setStore({ specificOwner: data });
-          });
-      },
+            getSpecificOwner: (ownerId) => {
+                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Datos recibidos:", data);
+                        setStore({ specificOwner: data });
+                    });
+            },
 
-      addOwner: (newOwner) => {
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newOwner),
-        };
+            addOwner: (newOwner) => {
+                const requestOptions = {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newOwner),
+                };
 
-        fetch(process.env.BACKEND_URL + "/api/owners", requestOptions)
-          .then((response) => response.json())
-          .then((data) => {
-            const store = getStore();
-            setStore({ owners: [...store.owners, data] });
+                fetch(process.env.BACKEND_URL + "/api/owners", requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const store = getStore();
+                        setStore({ owners: [...store.owners, data] });
 
-            getActions().getAllOwners();
-          });
-      },
+                        getActions().getAllOwners();
+                    });
+            },
 
-      deleteOwner: (ownerId) => {
-        const requestOptions = {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        };
+            deleteOwner: (ownerId) => {
+                const requestOptions = {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                };
 
-        fetch(
-          process.env.BACKEND_URL + "/api/owners/" + ownerId,
-          requestOptions
-        )
-          .then((response) => response.json())
-          .then(() => {
-            const store = getStore();
-            setStore({
-              owners: store.owners.filter((owner) => owner.id !== ownerId),
-            });
+                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, requestOptions)
+                    .then((response) => response.json())
+                    .then(() => {
+                        const store = getStore();
+                        setStore({ owners: store.owners.filter((owner) => owner.id !== ownerId) });
 
-            getActions().getAllOwners();
-          });
-      },
+                        getActions().getAllOwners();
+                    });
+            },
 
-      modifyOwner: (ownerId, updatedOwner) => {
-        const requestOptions = {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedOwner),
-        };
+            modifyOwner: (ownerId, updatedOwner) => {
+                const requestOptions = {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updatedOwner),
+                };
 
-        fetch(
-          process.env.BACKEND_URL + "/api/owners/" + ownerId,
-          requestOptions
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            const store = getStore();
-            const updatedOwners = store.owners.map((owner) =>
-              owner.id === ownerId ? data : owner
-            );
-            setStore({ owners: updatedOwners });
+                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const store = getStore();
+                        const updatedOwners = store.owners.map((owner) =>
+                            owner.id === ownerId ? data : owner
+                        );
+                        setStore({ owners: updatedOwners });
 
-            getActions().getAllOwners();
-          });
-      },
+                        getActions().getAllOwners();
+                    });
+            },
 
-      ownerLogin: (email, password) => {
-        console.log("login from actions");
-        const backendUrl = process.env.BACKEND_URL + "/api/owners/login";
-        console.log("Backend URL:", backendUrl); // Stampa l'URL in console
+            getMessage: async () => {
+                try {
+                    const resp = await fetch(process.env.BACKEND_URL + "/api/hello");
+                    const data = await resp.json();
+                    setStore({ message: data.message });
+                    return data;
+                } catch (error) {
+                    console.log("Error loading message from backend", error);
+                }
+            },
 
-        const requestOption = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
-        };
-        fetch(process.env.BACKEND_URL + "/api/owners/login", requestOption)
-          .then((response) => {
-            console.log(response.status);
-            if (response.status == 200) {
-              setStore({ auth: true });
-            } else {
-              setStore({ auth: false });
-            }
-            return response.json();
-          })
-          .then((data) => {
-            if (data.msg) {
-              // Si el servidor restituye un mensaje de error (ejemplo "wrong email o password")
-              alert(data.msg); // Muestra el mensaje del servidor del back
-            } else {
-              localStorage.setItem("token", data.access_token);    //guarda el token en el local storage
-              localStorage.setItem("ownerName", data.owner_name);  //guarda el nombre del owner en el local Storage
+            getOriginList: () => {
+                const requestOptions = {
+                    method: "GET",
+                    headers: { "content-type": "application/json" },
+                };
 
-              setStore({ 
-                auth: true,
-                ownerName: data.owner_name, // Asigna el valor del nombre a la variable del Store 
-              });
+                fetch(process.env.BACKEND_URL + "/api/origins", requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        setStore({ origins: result });
+                    });
+            },
 
-              console.log(data.access_token);
-            }
-          });
-      },
+            originDelete: (id) => {
+                const requestOptions = {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                };
 
-      ownerLogout: () => {
-        console.log("logout desde actions");
-        setStore({ auth: false });
-        localStorage.removeItem("token");
-      },
+                fetch(process.env.BACKEND_URL + "/api/origin/" + id, requestOptions)
+                    .then((response) => response.json())
+                    .then(() => {
+                        const updatedOrigins = getStore().origins.filter((origin) => origin.id !== id);
+                        setStore({ origins: updatedOrigins });
+                    });
+            },
 
-      getMessage: async () => {
-        try {
-          const resp = await fetch(process.env.BACKEND_URL + "/api/hello");
-          const data = await resp.json();
-          setStore({ message: data.message });
-          return data;
-        } catch (error) {
-          console.log("Error loading message from backend", error);
-        }
-      },
+            createOrigin: (name) => {
+                const requestOptions = {
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ name }),
+                };
 
-      changeColor: (index, color) => {
-        const store = getStore();
-        const demo = store.demo.map((elm, i) => {
-          if (i === index) elm.background = color;
-          return elm;
-        });
-        setStore({ demo });
-      },
+                fetch(process.env.BACKEND_URL + "/api/origin", requestOptions)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Failed to create new origin.");
+                        }
+                        return response.json();
+                    })
+                    .then((result) => {
+                        const store = getStore();
+                        setStore({ origins: [...store.origins, result] });
+                        getActions().getOriginList();
+                    });
+            },
+            editOrigin: (name, id) => {
+              fetch(process.env.BACKEND_URL + "/api/origin/" + id, {
+                  method: "PUT",
+                  body: JSON.stringify({ name }),
+                  headers: { "Content-Type": "application/json" },
+              })
+                  .then((response) => response.json())
+                  .then((data) => {
+                      const updatedOrigin = getStore().origins.map((origin) =>
+                          origin.id === updatedOrigin.id ? updatedOrigin : origin
+                      );
+                      setStore({ origins: data });
+                  });
+          },
+
+            changeColor: (index, color) => {
+                const store = getStore();
+                const demo = store.demo.map((elm, i) => {
+                    if (i === index) elm.background = color;
+                    return elm;
+                });
+                setStore({ demo });
+
+            },
     },
   };
 };

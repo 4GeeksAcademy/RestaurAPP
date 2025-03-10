@@ -29,6 +29,9 @@ export const Navbar = () => {
                     <Link to="/dinerlist">
                         <button className="btn btn-primary">Diner list</button>
                     </Link>
+                    <Link to="/origins">
+                        <button className="btn btn-primary mx-1">Food Origin List</button>
+                    </Link>
                 </div>
             </div>
         </nav>
