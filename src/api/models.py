@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -32,6 +33,9 @@ class Owner(db.Model):
     telephone = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
+    
+     # Relación con restaurantes
+    restaurants = relationship("Restaurant", back_populates="owner")
 
     def __repr__(self):
         return f'<Owner {self.email}>'
@@ -77,6 +81,12 @@ class Restaurant(db.Model):
     longitude = db.Column(db.Float, nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
     
+     # Foreign Key para relacionar con Owner
+    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
+
+    # Relación con Owner
+    owner = relationship("Owner", back_populates="restaurants")
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -85,7 +95,8 @@ class Restaurant(db.Model):
             "telephone": self.telephone,
             "latitude": self.latitude,
             "longitude": self.longitude,
-            "capacity": self.capacity
+            "capacity": self.capacity,
+            "owner_id": self.owner_id  # Incluye el ID del propietario en la serialización
         }
     
 class Origin(db.Model):

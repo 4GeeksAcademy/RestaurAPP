@@ -217,6 +217,20 @@ const getState = ({ getStore, getActions, setStore }) => {
                         getActions().getOriginList();
                     });
             },
+            editOrigin: (name, id) => {
+              fetch(process.env.BACKEND_URL + "/api/origin/" + id, {
+                  method: "PUT",
+                  body: JSON.stringify({ name }),
+                  headers: { "Content-Type": "application/json" },
+              })
+                  .then((response) => response.json())
+                  .then((data) => {
+                      const updatedOrigin = getStore().origins.map((origin) =>
+                          origin.id === updatedOrigin.id ? updatedOrigin : origin
+                      );
+                      setStore({ origins: data });
+                  });
+          },
 
             changeColor: (index, color) => {
                 const store = getStore();
@@ -227,9 +241,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 setStore({ demo });
 
             },
-
-        },
-    };
+    },
+  };
 };
 
 export default getState;

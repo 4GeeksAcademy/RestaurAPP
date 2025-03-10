@@ -6,6 +6,8 @@ export const OriginList = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [name, setName] = useState('');
+    const [edit, setEdit] = useState('');
+    const [editId, setEditId] = useState(null); 
 
     useEffect(() => {
         actions.getOriginList();
@@ -23,7 +25,27 @@ export const OriginList = () => {
         setName('');
     }
 
+    
+    function editOrigin(e) {
+        e.preventDefault();
+        if (editId !== null) {  
+            let updatedName = edit.trim(); 
+            if (!updatedName.endsWith(" food")) {
+                updatedName += " food";  
+            }
+    
+            actions.editOrigin(updatedName, editId);
+            setEdit('');
+            setEditId(null);  
+            actions.getOriginList();
+        }
+    }
+    
 
+    function handleEditClick(id, name) {
+        setEditId(id);
+        setEdit(name); 
+    }
 
     return (
         <>
@@ -48,9 +70,27 @@ export const OriginList = () => {
                         store.origins.map((origin, index) => (
                             <li key={index} className="list-group-item">
                                 <h5>{origin.name}</h5>
-                                <button onClick={(e) => originDelete(origin.id)}>Delete</button>
+                                <div>
+                                    <button onClick={(e) => originDelete(origin.id)}>Delete</button>
+                                    <button onClick={() => handleEditClick(origin.id, origin.name)}>Edit</button>
+                                    {editId === origin.id && (
+                                        <form onSubmit={editOrigin} className="row g-3">
+                                            <div className="col-auto">
+                                                <label htmlFor="inputOrigin" className="visually-hidden">Edit Origin</label>
+                                                <input type="text"
+                                                    className="form-control"
+                                                    id="inputEditOrigin"
+                                                    placeholder="Edit Origin"
+                                                    value={edit}
+                                                    onChange={(e) => setEdit(e.target.value)} />
+                                            </div>
+                                            <div className="col-auto">
+                                                <button type="submit" className="btn btn-primary mb-3">Edit Origin</button>
+                                            </div>
+                                        </form>
+                                    )}
+                                </div>
                             </li>
-
                         ))
                     ) : (
                         <p>No origin found.</p>
@@ -64,3 +104,4 @@ export const OriginList = () => {
         </>
     );
 };
+

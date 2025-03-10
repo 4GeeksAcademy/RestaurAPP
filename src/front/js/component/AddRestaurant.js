@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://zany-space-lamp-r5wg7q95j5xfw4j-3001.app.github.dev';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://turbo-space-disco-jp95rv6p69wc5w74-3001.app.github.dev';
 
 const AddRestaurant = () => {
     const [formData, setFormData] = useState({
@@ -10,29 +10,38 @@ const AddRestaurant = () => {
         telephone: "",
         latitude: "0.0000",
         longitude: "0.0000",
-        capacity: ""
+        capacity: "",
+        owner_id: 1 // Aquí deberías reemplazar 1 con el ID del propietario logueado dinámicamente
     });
     const [message, setMessage] = useState("");
 
+    // Manejador de cambios en el formulario
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    // Manejador de envío del formulario
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Evita que la página se recargue al enviar el formulario
         try {
+            // Realiza la solicitud POST al backend con los datos del formulario
             const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData);
-            setMessage(response.data.message);
+            setMessage(response.data.message || "Restaurante añadido exitosamente");
+
+            // Resetea el formulario después del éxito
             setFormData({
                 name: "",
                 location: "",
                 telephone: "",
                 latitude: "0.0000",
                 longitude: "0.0000",
-                capacity: ""
+                capacity: "",
+                owner_id: formData.owner_id // Mantenemos el ID del propietario logueado
             });
         } catch (error) {
+            // Muestra un mensaje de error en caso de fallo
+            console.error("Error al enviar el restaurante:", error); // Para depuración
             setMessage(error.response?.data?.error || "Hubo un error al añadir el restaurante");
         }
     };
