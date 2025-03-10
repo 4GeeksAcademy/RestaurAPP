@@ -1,3 +1,4 @@
+
 from flask import Blueprint, jsonify, request
 from src.api.models import Reservation, Restaurant
 from src import db
@@ -158,3 +159,22 @@ def delete_reservation(reservation_id):
         db.session.rollback()
         print(f"Error: {e}")
         return jsonify({"error": "No se pudo eliminar la reserva"}), 500
+@reservations.route('/manage/<int:reservation_id>', methods=['PUT'])
+def manage_reservation(reservation_id):
+    data = request.get_json()
+    reservation = Reservation.query.get(reservation_id)
+
+    if not reservation:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+
+    if "state" not in data or data["state"] not in ["Accepted", "Rehused"]:
+        return jsonify({"error": "Estado inválido"}), 400
+
+    reservation.state = data["state"]
+
+    try:
+        db.session.commit()
+        return jsonify({"message": f"Reserva {data['state']}", "reservation": reservation.serialize()}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "Error al gestionar la reserva"}), 500

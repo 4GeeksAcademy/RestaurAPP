@@ -1,3 +1,5 @@
+
+
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
@@ -19,6 +21,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       owners: [],
       specificOwner: null,
       reservations: [],
+      user: null,
     },
     actions: {
       // Ejemplo de función (sin cambios)
@@ -294,3 +297,5 @@ const getState = ({ getStore, getActions, setStore }) => {
 };
 
 export default getState;
+
+
