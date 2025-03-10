@@ -18,6 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       auth: true,
       owners: [],
       specificOwner: null,
+      reservations: [],
     },
     actions: {
       // Ejemplo de función (sin cambios)
@@ -117,7 +118,9 @@ const getState = ({ getStore, getActions, setStore }) => {
       // Obtener todos los propietarios
       getAllOwners: async () => {
         try {
-          const response = await fetch(process.env.BACKEND_URL + "/api/owners/");
+          const response = await fetch(
+            process.env.BACKEND_URL + "/api/owners/"
+          );
           if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
@@ -260,6 +263,21 @@ const getState = ({ getStore, getActions, setStore }) => {
             "Error al cargar el mensaje del backend:",
             error.message
           );
+        }
+      },
+      getAllReservations: async () => {
+        try {
+          const response = await fetch(
+            process.env.BACKEND_URL + "/api/reservations/"
+          ); // URL de tu backend
+          if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log("Reservas obtenidas:", data); // Para depuración
+          setStore({ reservations: data.reservations }); // Actualiza el estado global
+        } catch (error) {
+          console.error("Error al obtener reservas:", error.message);
         }
       },
 

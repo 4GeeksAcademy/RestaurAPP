@@ -1,4 +1,3 @@
-
 import React, { useContext } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
@@ -24,6 +23,7 @@ import OwnerForm from "./component/ownerForm";
 import OwnerRestaurants from "./component/OwnerRestaurants";
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
+import ReservationList from "./component/ReservationList"; // Importar el componente del listado de reservas
 
 //create your first component
 const Layout = () => {
@@ -58,6 +58,8 @@ const Layout = () => {
                         {/* Ruta protegida para propietarios */}
                         <Route path="/my-restaurants" element={<MyRestaurants />} />
 
+                        {/* Ruta para el listado de reservas */}
+                        <Route element={<ReservationList />} path="/reservations" />
 
                         {/*<Route element={<Signup />} path="/signup" />*/}  {/* Ruta de registro */}
                         {/*<Route element={<Login />} path="/login" />*/}  {/* Ruta de inicio de sesión */}
