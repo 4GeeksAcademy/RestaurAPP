@@ -1,11 +1,10 @@
-# Description: Archivo principal de la aplicación, inicializa la aplicación de Flask y configura las rutas, la base de datos y el manejo de errores.
 from flask import Flask, jsonify, send_from_directory
 import os
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from src.api.utils import APIException, generate_sitemap
-from src.api.models import db, User, Owner, Diner, Reservation
+from src.api.models import db
 from src.api.routes import api
 from src.api.admin import setup_admin
 from src.api.commands import setup_commands
@@ -15,7 +14,9 @@ from src.api.routesDiner import diner_api
 
 # Inicialización de Flask
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})  # Permitir todas las solicitudes en desarrollo
+
+# Configuración de CORS (Permitir todas las solicitudes en desarrollo)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Configuración de clave secreta para JWT
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "default-unsafe-key")  # Usa una clave segura en producción
@@ -44,6 +45,7 @@ app.register_blueprint(reservations, url_prefix='/api/reservations')
 app.register_blueprint(owner_api, url_prefix='/api/owners', strict_slashes=False)
 app.register_blueprint(diner_api, url_prefix='/api/diners', strict_slashes=False)
 
+# Manejador de encabezados CORS (para cualquier solicitud sin configurar adecuadamente)
 @app.after_request
 def add_cors_headers(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
@@ -51,8 +53,13 @@ def add_cors_headers(response):
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response
 
-for rule in app.url_map.iter_rules():
-    print(rule)
+# Generar el sitemap con todos los endpoints
+@app.route('/')
+def sitemap():
+    if ENV == "development":
+        return generate_sitemap(app)
+    return send_from_directory(static_file_dir, 'index.html')
+
 # Manejador de errores personalizados
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
@@ -67,13 +74,6 @@ def handle_404(error):
 @app.errorhandler(500)
 def handle_500(error):
     return jsonify({"error": "Error interno del servidor"}), 500
-
-# Generar el sitemap con todos los endpoints
-@app.route('/')
-def sitemap():
-    if ENV == "development":
-        return generate_sitemap(app)
-    return send_from_directory(static_file_dir, 'index.html')
 
 # Manejo de archivos estáticos (Frontend)
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
