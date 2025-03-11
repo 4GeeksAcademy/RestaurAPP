@@ -23,7 +23,7 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
-
+"""/////////////////////////////////// DINERS ////////////////////////////////////////"""
 
 @api.route('/diners', methods=['GET'])
 def get_diners():
@@ -103,7 +103,27 @@ def delete_diner(id):
     db.session.commit()
     
     return jsonify({"message": "Diner deleted"}), 200
-     
+
+@api.route("/diner/login", methods=["POST"])
+def dinerLogin():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    
+    print(f"Email: {email}")
+
+    diner = Diner.query.filter_by(email = email).first()
+    print(diner)
+
+    if diner is None :                                             
+        return jsonify({"msg": "Could not find email"}), 401
+
+    if password != diner.password :
+        return jsonify({"msg": "Bad email or password"}), 401
+
+    access_token = create_access_token(identity=email)
+    return jsonify({"access_token": access_token, "diner_fullname": diner.fullname}), 200
+
+"""/////////////////////////////////// OWNERS ////////////////////////////////////////"""
 
 @api.route('/owners', methods=['GET'])
 def get_all_owners():
@@ -375,6 +395,8 @@ def delete_restaurant(restaurant_id):
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente."}), 200
 
+"""/////////////////////////////////// ORGINS ////////////////////////////////////////"""
+
 @api.route('/origin', methods=['POST'])
 def add_origin():
     data = request.get_json() 
@@ -432,3 +454,4 @@ def modify_origin(id):
     db.session.commit()
 
     return jsonify({"message": "origin modified!"}), 200
+

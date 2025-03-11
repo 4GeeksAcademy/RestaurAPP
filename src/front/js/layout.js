@@ -18,6 +18,8 @@ import { Footer } from "./component/footer";
 import { Dinerform } from "./component/dinerform";
 import { Dinerlist } from "./component/dinerlist";
 import { DinerEdit } from "./component/dineredit";
+import { DinerLogin } from "./component/dinerLogin";
+import { DinerDashboard } from "./component/dinerDashboard";
 
 import OwnerList from "./component/ownerList";
 import OwnerForm from "./component/ownerForm";
@@ -31,6 +33,8 @@ import { OriginList } from "./component/originList";
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 import { Context } from "./store/appContext";
+
+
 //create your first component
 const Layout = () => {
     // the basename is used when your project is published in a subdirectory and not in the root of the domain
@@ -51,6 +55,8 @@ const Layout = () => {
                         <Route element={<Dinerform />} path="/dinerform" />
                         <Route element={<Dinerlist />} path="/dinerlist" />
                         <Route element={<DinerEdit />} path="/dineredit/:id" />
+                        <Route element={<DinerLogin />} path="/diner/login" />
+                        <Route element={<DinerDashboard />} path="/diner/dashboard" />
 
                         <Route element={<OriginList />} path="/origins" />
 
