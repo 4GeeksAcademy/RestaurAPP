@@ -15,7 +15,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 },
             ],
             diners: [],
-            auth: true,
+            auth: false,
             owners: [],
             specificOwner: null,
             origins: [],
@@ -158,6 +158,53 @@ const getState = ({ getStore, getActions, setStore }) => {
                         getActions().getAllOwners();
                     });
             },
+
+            ownerLogin: (email, password) => {
+                console.log("login from actions");
+                const backendUrl = process.env.BACKEND_URL + "/api/owners/login";
+                console.log("Backend URL:", backendUrl); // Stampa l'URL in console
+        
+                const requestOption = {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    email: email,
+                    password: password,
+                  }),
+                };
+                fetch(process.env.BACKEND_URL + "/api/owners/login", requestOption)
+                  .then((response) => {
+                    console.log(response.status);
+                    if (response.status == 200) {
+                      setStore({ auth: true });
+                    } else {
+                      setStore({ auth: false });
+                    }
+                    return response.json();
+                  })
+                  .then((data) => {
+                    if (data.msg) {
+                      // Si el servidor restituye un mensaje de error (ejemplo "wrong email o password")
+                      alert(data.msg); // Muestra el mensaje del servidor del back
+                    } else {
+                      localStorage.setItem("token", data.access_token);    //guarda el token en el local storage
+                      localStorage.setItem("ownerName", data.owner_name);  //guarda el nombre del owner en el local Storage
+        
+                      setStore({ 
+                        auth: true,
+                        ownerName: data.owner_name, // Asigna el valor del nombre a la variable del Store 
+                      });
+        
+                      console.log(data.access_token);
+                    }
+                  });
+              },
+        
+              ownerLogout: () => {
+                console.log("logout desde actions");
+                setStore({ auth: false });
+                localStorage.removeItem("token");
+              },
 
             getMessage: async () => {
                 try {
