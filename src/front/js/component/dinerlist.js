@@ -1,3 +1,4 @@
+
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -43,7 +44,7 @@ export const Dinerlist = () => {
                 </ul>
                 <br />
                 <Link to="/dinerform">
-                    <button className="btn btn-primary">Diner form</button>
+                    <button className="btn btn-primary">Diner Sign Up</button>
                 </Link>
             </div>
         </>

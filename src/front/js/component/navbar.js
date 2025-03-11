@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Navbar = () => {
-    const { store } = useContext(Context); // Usamos el contexto para acceder al usuario logueado
+    const { store } = useContext(Context);
 
     return (
         <nav className="navbar navbar-light bg-light">
@@ -21,9 +21,9 @@ export const Navbar = () => {
                     {/* <Link to="/demo">
                         <button className="btn btn-info">Otras funcionalidades RestaurAPP</button>
                     </Link> */}
-                    
+
                     <Link to="/owners/new">
-                        <button type="button" class="btn btn-light">Owner Signup</button>
+                        <button type="button" className="btn btn-light">Owner Signup</button>
                     </Link>
                     <Link to="/owners">
                         <button className="btn btn-light">Owners List</button>
@@ -37,9 +37,20 @@ export const Navbar = () => {
                             <button className="btn btn-light">Owner Login</button>
                         </Link>
                     )}
-
+                    {store.auth ? (
+                        <Link to="/diner/dashboard">
+                            <button className="btn btn-light">Diner Dashboard</button>
+                        </Link>
+                    ) : (
+                        <Link to="/diner/login">
+                            <button className="btn btn-light">Diner Login</button>
+                        </Link>
+                    )}
                     <Link to="/dinerlist">
                         <button className="btn btn-primary">Diner list</button>
+                    </Link>
+                    <Link to="/dinerform">
+                        <button className="btn btn-primary mx-1">Diner Sign up</button>
                     </Link>
                     {/* Mostrar el botón solo si el usuario logueado es owner */}
                     {store.user && store.user.role === "owner" && (
@@ -47,6 +58,7 @@ export const Navbar = () => {
                             <button className="btn btn-success">Mis Restaurantes</button>
                         </Link>
                     )}
+
                 </div>
             </div>
         </nav>

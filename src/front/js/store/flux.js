@@ -88,6 +88,42 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
+            dinerLogin: (email, password) => {
+
+                const backendUrl = process.env.BACKEND_URL + "/api/diner/login";
+                console.log("Backend URL:", backendUrl); 
+        
+                const requestOption = {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    email: email,
+                    password: password,
+                  }),
+                };
+                fetch(process.env.BACKEND_URL + "/api/diner/login", requestOption)
+                  .then((response) => {
+                    if (response.status == 200) {
+                      setStore({ auth: true });
+                    } else {
+                      setStore({ auth: false });
+                    }
+                    return response.json();
+                  })
+                  .then((data) => {
+                    if (data.msg) {
+                      alert(data.msg);
+                    } else {
+                        localStorage.setItem("dinerFullName", data.diner_fullname);  
+                        setStore({ auth: true, dinerFullName: data.diner_fullname });                                                   
+                    }
+                  });
+              },
+              dinerLogout: () => {
+                setStore({ auth: false });
+                localStorage.removeItem("token");
+              },
+
             getAllOwners: () => {
                 fetch(process.env.BACKEND_URL + "/api/owners")
                     .then((response) => response.json())
