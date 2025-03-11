@@ -124,3 +124,4 @@ const AddRestaurant = () => {
 };
 
 export default AddRestaurant;
+
