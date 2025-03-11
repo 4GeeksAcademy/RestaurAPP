@@ -59,15 +59,23 @@ export const Navbar = () => {
                     {/* <Link to="/demo">
                         <button className="btn btn-info">Otras funcionalidades RestaurAPP</button>
                     </Link> */}
+                    
                     <Link to="/owners/new">
-                    <button type="button" class="btn btn-light">Owner signup</button>
+                        <button type="button" class="btn btn-light">Owner Signup</button>
                     </Link>
                     <Link to="/owners">
-                    <Link to="/owners/login">
-                        <button className="btn btn-light">Owner login</button>
+                        <button className="btn btn-light">Owners List</button>
                     </Link>
-                        <button className="btn btn-light">Owners list</button>
-                    </Link>
+                    {store.auth ? (
+                        <Link to="/owners/dashboard">
+                            <button className="btn btn-light">Owner Dashboard</button>
+                        </Link>
+                    ) : (
+                        <Link to="/owners/login">
+                            <button className="btn btn-light">Owner Login</button>
+                        </Link>
+                    )}
+
                     <Link to="/dinerlist">
                         <button className="btn btn-primary">Diner list</button>
                     </Link>
