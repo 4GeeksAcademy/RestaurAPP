@@ -84,6 +84,42 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error("Error en getDinerList:", error.message);
         }
       },
+
+      handleEdit: async (diner_id, updatedData) => {
+        console.log(`Editando diner con ID: ${diner_id}`);
+        try {
+          const url = new URL(`/api/diners/${diner_id}`, process.env.BACKEND_URL).toString();
+      
+          const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedData),
+          });
+      
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+          }
+      
+          const data = await response.json();
+          console.log("Diner actualizado exitosamente:", data);
+      
+          // Actualizar el estado global (store)
+          const updatedDiners = getStore().diners.map((diner) =>
+            diner.id === diner_id ? data.diner : diner
+          );
+          setStore({ diners: updatedDiners });
+      
+          return data.diner;
+        } catch (error) {
+          console.error("Error en handleEdit:", error.message);
+          throw error; // Lanza el error para que el componente lo maneje
+        }
+      },
+      
+      
       // Buscar restaurantes disponibles
       getAvailableRestaurants: async (city, people) => {
         console.log("Ejecutando getAvailableRestaurants");
