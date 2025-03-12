@@ -12,13 +12,13 @@ const OwnerForm = () => {
 
   const { store, actions } = useContext(Context); // Estado global y acciones
   const navigate = useNavigate();
-  const { ownerId } = useParams();
+  const { owner_id } = useParams();
 
   // Cargar datos del propietario si está editando
   useEffect(() => {
-    if (ownerId) {
+    if (owner_id) {
       const owner = store.owners.find(
-        (owner) => owner.id === parseInt(ownerId)
+        (owner) => owner.id === parseInt(owner_id)
       );
       if (owner) {
         setName(owner.name || "");
@@ -35,7 +35,7 @@ const OwnerForm = () => {
       setEmail("");
       setPassword("");
     }
-  }, [ownerId, store.owners]);
+  }, [owner_id, store.owners]);
 
   // Validación del formulario
   const validateForm = () => {
@@ -53,34 +53,47 @@ const OwnerForm = () => {
   };
 
   // Envío del formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevenir recarga de la página al enviar el formulario
+  
+    // Construir formData desde los estados individuales
+    const formData = {
+      name,
+      location,
+      telephone,
+      email,
+      password, // Solo se usa en creación, no en edición
+    };
+  
     try {
-      if (ownerId) {
-        await actions.modifyOwner(ownerId, {
-          name,
-          telephone,
-          email,
-          location,
-          password,
+      if (owner_id) {
+        // Si estamos editando (hay un owner_id)
+        console.log(`Modificando propietario con ID ${owner_id}`);
+        await actions.updateOwner(owner_id, {
+          name: formData.name,
+          location: formData.location,
+          telephone: formData.telephone,
+          email: formData.email,
         });
-        alert("Propietario actualizado con éxito.");
       } else {
-        await actions.addOwner({ name, telephone, email, location, password });
-        alert("Propietario creado con éxito.");
+        // Si estamos creando un nuevo propietario
+        console.log("Creando un nuevo propietario");
+        await actions.addOwner(formData); // Usar formData directamente en creación
       }
-      navigate("/owners"); // Redirigir a la lista de propietarios
+  
+      alert("Operación completada exitosamente");
+      navigate("/owners"); // Redirige a la lista de propietarios
     } catch (error) {
-      console.error("Error al guardar el propietario:", error);
-      alert("Hubo un error al procesar la solicitud. Inténtalo de nuevo.");
+      console.error("Error al guardar el propietario:", error.message);
+      alert("Error al realizar la operación: " + error.message);
     }
   };
+  
+  
 
   return (
     <>
-      <h1 className="container mt-3">{ownerId ? "Editar Propietario" : "Registro de Propietario"}</h1>
+      <h1 className="container mt-3">{owner_id ? "Editar Propietario" : "Registro de Propietario"}</h1>
       <form className="container mt-4" onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="exampleInputName" className="form-label">
@@ -148,7 +161,7 @@ const OwnerForm = () => {
           />
         </div>
         <button type="submit" className="btn btn-primary">
-          {ownerId ? "Actualizar" : "Registrar"}
+          {owner_id ? "Actualizar" : "Registrar"}
         </button>
       </form>
     </>

@@ -76,13 +76,23 @@ def update_restaurant(restaurant_id):
 # Eliminar un restaurante
 @api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
 def delete_restaurant(restaurant_id):
-    restaurant = Restaurant.query.get(restaurant_id)
-    if not restaurant:
-        return jsonify({"error": "Restaurante no encontrado"}), 404
+    try:
+        # Verifica si el restaurante existe
+        restaurant = Restaurant.query.get(restaurant_id)
+        if not restaurant:
+            return jsonify({"error": "Restaurante no encontrado"}), 404
 
-    db.session.delete(restaurant)
-    db.session.commit()
-    return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
+        # Eliminar restaurante
+        db.session.delete(restaurant)
+        db.session.commit()
+
+        # Respuesta exitosa
+        return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
+    except Exception as e:
+        # Capturar y registrar el error
+        db.session.rollback()  # Revierte cambios en la base de datos
+        print("Error interno en delete_restaurant:", str(e))  # Registro del error en consola
+        return jsonify({"error": "Error interno del servidor", "details": str(e)}), 500
 
 @api.route('/hello', methods=['GET'])
 def hello():

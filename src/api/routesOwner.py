@@ -10,7 +10,7 @@ def get_owners():
     try:
         owners = Owner.query.all()  # Obtener todos los propietarios
         if not owners:
-            return jsonify({"message": "No se encontraron propietarios."}), 200
+            return jsonify({"message": "No se encontraron propietarios."}), 204
         response_body = [owner.serialize() for owner in owners]  # Serializar datos a JSON
         return jsonify(response_body), 200  # Devuelve la lista de propietarios
     except Exception as e:
@@ -46,26 +46,36 @@ def create_owner():
 # Modificar un propietario existente
 @owner_api.route('/<int:owner_id>', methods=['PUT'])
 def update_owner(owner_id):
-    data = request.get_json()
+    # Busca al propietario por su ID
     owner = Owner.query.get(owner_id)
     if not owner:
         return jsonify({"error": "Propietario no encontrado"}), 404
 
-    owner.name = data.get('name', owner.name)
-    owner.email = data.get('email', owner.email)
-    owner.telephone = data.get('telephone', owner.telephone)
-    owner.password = data.get('password', owner.password)  # Usa hashing si es necesario
+    # Obtiene los datos enviados desde el frontend
+    data = request.get_json()
 
     try:
+        # Solo actualiza los campos que se envían; si no están, usa los valores actuales
+        owner.name = data.get("name", owner.name)
+        owner.email = data.get("email", owner.email)
+        owner.telephone = data.get("telephone", owner.telephone)
+        
+        # Comprueba si el email o teléfono ya están asignados a otro propietario
+        if Owner.query.filter(Owner.email == owner.email, Owner.id != owner.id).first():
+            return jsonify({"error": "El correo ya está en uso por otro propietario"}), 400
+
+        if Owner.query.filter(Owner.telephone == owner.telephone, Owner.id != owner.id).first():
+            return jsonify({"error": "El teléfono ya está en uso por otro propietario"}), 400
+
+        # Guarda los cambios en la base de datos
         db.session.commit()
+
         return jsonify({"message": "Propietario actualizado exitosamente", "owner": owner.serialize()}), 200
-    except IntegrityError:
-        db.session.rollback()
-        return jsonify({"error": "El email o el teléfono ya están registrados"}), 400
     except Exception as e:
-        db.session.rollback()
-        print(f"Error: {e}")
-        return jsonify({"error": "Error interno del servidor"}), 500
+        print(f"Error al actualizar propietario: {e}")
+        db.session.rollback()  # Revierte la transacción si hay un error
+        return jsonify({"error": "Error al actualizar el propietario"}), 500
+
 
 # Eliminar un propietario
 @owner_api.route('/<int:owner_id>', methods=['DELETE'])
@@ -78,8 +88,9 @@ def delete_owner(owner_id):
         db.session.delete(owner)
         db.session.commit()
         return jsonify({"message": "Propietario eliminado exitosamente"}), 200
-    except IntegrityError:
+    except IntegrityError as e:
         db.session.rollback()
+        print(f"IntegrityError al eliminar propietario: {e}")
         return jsonify({"error": "No se puede eliminar el propietario porque está relacionado con otros recursos."}), 400
     except Exception as e:
         db.session.rollback()
@@ -92,6 +103,8 @@ def get_owner_restaurants(owner_id):
     owner = Owner.query.get(owner_id)
     if not owner:
         return jsonify({"error": "Propietario no encontrado"}), 404
-
+    
     restaurants = Restaurant.query.filter_by(owner_id=owner_id).all()
+    if not restaurants:
+        return jsonify({"message": "El propietario no tiene restaurantes registrados."}), 204
     return jsonify([restaurant.serialize() for restaurant in restaurants]), 200

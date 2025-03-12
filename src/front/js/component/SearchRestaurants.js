@@ -19,30 +19,23 @@ const SearchRestaurants = () => {
       });
       setRestaurants(response.data);
     } catch (error) {
-      console.error("Error fetching restaurants:", error);
+      console.error("Error al buscar restaurantes:", error);
+      setMessage("Error al buscar restaurantes");
     }
   };
 
-  const handleDelete = async (restaurantId) => {
+  const handleDelete = async (restaurant_id) => {
     try {
-      const token = localStorage.getItem("accessToken"); // Obtén el token del almacenamiento local
-      if (!token) {
-        setMessage("No se encontró el token de autenticación.");
-        return;
-      }
+      console.log("BACKEND_URL:", BACKEND_URL);
 
-      await axios.delete(`${BACKEND_URL}/api/restaurants/${restaurantId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Agrega el token en el encabezado
-        },
-      });
+      await axios.delete(`${BACKEND_URL}/api/restaurants/${restaurant_id}`);
       setRestaurants(
-        restaurants.filter((restaurant) => restaurant.id !== restaurantId)
+        restaurants.filter((restaurant) => restaurant.id !== restaurant_id)
       );
       setMessage("Restaurante eliminado exitosamente");
     } catch (error) {
       console.error(
-        "Error deleting restaurant:",
+        "Error al eliminar restaurante:",
         error.response?.data || error.message
       );
       setMessage("Error al eliminar el restaurante");
@@ -55,20 +48,9 @@ const SearchRestaurants = () => {
 
   const handleSaveEdit = async () => {
     try {
-      const token = localStorage.getItem("accessToken"); // Obtén el token del almacenamiento local
-      if (!token) {
-        setMessage("No se encontró el token de autenticación.");
-        return;
-      }
-
       await axios.put(
         `${BACKEND_URL}/api/restaurants/${editRestaurant.id}`,
-        editRestaurant,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Agrega el token en el encabezado
-          },
-        }
+        editRestaurant
       );
       setMessage("Restaurante modificado exitosamente");
       // Actualiza la lista localmente para reflejar los cambios
@@ -80,7 +62,7 @@ const SearchRestaurants = () => {
       setEditRestaurant(null); // Cierra el modal
     } catch (error) {
       console.error(
-        "Error updating restaurant:",
+        "Error al modificar restaurante:",
         error.response?.data || error.message
       );
       setMessage("Error al modificar el restaurante");
@@ -163,7 +145,7 @@ const SearchRestaurants = () => {
       ) : (
         <p>
           No hay restaurantes disponibles en esta ciudad para la capacidad
-          especificada
+          especificada.
         </p>
       )}
 

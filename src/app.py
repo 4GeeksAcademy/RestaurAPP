@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 import os
 from flask_migrate import Migrate
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 from src.api.utils import APIException, generate_sitemap
 from src.api.models import db
 from src.api.routes import api
@@ -16,10 +15,7 @@ from src.api.routesDiner import diner_api
 app = Flask(__name__)
 
 # Configuración de CORS (Permitir todas las solicitudes en desarrollo)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-# Configuración de clave secreta para JWT
-app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "default-unsafe-key")  # Usa una clave segura en producción
+CORS(app, resources={r"/api/*": {"origins":  "https://glorious-space-capybara-575qvj6jgqqh767x-3000.app.github.dev"}})
 
 # Configuración del entorno (desarrollo o producción)
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -40,18 +36,26 @@ setup_admin(app)
 setup_commands(app)
 
 # Registro de Blueprints
-app.register_blueprint(api, url_prefix='/api')
-app.register_blueprint(reservations, url_prefix='/api/reservations')
+app.register_blueprint(api, url_prefix='/api', strict_slashes=False)
+app.register_blueprint(reservations, url_prefix='/api/reservations', strict_slashes=False)
 app.register_blueprint(owner_api, url_prefix='/api/owners', strict_slashes=False)
 app.register_blueprint(diner_api, url_prefix='/api/diners', strict_slashes=False)
 
 # Manejador de encabezados CORS (para cualquier solicitud sin configurar adecuadamente)
 @app.after_request
 def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
+    print("Encabezados añadidos:", response.headers)  # DEBUG: Mostrar en consola los encabezados
+    response.headers["Access-Control-Allow-Origin"] = "https://glorious-space-capybara-575qvj6jgqqh767x-3000.app.github.dev"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response
+
+"""@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response"""
 
 # Generar el sitemap con todos los endpoints
 @app.route('/')
@@ -87,6 +91,7 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # Evitar caché
     return response
+
 
 # Ejecución principal
 if __name__ == '__main__':

@@ -29,13 +29,10 @@ import SearchAndReserve from "./component/SearchAndReserve"; // Importar el comp
 import ManageReservations from "./component/ManageReservations"; // Importar el componente de gestión de reservas
 import RequestReservation from "./component/RequestReservation";
 
-//create your first component
 const Layout = () => {
-  // the basename is used when your project is published in a subdirectory and not in the root of the domain
-  // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
   const basename = process.env.BASENAME || "";
 
-  if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "")
+  if (!process.env.BACKEND_URL || process.env.BACKEND_URL === "")
     return <BackendURL />;
 
   return (
@@ -49,43 +46,19 @@ const Layout = () => {
             <Route element={<Dinerlist />} path="/dinerlist" />
             <Route element={<DinerEdit />} path="/dineredit/:id" />
             <Route element={<OwnerList />} path="/owners" />
-            <Route
-              element={<OwnerRestaurants />}
-              path="/owners/:owner_id/restaurants"
-            />
+            <Route element={<OwnerRestaurants />} path="/owners/:owner_id/restaurants" />
             <Route element={<OwnerForm />} path="/owners/new" />
             <Route element={<OwnerForm />} path="/owners/:ownerId" />
             <Route element={<Demo />} path="/demo" />
             <Route element={<Single />} path="/single/:theid" />
-            <Route
-              element={<SearchRestaurants />}
-              path="/search-restaurants"
-            />{" "}
-            {/* Ruta de búsqueda de restaurantes */}
-            <Route element={<AddRestaurant />} path="/add-restaurant" />{" "}
-            {/* Ruta de añadir restaurante */}
-            <Route
-              element={<SearchAndReserve />}
-              path="/search-and-reserve"
-            />{" "}
-            {/* Ruta de búsqueda y reserva */}
-            <Route
-              element={<ManageReservations />}
-              path="/manage-reservations"
-            />{" "}
-            {/* Ruta de gestión de reservas */}
-            {/* Ruta protegida para propietarios */}
-            <Route path="/my-restaurants" element={<MyRestaurants />} />
-            {/* Ruta para el listado de reservas */}
-            <Route element={<ReservationList />} path="/reservations" />
-            <Route
-              path="/request-reservation"
-              element={<RequestReservation />}
-            />
-            {/*<Route element={<Signup />} path="/signup" />*/}{" "}
-            {/* Ruta de registro */}
-            {/*<Route element={<Login />} path="/login" />*/}{" "}
-            {/* Ruta de inicio de sesión */}
+            <Route element={<SearchRestaurants />} path="/search-restaurants" /> {/* Ruta de búsqueda de restaurantes */}
+            <Route element={<AddRestaurant />} path="/add-restaurant" /> {/* Ruta de añadir restaurante */}
+            <Route element={<SearchAndReserve />} path="/search-and-reserve" /> {/* Ruta de búsqueda y reserva */}
+            <Route element={<ManageReservations />} path="/manage-reservations" /> {/* Ruta de gestión de reservas */}
+            <Route element={<MyRestaurants />} path="/my-restaurants" />
+            <Route element={<RequestReservation />} path="/request-reservation" />
+            <Route element={<ReservationList />} path="/restaurants/:restaurantId/reservations" /> {/* Ruta para el listado de reservas */}
+  
             <Route element={<h1>Not found!</h1>} />
           </Routes>
           {/* <Footer /> */}
