@@ -29,6 +29,9 @@ import OwnerDashboard from "./pages/ownerDashboard";
 
 import { OriginList } from "./component/originList";
 
+import CategoriesList from "./component/categoriesList";
+import CategoriesForm from "./component/categoryForm";
+
 
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
@@ -59,6 +62,10 @@ const Layout = () => {
                         <Route element={<DinerDashboard />} path="/diner/dashboard" />
 
                         <Route element={<OriginList />} path="/origins" />
+
+                        <Route element={<CategoriesList />} path="/categories" />
+                        <Route element={<CategoriesForm />} path="/categories/new" />
+                        <Route element={<CategoriesForm />} path="/categories/:categoryId" />
 
                         <Route element={<OwnerList />} path="/owners" />
                         <Route element={<OwnerRestaurants />} path="/owners/:owner_id/restaurants" />

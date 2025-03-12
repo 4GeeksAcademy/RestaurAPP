@@ -2,60 +2,49 @@ import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-const OwnerList = () => {
+const CategoriesList = () => {
   const { store, actions } = useContext(Context);
 
   useEffect(() => {
-    actions.getAllOwners(); // Llama a la acción para obtener la lista de propietarios
+    actions.getAllCategories(); // Llama a la acción para obtener la lista de categorias
   }, []);
 
   const navigate = useNavigate();
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center">Owners List</h1>
+      <h1 className="text-center">Categories List</h1>
       <button
         type="button"
         className="btn btn-primary mb-3"
-        onClick={() => navigate("/owners/new")}
+        onClick={() => navigate("/categories/new")}
       >
-        ➕ Create new owner
+        ➕ Create new category
       </button>
 
-      {store.owners?.length > 0 ? (
+      {store.categories?.length > 0 ? (
         <table className="table table-striped">
           <thead>
             <tr>
               <th>Name</th>
-              <th>Telephone</th>
-              <th>Email</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {store.owners.map((owner) => (
-              <tr key={owner.id}>
-                <td>{owner.name}</td>
-                <td>{owner.telephone}</td>
-                <td>{owner.email}</td>
+            {store.categories.map((category) => (
+              <tr key={category.id}>
+                <td>{category.name}</td>
                 <td>
                   <button
-                    onClick={() => navigate(`/owners/${owner.id}`)}
+                    onClick={() => navigate(`/categories/${category.id}`)}
                     className="btn btn-warning me-2"
                   >
                     ✏️ Edit
                   </button>
                   <button
-                    onClick={() => actions.deleteOwner(owner.id)}
+                    onClick={() => actions.deleteCategory(category.id)}
                     className="btn btn-danger me-2"
                   >
                     🗑️ Delete
-                  </button>
-                  <button
-                    onClick={() => navigate(`/owners/${owner.id}/restaurants`)}
-                    className="btn btn-success"
-                  >
-                    🔎 View Restaurants
                   </button>
                 </td>
               </tr>
@@ -63,10 +52,10 @@ const OwnerList = () => {
           </tbody>
         </table>
       ) : (
-        <p className="text-center">No owners available</p>
+        <p className="text-center">No categories available</p>
       )}
     </div>
   );
 };
 
-export default OwnerList;
+export default CategoriesList;

@@ -19,6 +19,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             owners: [],
             specificOwner: null,
             origins: [],
+            categories: [],
+            specificCategory: null,
         },
         actions: {
             // Use getActions to call a function within a function
@@ -91,38 +93,38 @@ const getState = ({ getStore, getActions, setStore }) => {
             dinerLogin: (email, password) => {
 
                 const backendUrl = process.env.BACKEND_URL + "/api/diner/login";
-                console.log("Backend URL:", backendUrl); 
-        
+                console.log("Backend URL:", backendUrl);
+
                 const requestOption = {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    email: email,
-                    password: password,
-                  }),
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                    }),
                 };
                 fetch(process.env.BACKEND_URL + "/api/diner/login", requestOption)
-                  .then((response) => {
-                    if (response.status == 200) {
-                      setStore({ auth: true });
-                    } else {
-                      setStore({ auth: false });
-                    }
-                    return response.json();
-                  })
-                  .then((data) => {
-                    if (data.msg) {
-                      alert(data.msg);
-                    } else {
-                        localStorage.setItem("dinerFullName", data.diner_fullname);  
-                        setStore({ auth: true, dinerFullName: data.diner_fullname });                                                   
-                    }
-                  });
-              },
-              dinerLogout: () => {
+                    .then((response) => {
+                        if (response.status == 200) {
+                            setStore({ auth: true });
+                        } else {
+                            setStore({ auth: false });
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        if (data.msg) {
+                            alert(data.msg);
+                        } else {
+                            localStorage.setItem("dinerFullName", data.diner_fullname);
+                            setStore({ auth: true, dinerFullName: data.diner_fullname });
+                        }
+                    });
+            },
+            dinerLogout: () => {
                 setStore({ auth: false });
                 localStorage.removeItem("token");
-              },
+            },
 
             getAllOwners: () => {
                 fetch(process.env.BACKEND_URL + "/api/owners")
@@ -199,48 +201,48 @@ const getState = ({ getStore, getActions, setStore }) => {
                 console.log("login from actions");
                 const backendUrl = process.env.BACKEND_URL + "/api/owners/login";
                 console.log("Backend URL:", backendUrl); // Stampa l'URL in console
-        
+
                 const requestOption = {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    email: email,
-                    password: password,
-                  }),
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                    }),
                 };
                 fetch(process.env.BACKEND_URL + "/api/owners/login", requestOption)
-                  .then((response) => {
-                    console.log(response.status);
-                    if (response.status == 200) {
-                      setStore({ auth: true });
-                    } else {
-                      setStore({ auth: false });
-                    }
-                    return response.json();
-                  })
-                  .then((data) => {
-                    if (data.msg) {
-                      // Si el servidor restituye un mensaje de error (ejemplo "wrong email o password")
-                      alert(data.msg); // Muestra el mensaje del servidor del back
-                    } else {
-                      localStorage.setItem("token", data.access_token);    //guarda el token en el local storage
-                      localStorage.setItem("ownerName", data.owner_name);  //guarda el nombre del owner en el local Storage
-        
-                      setStore({ 
-                        auth: true,
-                        ownerName: data.owner_name, // Asigna el valor del nombre a la variable del Store 
-                      });
-        
-                      console.log(data.access_token);
-                    }
-                  });
-              },
-        
-              ownerLogout: () => {
+                    .then((response) => {
+                        console.log(response.status);
+                        if (response.status == 200) {
+                            setStore({ auth: true });
+                        } else {
+                            setStore({ auth: false });
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        if (data.msg) {
+                            // Si el servidor restituye un mensaje de error (ejemplo "wrong email o password")
+                            alert(data.msg); // Muestra el mensaje del servidor del back
+                        } else {
+                            localStorage.setItem("token", data.access_token);    //guarda el token en el local storage
+                            localStorage.setItem("ownerName", data.owner_name);  //guarda el nombre del owner en el local Storage
+
+                            setStore({
+                                auth: true,
+                                ownerName: data.owner_name, // Asigna el valor del nombre a la variable del Store 
+                            });
+
+                            console.log(data.access_token);
+                        }
+                    });
+            },
+
+            ownerLogout: () => {
                 console.log("logout desde actions");
                 setStore({ auth: false });
                 localStorage.removeItem("token");
-              },
+            },
 
             getMessage: async () => {
                 try {
@@ -301,19 +303,92 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
             editOrigin: (name, id) => {
-              fetch(process.env.BACKEND_URL + "/api/origin/" + id, {
-                  method: "PUT",
-                  body: JSON.stringify({ name }),
-                  headers: { "Content-Type": "application/json" },
-              })
-                  .then((response) => response.json())
-                  .then((data) => {
-                      const updatedOrigin = getStore().origins.map((origin) =>
-                          origin.id === updatedOrigin.id ? updatedOrigin : origin
-                      );
-                      setStore({ origins: data });
-                  });
-          },
+                fetch(process.env.BACKEND_URL + "/api/origin/" + id, {
+                    method: "PUT",
+                    body: JSON.stringify({ name }),
+                    headers: { "Content-Type": "application/json" },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const updatedOrigin = getStore().origins.map((origin) =>
+                            origin.id === updatedOrigin.id ? updatedOrigin : origin
+                        );
+                        setStore({ origins: data });
+                    });
+            },
+
+            getAllCategories: () => {
+                fetch(process.env.BACKEND_URL + "/api/categories")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Datos recibidos:", data);
+                        setStore({ categories: data });
+                    });
+            },
+
+            getSpecificCategory: (categoryId) => {
+                fetch(process.env.BACKEND_URL + "/api/categories/" + categoryId)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Datos recibidos:", data);
+                        setStore({ specificCategory: data });
+                    });
+            },
+
+            addCategory: (newCategory) => {
+                const requestOptions = {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newCategory),
+                };
+
+                fetch(process.env.BACKEND_URL + "/api/categories", requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const store = getStore();
+                        setStore({ categories: [...store.categories, data] });
+
+                        getActions().getAllCategories();
+                    });
+            },
+
+            deleteCategory: (categoryId) => {
+                const requestOptions = {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                };
+
+                fetch(process.env.BACKEND_URL + "/api/categories/" + categoryId, requestOptions)
+                    .then((response) => response.json())
+                    .then(() => {
+                        const store = getStore();
+                        setStore({ categories: store.categories.filter((category) => category.id !== categoryId) });
+
+                        getActions().getAllCategories();
+                    });
+            },
+
+            modifyCategory: (categoryId, updatedCategory) => {
+                console.log("modifica da actions");
+                
+                const requestOptions = {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updatedCategory),
+                };
+
+                fetch(process.env.BACKEND_URL + "/api/categories/" + categoryId, requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const store = getStore();
+                        const updatedCategories = store.categories.map((category) =>
+                            category.id === categoryId ? data : category
+                        );
+                        setStore({ categories: updatedCategories });
+
+                        getActions().getAllCategories();
+                    });
+            },
 
             changeColor: (index, color) => {
                 const store = getStore();
@@ -324,8 +399,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                 setStore({ demo });
 
             },
-    },
-  };
+        },
+    };
 };
 
 export default getState;

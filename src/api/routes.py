@@ -2,7 +2,7 @@
 
 from flask import Flask, request, jsonify, url_for, Blueprint
 
-from api.models import db, User, Diner, Origin, Restaurant, Owner
+from api.models import db, User, Diner, Origin, Restaurant, Owner, Categories
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -455,3 +455,75 @@ def modify_origin(id):
 
     return jsonify({"message": "origin modified!"}), 200
 
+
+"""/////////////////////////////////// CATEGORIES ////////////////////////////////////////"""
+
+
+@api.route('/categories', methods=['GET'])
+def get_all_categories():
+
+    all_categories= Categories.query.all()
+
+    if not all_categories:                                           
+        return jsonify({"message": "No categories found"}), 404
+
+    results= list(map(lambda category : category.serialize(), all_categories)) 
+
+    return jsonify(results), 200
+
+
+@api.route('/categories/<int:category_id>', methods=['GET'])
+def get_single_category(category_id):
+
+    single_category = Categories.query.get(category_id)
+    print(single_category)
+    print(single_category.serialize())
+
+    return jsonify(single_category.serialize()), 200
+
+
+@api.route('/categories', methods=['POST'])
+def add_category():
+
+    name= request.json.get("name", None)
+    
+    if not all([name]):
+        return jsonify({"error": "All fields are required"}), 400
+
+    new_category = Categories(name = name)
+
+    db.session.add(new_category)
+    db.session.commit()
+
+    return jsonify({"message": "category added successfully", "category": new_category.serialize()}), 201
+
+
+@api.route('/categories/<int:category_id>', methods=['DELETE'])
+def delete_category(category_id):
+
+    single_category = Categories.query.get(category_id)
+
+    if not single_category : 
+        return jsonify({"message" : "category not found"}), 404
+
+    db.session.delete(single_category)
+    db.session.commit()
+
+    return jsonify({"message": "category successfully deleted"}), 200
+
+
+@api.route('/categories/<int:category_id>', methods=['PUT'])
+def modify_category(category_id):
+
+    single_category = Categories.query.get(category_id)
+
+    if not single_category : 
+        return jsonify({"message" : "category not found"}), 404
+
+    name= request.json.get("name", single_category.name)
+
+    single_category.name = name
+    
+    db.session.commit()
+
+    return jsonify({"message": "Category successfully modified"}), 200
