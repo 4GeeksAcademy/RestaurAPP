@@ -45,7 +45,7 @@ const OwnerList = () => {
                 <td>{owner.email}</td>
                 <td>
                   <button
-                    onClick={() => navigate(`/owners/${owner.id}`)}
+                    onClick={() => navigate(`/owners/${owner.id}/edit`)}
                     className="btn btn-warning me-2"
                   >
                     ✏️ Edit

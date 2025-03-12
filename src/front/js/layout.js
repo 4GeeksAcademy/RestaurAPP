@@ -48,7 +48,7 @@ const Layout = () => {
             <Route element={<OwnerList />} path="/owners" />
             <Route element={<OwnerRestaurants />} path="/owners/:owner_id/restaurants" />
             <Route element={<OwnerForm />} path="/owners/new" />
-            <Route element={<OwnerForm />} path="/owners/:ownerId" />
+            <Route element={<OwnerForm />} path="/owners/:owner_id/edit" />
             <Route element={<Demo />} path="/demo" />
             <Route element={<Single />} path="/single/:theid" />
             <Route element={<SearchRestaurants />} path="/search-restaurants" /> {/* Ruta de búsqueda de restaurantes */}

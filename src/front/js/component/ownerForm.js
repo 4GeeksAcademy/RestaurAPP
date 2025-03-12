@@ -3,6 +3,10 @@ import { Context } from "../store/appContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 const OwnerForm = () => {
+
+  const { store, actions } = useContext(Context); // Estado global y acciones
+  const navigate = useNavigate();
+  const { owner_id } = useParams();
   // Estados del formulario
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -10,9 +14,7 @@ const OwnerForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { store, actions } = useContext(Context); // Estado global y acciones
-  const navigate = useNavigate();
-  const { owner_id } = useParams();
+  
 
   // Cargar datos del propietario si está editando
   useEffect(() => {
@@ -21,7 +23,7 @@ const OwnerForm = () => {
         (owner) => owner.id === parseInt(owner_id)
       );
       if (owner) {
-        setName(owner.name || "");
+        setName(owner.name || "name");
         setLocation(owner.location || "");
         setTelephone(owner.telephone || "");
         setEmail(owner.email || "");
