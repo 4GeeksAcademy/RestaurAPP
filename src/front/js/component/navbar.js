@@ -21,7 +21,12 @@ export const Navbar = () => {
                     {/* <Link to="/demo">
                         <button className="btn btn-info">Otras funcionalidades RestaurAPP</button>
                     </Link> */}
-
+                     <Link to="/categories">
+                        <button className="btn btn-light">Categories List</button>
+                    </Link>
+                    <Link to="/categories/new">
+                        <button className="btn btn-light">Add Categories</button>
+                    </Link>
                     <Link to="/owners/new">
                         <button type="button" className="btn btn-light">Owner Signup</button>
                     </Link>
