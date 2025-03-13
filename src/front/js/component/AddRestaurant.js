@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://glorious-space-capybara-575qvj6jgqqh767x-3001.app.github.dev';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev';
+;
 
 const AddRestaurant = () => {
     // Obtiene dinámicamente el ID del propietario logueado (por ejemplo, desde localStorage)

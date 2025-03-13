@@ -11,6 +11,8 @@ from src.api.routesReservations import reservations
 from src.api.routesOwner import owner_api
 from src.api.routesDiner import diner_api
 
+
+
 # Inicialización de Flask
 app = Flask(__name__)
 
@@ -74,30 +76,74 @@ def sitemap():
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, 'index.html')
 
+
+# Inicializar la lista de restaurantes si no existe
+if not hasattr(app, 'restaurants'):
+    app.restaurants = []
+
+# Agregar datos iniciales una única vez
+if len(app.restaurants) == 0:
+    app.restaurants.extend([
+        {"name": "Restaurante A", "location": "Madrid", "capacity": 50},
+        {"name": "Restaurante B", "location": "Barcelona", "capacity": 20},
+        {"name": "Restaurante C", "location": "Madrid", "capacity": 10},
+    ])
+
+print(f"Lista completa de restaurantes: {app.restaurants}")
+
+
+from src.api.models import db, Restaurant
+
 @app.route('/api/restaurants', methods=['POST'])
 def add_restaurant():
-    # Código para agregar un restaurante
-    return jsonify({"message": "Restaurant added"})
+    data = request.get_json()
+
+    # Validar los datos requeridos
+    required_fields = ["name", "location", "telephone", "latitude", "longitude", "capacity", "owner_id"]
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({"error": f"El campo {field} es obligatorio"}), 400
+
+    # Crear un nuevo restaurante
+    new_restaurant = Restaurant(
+        name=data["name"],
+        location=data["location"],
+        telephone=data["telephone"],
+        latitude=float(data["latitude"]),
+        longitude=float(data["longitude"]),
+        capacity=int(data["capacity"]),
+        owner_id=int(data["owner_id"])
+    )
+
+    try:
+        db.session.add(new_restaurant)
+        db.session.commit()
+        return jsonify({"message": "Restaurante añadido exitosamente", "restaurant": new_restaurant.serialize()}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Error al guardar el restaurante: {str(e)}"}), 500
 
 @app.route('/api/restaurants/available', methods=['POST'])
 def get_available_restaurants():
-    # Obtén datos enviados desde el frontend
     data = request.get_json()
-    location = data.get('location')
-    people = data.get('people')
 
-    print(f"Datos recibidos: location={location}, people={people}")  # DEBUG
+    # Validar los parámetros enviados
+    location = data.get('location', '').strip().lower()
+    people = data.get('people', 0)
 
-    # Filtrar restaurantes en la base de datos (o lista en memoria)
-    filtered_restaurants = [
-        restaurant for restaurant in getattr(app, 'restaurants', [])
-        if restaurant["location"] == location and restaurant["capacity"] >= people
-    ]
+    if not location or people <= 0:
+        return jsonify({"error": "La ubicación y el número de personas son obligatorios"}), 400
 
-    print("Restaurantes filtrados:", filtered_restaurants)  # DEBUG
+    try:
+        # Consultar la base de datos
+        available_restaurants = Restaurant.query.filter(
+            db.func.lower(Restaurant.location) == location,
+            Restaurant.capacity >= people
+        ).all()
 
-    # Devuelve los restaurantes filtrados
-    return jsonify({"available_restaurants": filtered_restaurants})
+        return jsonify({"available_restaurants": [restaurant.serialize() for restaurant in available_restaurants]})
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener restaurantes: {str(e)}"}), 500
 
 
 # Manejador de errores personalizados

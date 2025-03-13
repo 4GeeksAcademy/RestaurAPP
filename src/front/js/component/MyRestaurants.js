@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
-const BACKEND_URL = process.env.BACKEND_URL || "https://glorious-space-capybara-575qvj6jgqqh767x-3001.app.github.dev/";
+const BACKEND_URL = process.env.BACKEND_URL || "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev";
 
 const MyRestaurants = () => {
     const [restaurants, setRestaurants] = useState([]);

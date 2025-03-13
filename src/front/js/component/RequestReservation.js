@@ -3,7 +3,7 @@ import { Context } from "../store/appContext";
 
 const RequestReservation = () => {
   const { store, actions } = useContext(Context);
-  const [searchData, setSearchData] = useState({ location: "", people: "" });
+  const [searchData, setSearchData] = useState({ location:"", people:"" });
   const [phoneNumber, setPhoneNumber] = useState(""); // Para identificar al diner
   const [selectedRestaurant, setSelectedRestaurant] = useState(""); // ID del restaurante
   const [reservationData, setReservationData] = useState({

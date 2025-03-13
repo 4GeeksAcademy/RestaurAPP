@@ -122,7 +122,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       
       // Buscar restaurantes disponibles
       getAvailableRestaurants: async (location, people) => {
-        console.log("Respuesta completa del servidor desde /api/restaurants/available:");
+        console.log("Respuesta completa del servidor desde /api/restaurants/available:, {location, people}");
         try {
           const response = await fetch(
             `${process.env.BACKEND_URL}/api/restaurants/available`,
@@ -137,7 +137,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
           }
           const data = await response.json();
-          console.log("Restaurantes disponibles:", data.available_restaurants);
+          console.log("Restaurantes disponibles respuesta del backend:", data);
           setStore({ availableRestaurants: data.available_restaurants });
         } catch (error) {
           console.error("Error en getAvailableRestaurants:", error.message);
