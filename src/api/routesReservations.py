@@ -24,7 +24,8 @@ def validate_reservation_data(data):
         errors.append("Formato de fecha u hora inválido (YYYY-MM-DD, HH:MM)")
 
     # Validar número de personas
-    if not isinstance(data.get('people', int)) or data.get['people'] <= 0:
+    if not isinstance(data.get('people', 0), int) or data.get('people', 0) <= 0:
+
         errors.append("El número de personas debe ser un entero positivo")
 
     return errors if errors else None

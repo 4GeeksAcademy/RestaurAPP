@@ -69,7 +69,7 @@ const OwnerForm = () => {
   
     try {
       if (owner_id) {
-        // Si estamos editando (hay un owner_id)
+        // Si estamos editando un propietario existente
         console.log(`Modificando propietario con ID ${owner_id}`);
         await actions.updateOwner(owner_id, {
           name: formData.name,

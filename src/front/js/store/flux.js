@@ -145,22 +145,20 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
       // Obtener todos los propietarios
       getAllOwners: async () => {
-        console.log("Ejecutando getAllOwners");
         try {
-          const response = await fetch(
-            `${process.env.BACKEND_URL}/api/owners/`
-          );
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
-          }
-          const data = await response.json();
-          console.log("Datos de propietarios obtenidos:", data);
-          setStore({ owners: data });
+            console.log("Fetching owners from the backend...");
+            const response = await fetch("https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev/api/owners/");
+            if (!response.ok) {
+                throw new Error(`Failed to fetch owners: ${response.status}`);
+            }
+            const data = await response.json();
+            setStore({ ...getStore(), owners: data.owners }); // Asegúrate de que no sobreescribe todo el store
+            console.log("Owners fetched successfully:", data.owners);
         } catch (error) {
-          console.error("Error en getAllOwners:", error.message);
+            console.error("Error in getAllOwners:", error);
         }
-      },
+    },
+    
       // Crear un nuevo propietario
       addOwner: async (ownerData) => {
         console.log("Ejecutando addOwner");

@@ -47,28 +47,24 @@ app.register_blueprint(diner_api, url_prefix='/api/diners', strict_slashes=False
 def add_cors_headers(response):
     origin = request.headers.get("Origin")
     allowed_origins = ["https://potential-telegram-9gw96rvrqwjfpvx6-3000.app.github.dev"]
+
+    # Permitir todos los orígenes o restringir a los permitidos
     if origin in allowed_origins:
         response.headers["Access-Control-Allow-Origin"] = origin
-    response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-    return response
+    else:
+        response.headers["Access-Control-Allow-Origin"] = "*"  # Permitir todos los orígenes (puedes restringir esto si necesario)
 
-# Manejador de encabezados CORS (para cualquier solicitud sin configurar adecuadamente)
-@app.after_request
-def add_cors_headers(response):
+    # Métodos permitidos
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+
+    # Encabezados permitidos
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+
+    # (Opcional) Mostrar los encabezados para depuración
     print("Encabezados añadidos:", response.headers)  # DEBUG: Mostrar en consola los encabezados
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response
 
-"""@app.after_request
-def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-    return response"""
-
+# Ruta de inicio
 # Generar el sitemap con todos los endpoints
 @app.route('/')
 def sitemap():
