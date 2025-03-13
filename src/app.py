@@ -15,7 +15,7 @@ from src.api.routesDiner import diner_api
 app = Flask(__name__)
 
 # Configuración de CORS (Permitir todas las solicitudes en desarrollo)
-CORS(app, resources={r"/api/*": {"origins":  "https://glorious-space-capybara-575qvj6jgqqh767x-3000.app.github.dev"}})
+CORS(app, resources={r"/api/*": {"origins":  "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev"}})
 
 # Configuración del entorno (desarrollo o producción)
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -41,11 +41,21 @@ app.register_blueprint(reservations, url_prefix='/api/reservations', strict_slas
 app.register_blueprint(owner_api, url_prefix='/api/owners', strict_slashes=False)
 app.register_blueprint(diner_api, url_prefix='/api/diners', strict_slashes=False)
 
+@app.after_request
+def add_cors_headers(response):
+    origin = request.headers.get("Origin")
+    allowed_origins = ["https://potential-telegram-9gw96rvrqwjfpvx6-3000.app.github.dev"]
+    if origin in allowed_origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
+
 # Manejador de encabezados CORS (para cualquier solicitud sin configurar adecuadamente)
 @app.after_request
 def add_cors_headers(response):
     print("Encabezados añadidos:", response.headers)  # DEBUG: Mostrar en consola los encabezados
-    response.headers["Access-Control-Allow-Origin"] = "https://glorious-space-capybara-575qvj6jgqqh767x-3000.app.github.dev"
+    response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response
@@ -63,6 +73,32 @@ def sitemap():
     if ENV == "development":
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, 'index.html')
+
+@app.route('/api/restaurants', methods=['POST'])
+def add_restaurant():
+    # Código para agregar un restaurante
+    return jsonify({"message": "Restaurant added"})
+
+@app.route('/api/restaurants/available', methods=['POST'])
+def get_available_restaurants():
+    # Obtén datos enviados desde el frontend
+    data = request.get_json()
+    location = data.get('location')
+    people = data.get('people')
+
+    print(f"Datos recibidos: location={location}, people={people}")  # DEBUG
+
+    # Filtrar restaurantes en la base de datos (o lista en memoria)
+    filtered_restaurants = [
+        restaurant for restaurant in getattr(app, 'restaurants', [])
+        if restaurant["location"] == location and restaurant["capacity"] >= people
+    ]
+
+    print("Restaurantes filtrados:", filtered_restaurants)  # DEBUG
+
+    # Devuelve los restaurantes filtrados
+    return jsonify({"available_restaurants": filtered_restaurants})
+
 
 # Manejador de errores personalizados
 @app.errorhandler(APIException)

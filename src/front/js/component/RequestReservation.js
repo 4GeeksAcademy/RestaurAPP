@@ -3,7 +3,7 @@ import { Context } from "../store/appContext";
 
 const RequestReservation = () => {
   const { store, actions } = useContext(Context);
-  const [searchData, setSearchData] = useState({ city: "", people: "" });
+  const [searchData, setSearchData] = useState({ location: "", people: "" });
   const [phoneNumber, setPhoneNumber] = useState(""); // Para identificar al diner
   const [selectedRestaurant, setSelectedRestaurant] = useState(""); // ID del restaurante
   const [reservationData, setReservationData] = useState({
@@ -29,12 +29,12 @@ const RequestReservation = () => {
   };
 
   const searchRestaurants = async () => {
-    if (!searchData.city || !searchData.people) {
+    if (!searchData.location || !searchData.people) {
       setMessage("Por favor ingresa localidad y número de personas.");
       return;
     }
 
-    await actions.getAvailableRestaurants(searchData.city, parseInt(searchData.people));
+    await actions.getAvailableRestaurants(searchData.location, parseInt(searchData.people));
   };
 
   const handleReservation = async () => {
@@ -78,9 +78,9 @@ const RequestReservation = () => {
       {/* Formulario de Búsqueda */}
       <input
         type="text"
-        name="city"
+        name="location"
         placeholder="Localidad"
-        value={searchData.city}
+        value={searchData.location}
         onChange={handleSearchChange}
       />
       <input

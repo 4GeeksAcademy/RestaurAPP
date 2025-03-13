@@ -121,8 +121,8 @@ const getState = ({ getStore, getActions, setStore }) => {
       
       
       // Buscar restaurantes disponibles
-      getAvailableRestaurants: async (city, people) => {
-        console.log("Ejecutando getAvailableRestaurants");
+      getAvailableRestaurants: async (location, people) => {
+        console.log("Respuesta completa del servidor desde /api/restaurants/available:");
         try {
           const response = await fetch(
             `${process.env.BACKEND_URL}/api/restaurants/available`,
@@ -335,6 +335,25 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error("Error en getRestaurantReservations:", error.message);
         }
       },
+
+      addRestaurant: async (restaurant) => {
+        try {
+          const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(restaurant),
+          });
+      
+          if (!response.ok) {
+            throw new Error(`Error al añadir restaurante: ${response.status}`);
+          }
+          const data = await response.json();
+          console.log(data.message);
+        } catch (error) {
+          console.error(error.message);
+        }
+      },
+      
 
       // Gestionar una reserva (aceptar, rechazar, modificar)
       manageReservation: async (reservation_id, reservationData) => {
