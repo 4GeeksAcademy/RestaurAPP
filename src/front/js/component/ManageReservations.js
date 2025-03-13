@@ -5,8 +5,11 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "https://potential-telegram-9
 
 const ManageReservations = () => {
     const [reservations, setReservations] = useState([]);
+    const [acceptedReservations, setAcceptedReservations] = useState([]); // Estado para reservas aceptadas
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+
+    
 
     // Fetch inicial de reservas pendientes
     useEffect(() => {
@@ -38,23 +41,46 @@ const ManageReservations = () => {
     // Manejar la decisión de aceptar o rechazar una reserva
     const handleDecision = async (reservationId, decision) => {
         try {
-            const response = await fetch(`${BASE_URL}/reservations/manage/${reservationId}`, {
+            // Usar DELETE para "Rechazar" la reserva
+            if (decision === "Rejected") {
+                const response = await fetch(`${BASE_URL}/api/reservations/${reservationId}`, {
+                    method: "DELETE",
+                });
+    
+                if (!response.ok) {
+                    throw new Error("Error al eliminar la reserva");
+                }
+    
+                // Eliminar la reserva de la lista localmente
+                setReservations(reservations.filter(r => r.id !== reservationId));
+                return;
+            }
+    
+            // Usar PUT para "Aceptar" la reserva
+            const response = await fetch(`${BASE_URL}/api/reservations/manage/${reservationId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ state: decision }),
             });
-
+    
             if (!response.ok) {
-                throw new Error("Error al gestionar reserva");
+                throw new Error("Error al gestionar la reserva");
             }
-
-            // Remover la reserva gestionada de la lista
+    
+            // Si la reserva es aceptada, moverla a la lista de aceptadas
+            const updatedReservation = reservations.find(r => r.id === reservationId);
+            if (decision === "Accepted") {
+                setAcceptedReservations(prev => [...prev, { ...updatedReservation, state: "Accepted" }]);
+            }
+    
+            // Eliminar la reserva gestionada de la lista actual
             setReservations(reservations.filter(r => r.id !== reservationId));
         } catch (err) {
             console.error(err);
-            setError("No se pudo actualizar el estado de la reserva. Intenta nuevamente.");
+            setError("No se pudo gestionar la reserva. Intenta nuevamente.");
         }
     };
+    
 
     return (
         <div>
