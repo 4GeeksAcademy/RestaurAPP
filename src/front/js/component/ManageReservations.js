@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-const BASE_URL = "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev"; // Define la URL base del backend
+
+const BASE_URL = process.env.REACT_APP_BASE_URL || "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev"; // Define la URL base del backend
 
 const ManageReservations = () => {
     const [reservations, setReservations] = useState([]);
@@ -13,13 +14,16 @@ const ManageReservations = () => {
             setIsLoading(true);
             setError(""); // Reiniciar el error
             try {
-                const response = await fetch(`${BASE_URL}/reservations/`);
+                const response = await fetch(`${BASE_URL}/api/reservations/`);
+                console.log("BASE_URL:", BASE_URL);
+
                 if (!response.ok) {
                     throw new Error("Error al obtener reservas");
                 }
                 const data = await response.json();
+                console.log("Datos recibidos AAAQQQUIII del backend:", data);
                 // Filtrar por estado pendiente
-                setReservations(data.reservations.filter(r => r.state === "Pending"));
+                setReservations(data.filter(r => r.state === "Pending"));
             } catch (err) {
                 console.error(err);
                 setError("No se pudo cargar las reservas. Intenta de nuevo más tarde.");
