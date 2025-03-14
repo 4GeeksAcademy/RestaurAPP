@@ -163,7 +163,11 @@ const OwnerForm = () => {
           />
         </div>
         <button type="submit" className="btn btn-primary">
+<<<<<<< HEAD
           {owner_id ? "Actualizar" : "Registrar"}
+=======
+          {ownerId ? "Save changes" : "Sign up"}
+>>>>>>> develop
         </button>
       </form>
     </>

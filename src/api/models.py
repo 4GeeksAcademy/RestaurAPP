@@ -113,7 +113,18 @@ class Restaurant(db.Model):
             "capacity": self.capacity,
             "owner": {"id": self.owner.id, "name": self.owner.name},  # Información básica del propietario
         }
+    
+class Origin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,      
+        }
 
+<<<<<<< HEAD
 
 # Modelo de Reserva
 class Reservation(db.Model):  # Cambia de Reservations a Reservation
@@ -136,10 +147,20 @@ class Reservation(db.Model):  # Cambia de Reservations a Reservation
 
     # Relación con comensal
     diner = relationship("Diner", back_populates="reservations")
+=======
+class Categories(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True, nullable=False)
+    
+
+    def __repr__(self):
+        return f'<Categories {self.name}>'
+>>>>>>> develop
 
     def serialize(self):
         return {
             "id": self.id,
+<<<<<<< HEAD
             "restaurant_id": self.id_fk_restaurant,
             "diner_id": self.id_fk_diner,
             "date": self.date.strftime('%d/%m/%Y'),
@@ -149,3 +170,8 @@ class Reservation(db.Model):  # Cambia de Reservations a Reservation
             "restaurant": self.restaurant.name if self.restaurant else None,  # Nombre del restaurante
             "diner": self.diner.fullname if self.diner else None  # Nombre del comensal
         }
+=======
+            "name" : self.name
+            # do not serialize the password, its a security breach
+        }  
+>>>>>>> develop
