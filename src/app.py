@@ -17,8 +17,8 @@ from src.api.routesDiner import diner_api
 app = Flask(__name__)
 
 # Configuración de CORS (Permitir todas las solicitudes en desarrollo)
-CORS(app, resources={r"/api/*": {"origins":  "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev"}})
-
+#CORS(app, resources={r"/api/*": {"origins":  "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev"}})
+CORS(app)
 # Configuración del entorno (desarrollo o producción)
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 

@@ -150,6 +150,16 @@ def create_reservation():
         print(f"Error al crear la reserva: {e}")
         return jsonify({"error": "Error interno al crear la reserva"}), 500
 
+# Map state function
+def map_state(state):
+    state_mapping = {
+        "Pendiente": "Pending",
+        "Aceptada": "Accepted",
+        "Rechazada": "Refused",
+        "Cancelada": "Canceled"
+    }
+    return state_mapping.get(state, "Invalid")
+
 # **PUT**: Actualizar una reserva existente
 @reservations.route('/<int:reservation_id>', methods=['PUT'])
 def update_reservation(reservation_id):
@@ -158,18 +168,45 @@ def update_reservation(reservation_id):
         return jsonify({"error": "Reserva no encontrada"}), 404
 
     data = request.get_json()
+    print("Datos recibidos:", data)  # Imprime los datos recibidos para depuración
+
     try:
+        # Definir la función para mapear valores a los estados permitidos
+        def map_state(state):
+            state_map = {
+                "pending": "Pending",
+                "accepted": "Accepted",
+                "refused": "Refused",
+                "canceled": "Canceled"
+            }
+            return state_map.get(state.lower(), state)  # Mapea el valor o retorna el original
+
+        # Procesar y validar el estado (state) solo si está presente en los datos
         if "state" in data:
-            reservation.state = data["state"]
+            mapped_state = map_state(data["state"])
+            if mapped_state not in ["Pending", "Accepted", "Refused", "Canceled"]:
+                return jsonify({"error": f"Estado '{data['state']}' no válido"}), 400
+            reservation.state = mapped_state
+
+        # Procesar y validar otros campos
         if "people" in data:
             reservation.people = data["people"]
+
         if "date" in data:
-            reservation.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+            try:
+                reservation.date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+            except ValueError:
+                return jsonify({"error": "Formato de fecha inválido (YYYY-MM-DD)"}), 400
+
         if "hour" in data:
-            reservation.hour = datetime.strptime(data['hour'], '%H:%M').time()
+            try:
+                reservation.hour = datetime.strptime(data['hour'], '%H:%M').time()
+            except ValueError:
+                return jsonify({"error": "Formato de hora inválido (HH:MM)"}), 400
 
         db.session.commit()
         return jsonify({"message": "Reserva actualizada exitosamente", "reservation": reservation.serialize()}), 200
+    
     except Exception as e:
         db.session.rollback()
         print(f"Error al actualizar la reserva: {e}")
@@ -190,4 +227,35 @@ def delete_reservation(reservation_id):
         db.session.rollback()
         print(f"Error al eliminar la reserva: {e}")
         return jsonify({"error": "Error interno al eliminar la reserva"}), 500
+    
+    # aceptar una reserva existente
 
+@reservations.route('/accept/<int:reservation_id>', methods=['PUT'])
+def accept_reservation(reservation_id):
+    data = request.get_json()
+    optional_fields = ['date', 'hour', 'people']  # Campos opcionales que el diner podría modificar
+
+    # Buscar la reserva en la base de datos
+    reservation = Reservation.query.get(reservation_id)
+    if not reservation:
+        return jsonify({"error": "Reserva no encontrada"}), 404
+
+    try:
+        # Actualizar el estado de la reserva a "Accepted"
+        reservation.state = "Accepted"
+
+        # Actualizar detalles opcionales si son enviados
+        for field in optional_fields:
+            if field in data:
+                setattr(reservation, field, data[field])
+
+        db.session.commit()
+
+        return jsonify({
+            "message": "Reserva aceptada y actualizada correctamente",
+            "reservation": reservation.serialize()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al aceptar reserva: {e}")
+        return jsonify({"error": "Error interno al aceptar la reserva"}), 500
