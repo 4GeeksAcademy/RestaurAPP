@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://turbo-space-disco-jp95rv6p69wc5w74-3001.app.github.dev';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://special-yodel-4jgq5rp6qp5gc5xwp-3001.app.github.dev/';
 
 const AddRestaurant = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
         location: "",
@@ -11,25 +13,33 @@ const AddRestaurant = () => {
         latitude: "0.0000",
         longitude: "0.0000",
         capacity: "",
-        owner_id: 1 // Aquí deberías reemplazar 1 con el ID del propietario logueado dinámicamente
+        owner_id: 1 // Asignamos el owner_id desde localStorage o un valor predeterminado
     });
     const [message, setMessage] = useState("");
 
-    // Manejador de cambios en el formulario
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    // Manejador de envío del formulario
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Evita que la página se recargue al enviar el formulario
+        e.preventDefault();
+
+        const token = localStorage.getItem('access_token');
+
         try {
-            // Realiza la solicitud POST al backend con los datos del formulario
-            const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData);
+            const response = await axios.post(
+                `${BACKEND_URL}/api/restaurants`,
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
             setMessage(response.data.message || "Restaurante añadido exitosamente");
 
-            // Resetea el formulario después del éxito
+            // Limpia el formulario después de enviar
             setFormData({
                 name: "",
                 location: "",
@@ -37,11 +47,14 @@ const AddRestaurant = () => {
                 latitude: "0.0000",
                 longitude: "0.0000",
                 capacity: "",
-                owner_id: formData.owner_id // Mantenemos el ID del propietario logueado
+                owner_id: formData.owner_id
             });
+
+            // Redirigir a otra página después de añadir el restaurante si es necesario
+            // navigate("/my-restaurants"); // Descomenta esto si quieres redirigir
+
         } catch (error) {
-            // Muestra un mensaje de error en caso de fallo
-            console.error("Error al enviar el restaurante:", error); // Para depuración
+            console.error("Error al enviar el restaurante:", error);
             setMessage(error.response?.data?.error || "Hubo un error al añadir el restaurante");
         }
     };

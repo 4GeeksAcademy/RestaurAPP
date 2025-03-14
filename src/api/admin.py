@@ -2,7 +2,7 @@
 import os
 from flask_admin import Admin
 
-from .models import db, User, Diner, Origin
+from .models import db, User, Diner, Origin, Restaurant
 
 from .models import  Owner
 
@@ -23,6 +23,8 @@ def setup_admin(app):
     admin.add_view(ModelView(Owner, db.session))
 
     admin.add_view(ModelView(Origin, db.session))
+
+    admin.add_view(ModelView(Restaurant, db.session))
 
 
     # You can duplicate that line to add mew models
