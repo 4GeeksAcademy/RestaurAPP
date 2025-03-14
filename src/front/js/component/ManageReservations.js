@@ -132,7 +132,7 @@ const ManageReservations = () => {
 };
 
 export default ManageReservations;
-*/
+--------------------------------------CODIGO RESERVA-^----------------------------------->*/
 
 import React, { useEffect, useState } from "react";
 
@@ -248,6 +248,9 @@ const ManageReservations = () => {
                 )
             );
 
+            // Recargar la página después de la actualización
+            window.location.reload();
+
             // Salir del modo edición
             setEditingReservationId(null);
         } catch (err) {
@@ -279,7 +282,7 @@ const ManageReservations = () => {
                 <input
                     type="date"
                     name="date"
-                    defaultValue={reservation.date}
+                    defaultValue={reservation.date.split('/').reverse().join('-')}  // Fecha por defecto en formato YYYY-MM-DD
                     required
                 />
             </label>
@@ -319,12 +322,12 @@ const ManageReservations = () => {
             {error && <p style={{ color: "red" }}>{error}</p>}
 
             <ul>
-                {reservations.map((reservation) => (
-                    <li key={reservation.id}>  {/* Asegúrate de que cada 'li' tenga una clave única */}
+                {reservations.map((reservation, index) => (
+                    <li key={`${reservation.id}-${index}`}>  {/* Agregar un índice para asegurar una clave única */}
                         <p>
                             Reserva de <strong>{reservation.people}</strong> personas para{" "}
                             <strong>{reservation.date}</strong> a las{" "}
-                            <strong>{reservation.hour}</strong>.
+                            <strong>{reservation.hour}</strong> por <strong>{reservation.diner}</strong>.
                         </p>
 
                         {editingReservationId === reservation.id ? (
@@ -361,3 +364,4 @@ const ManageReservations = () => {
 };
 
 export default ManageReservations;
+
