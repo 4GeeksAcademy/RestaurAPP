@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://turbo-space-disco-jp95rv6p69wc5w74-3001.app.github.dev';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev';
+;
 
 const AddRestaurant = () => {
+    // Obtiene dinámicamente el ID del propietario logueado (por ejemplo, desde localStorage)
+    const ownerId = localStorage.getItem("owner_id") || 1; // Reemplaza 1 con un valor adecuado
+
     const [formData, setFormData] = useState({
         name: "",
         location: "",
@@ -11,9 +15,11 @@ const AddRestaurant = () => {
         latitude: "0.0000",
         longitude: "0.0000",
         capacity: "",
-        owner_id: 1 // Aquí deberías reemplazar 1 con el ID del propietario logueado dinámicamente
+        owner_id: ownerId // Usamos el ID dinámico
     });
+
     const [message, setMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false); // Indicador de carga
 
     // Manejador de cambios en el formulario
     const handleChange = (e) => {
@@ -23,13 +29,32 @@ const AddRestaurant = () => {
 
     // Manejador de envío del formulario
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Evita que la página se recargue al enviar el formulario
+        e.preventDefault(); // Evita el refresh del navegador
+        setIsLoading(true); // Muestra el indicador de carga
+        setMessage("");
+
+        // Validaciones antes de enviar
+        if (!formData.name || !formData.location || !formData.telephone || !formData.latitude || !formData.longitude || !formData.capacity) {
+            setMessage("Todos los campos son obligatorios.");
+            setIsLoading(false);
+            return;
+        }
+        if (isNaN(formData.latitude) || isNaN(formData.longitude)) {
+            setMessage("Latitud y longitud deben ser números válidos.");
+            setIsLoading(false);
+            return;
+        }
+        if (formData.capacity <= 0) {
+            setMessage("La capacidad debe ser un número entero positivo.");
+            setIsLoading(false);
+            return;
+        }
+
         try {
-            // Realiza la solicitud POST al backend con los datos del formulario
+            // Realiza la solicitud al backend
             const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData);
             setMessage(response.data.message || "Restaurante añadido exitosamente");
-
-            // Resetea el formulario después del éxito
+            // Resetea el formulario excepto el owner_id
             setFormData({
                 name: "",
                 location: "",
@@ -37,12 +62,18 @@ const AddRestaurant = () => {
                 latitude: "0.0000",
                 longitude: "0.0000",
                 capacity: "",
-                owner_id: formData.owner_id // Mantenemos el ID del propietario logueado
+                owner_id: ownerId // Conservamos el owner_id
             });
         } catch (error) {
-            // Muestra un mensaje de error en caso de fallo
-            console.error("Error al enviar el restaurante:", error); // Para depuración
-            setMessage(error.response?.data?.error || "Hubo un error al añadir el restaurante");
+            if (error.response) {
+                setMessage(error.response.data.error || "Error del servidor.");
+            } else if (error.request) {
+                setMessage("No se pudo conectar al servidor. Por favor, intenta más tarde.");
+            } else {
+                setMessage("Ocurrió un error inesperado.");
+            }
+        } finally {
+            setIsLoading(false); // Oculta el indicador de carga
         }
     };
 
@@ -116,7 +147,9 @@ const AddRestaurant = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-success">Añadir Restaurante</button>
+                <button type="submit" className="btn btn-success">
+                    {isLoading ? "Procesando..." : "Añadir Restaurante"}
+                </button>
             </form>
             {message && <p className="mt-3">{message}</p>}
         </div>

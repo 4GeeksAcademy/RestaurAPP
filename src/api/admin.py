@@ -1,25 +1,34 @@
   
 import os
 from flask_admin import Admin
+<<<<<<< HEAD
+=======
 
 from .models import db, User, Diner, Origin, Owner, Categories
 
+>>>>>>> develop
 from flask_admin.contrib.sqla import ModelView
+from src.api.models import User, Owner, Diner, Restaurant, Reservation
+from src import db
 
 def setup_admin(app):
-    app.secret_key = os.environ.get('FLASK_APP_KEY', 'sample key')
+    # Configuración de clave secreta y estilo de Flask-Admin
+    app.secret_key = os.environ.get('FLASK_APP_KEY', 'default_secure_key')  # Cambia esto en producción
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+    
+    # Instancia del admin
     admin = Admin(app, name='4Geeks Admin', template_mode='bootstrap3')
 
-    
-    # Add your models here, for example this is how we add a the User model to the admin
+    # Registro de modelos en el panel de administración
     admin.add_view(ModelView(User, db.session))
-
-
     admin.add_view(ModelView(Diner, db.session))
-
     admin.add_view(ModelView(Owner, db.session))
+    admin.add_view(ModelView(Restaurant, db.session))  # Agregar modelo Restaurant
+    admin.add_view(ModelView(Reservation, db.session))  # Agregar modelo Reservation
 
+<<<<<<< HEAD
+    # Nota: Puedes duplicar las líneas anteriores para añadir más modelos en el futuro
+=======
     admin.add_view(ModelView(Origin, db.session))
 
     admin.add_view(ModelView(Categories, db.session))
@@ -27,3 +36,4 @@ def setup_admin(app):
 
     # You can duplicate that line to add mew models
     # admin.add_view(ModelView(YourModelName, db.session))
+>>>>>>> develop

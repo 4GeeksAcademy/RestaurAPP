@@ -1,4 +1,13 @@
 
+<<<<<<< HEAD
+from flask import request, jsonify, Blueprint
+from src.api.models import Restaurant, db
+from sqlalchemy.exc import IntegrityError
+
+api = Blueprint('api', __name__)
+
+# Obtener todos los restaurantes
+=======
 
 from flask import Flask, request, jsonify, url_for, Blueprint
 
@@ -240,161 +249,100 @@ def ownerLogin():
 
 """/////////////////////////////////// RESTAURANTS ////////////////////////////////////////"""
 
+>>>>>>> develop
 @api.route('/restaurants', methods=['GET'])
 def get_restaurants():
-    # Obtén los parámetros de la solicitud
     location = request.args.get('location')
-    capacity = request.args.get('capacity', type=int)  # Asegura que 'capacity' sea un entero
-    owner_id = request.args.get('owner_id', type=int)  # Nuevo filtro por propietario
+    capacity = request.args.get('capacity', type=int)
+    owner_id = request.args.get('owner_id', type=int)
 
-    # Inicializa la consulta base
     query = Restaurant.query
 
-    # Filtrar por ubicación si se proporciona
     if location:
-        query = query.filter_by(location=location)
-
-    # Filtrar por capacidad si se proporciona
+        query = query.filter(Restaurant.location.ilike(f"%{location}%"))
     if capacity:
         query = query.filter(Restaurant.capacity >= capacity)
-
-    # Filtrar por owner_id si se proporciona
     if owner_id:
-        query = query.filter_by(owner_id=owner_id)
-
-    # Obtener los resultados filtrados
-    restaurants = query.all()
-
-    # Serializar y devolver los resultados
-    return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
-
-
-"""
-@api.route('/restaurants', methods=['GET'])
-def get_restaurants():
-    location = request.args.get('location')
-    capacity = request.args.get('capacity', type=int)  # type=int asegura que 'capacity' sea un entero
-
-    query = Restaurant.query
-
-    if location:
-        query = query.filter_by(location=location)
-    if capacity:
-        query = query.filter(Restaurant.capacity >= capacity)
+        query = query.filter(Restaurant.owner_id == owner_id)
 
     restaurants = query.all()
+    if not restaurants:
+        return jsonify({"error": "No se encontraron restaurantes que coincidan con los criterios."}), 404
+
     return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
-"""
+
+# Crear un restaurante
 @api.route('/restaurants', methods=['POST'])
 def add_restaurant():
     data = request.json
+    required_fields = ['name', 'location', 'telephone', 'latitude', 'longitude', 'capacity', 'owner_id']
 
-    # Valida que todos los campos requeridos estén presentes, incluyendo owner_id
-    if not data.get('name') or not data.get('location') or not data.get('telephone') or \
-       not data.get('latitude') or not data.get('longitude') or not data.get('capacity') or \
-       not data.get('owner_id'):  # Aquí validamos que owner_id no sea nulo
-        return jsonify({"error": "Todos los campos son obligatorios"}), 400
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({"error": f"El campo {field} es obligatorio"}), 400
 
-    new_restaurant = Restaurant(
-        name=data['name'],
-        location=data['location'],
-        telephone=data['telephone'],
-        latitude=data['latitude'],
-        longitude=data['longitude'],
-        capacity=data['capacity'],
-        owner_id=data['owner_id']  # Asegúrate de que el valor se esté asignando aquí
-    )
-    
-    db.session.add(new_restaurant)
-    db.session.commit()
-
-    return jsonify({"message": "Restaurante añadido exitosamente"}), 201
-
-
-"""
-@api.route('/restaurants', methods=['POST'])
-def add_restaurant():
-    data = request.json
-    if not data.get('name') or not data.get('location') or not data.get('telephone') or not data.get('latitude') or not data.get('longitude') or not data.get('capacity'):
-        return jsonify({"error": "Todos los campos son obligatorios"}), 400
-
-    new_restaurant = Restaurant(
-        name=data['name'],
-        location=data['location'],
-        telephone=data['telephone'],
-        latitude=data['latitude'],
-        longitude=data['longitude'],
-        capacity=data['capacity']
-    )
-    db.session.add(new_restaurant)
-    db.session.commit()
-
-    return jsonify({"message": "Restaurante añadido exitosamente"}), 201
-"""
-from flask_jwt_extended import jwt_required, get_jwt_identity
-
-@api.route('/restaurants/<int:restaurant_id>', methods=['PUT'])
-@jwt_required()  # Protege la ruta para usuarios autenticados
-def update_restaurant(restaurant_id):
     try:
-        data = request.get_json()
-
-        # Busca el restaurante por ID
-        restaurant = Restaurant.query.get(restaurant_id)
-        if not restaurant:
-            return jsonify({"error": "Restaurante no encontrado."}), 404
-
-        # Obtén el owner_id del usuario autenticado
-        current_user = get_jwt_identity()  # Extrae la identidad del token
-        owner_id = current_user.get('owner_id')  # Asegúrate de que el token tenga el owner_id
-
-        # Validar que el usuario logueado es el propietario
-        if restaurant.owner_id != owner_id:
-            return jsonify({"error": "No tienes permisos para modificar este restaurante."}), 403
-
-        # Validar datos de entrada
-        if 'capacity' in data and not isinstance(data['capacity'], int):
-            return jsonify({"error": "La capacidad debe ser un número entero."}), 400
-
-        if 'latitude' in data and not isinstance(data['latitude'], (float, int)):
-            return jsonify({"error": "La latitud debe ser un número."}), 400
-
-        # Actualizar los datos del restaurante
-        restaurant.name = data.get('name', restaurant.name)
-        restaurant.location = data.get('location', restaurant.location)
-        restaurant.telephone = data.get('telephone', restaurant.telephone)
-        restaurant.latitude = data.get('latitude', restaurant.latitude)
-        restaurant.longitude = data.get('longitude', restaurant.longitude)
-        restaurant.capacity = data.get('capacity', restaurant.capacity)
-
+        new_restaurant = Restaurant(
+            name=data['name'],
+            location=data['location'],
+            telephone=data['telephone'],
+            latitude=data['latitude'],
+            longitude=data['longitude'],
+            capacity=data['capacity'],
+            owner_id=data['owner_id']
+        )
+        db.session.add(new_restaurant)
         db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"error": "Ya existe un restaurante con esos datos."}), 400
 
-        return jsonify({"message": "Restaurante modificado exitosamente.", "restaurant": restaurant.serialize()}), 200
+    return jsonify({"message": "Restaurante añadido exitosamente", "restaurant": new_restaurant.serialize()}), 201
 
-    except Exception as e:
-        # Registra el error para propósitos de depuración
-        import logging
-        logging.error(f"Error actualizando restaurante {restaurant_id}: {str(e)}")
-        return jsonify({"error": "Server error"}), 500
-
-
-
-@api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
-@jwt_required()  # Protege la ruta para usuarios autenticados
-def delete_restaurant(restaurant_id):
-    current_user = get_jwt_identity()  # Obtén el usuario logueado
+# Modificar un restaurante
+@api.route('/restaurants/<int:restaurant_id>', methods=['PUT'])
+def update_restaurant(restaurant_id):
+    data = request.get_json()
     restaurant = Restaurant.query.get(restaurant_id)
     if not restaurant:
         return jsonify({"error": "Restaurante no encontrado"}), 404
 
-    # Verifica que el usuario sea el propietario
-    if restaurant.owner_id != current_user.get('owner_id'):
-        return jsonify({"error": "No tienes permisos para eliminar este restaurante."}), 403
+    restaurant.name = data.get('name', restaurant.name)
+    restaurant.location = data.get('location', restaurant.location)
+    restaurant.telephone = data.get('telephone', restaurant.telephone)
+    restaurant.latitude = data.get('latitude', restaurant.latitude)
+    restaurant.longitude = data.get('longitude', restaurant.longitude)
+    restaurant.capacity = data.get('capacity', restaurant.capacity)
 
-    db.session.delete(restaurant)
     db.session.commit()
-    return jsonify({"message": "Restaurante eliminado exitosamente."}), 200
+    return jsonify({"message": "Restaurante modificado exitosamente", "restaurant": restaurant.serialize()}), 200
 
+<<<<<<< HEAD
+# Eliminar un restaurante
+@api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
+def delete_restaurant(restaurant_id):
+    try:
+        # Verifica si el restaurante existe
+        restaurant = Restaurant.query.get(restaurant_id)
+        if not restaurant:
+            return jsonify({"error": "Restaurante no encontrado"}), 404
+
+        # Eliminar restaurante
+        db.session.delete(restaurant)
+        db.session.commit()
+
+        # Respuesta exitosa
+        return jsonify({"message": "Restaurante eliminado exitosamente"}), 200
+    except Exception as e:
+        # Capturar y registrar el error
+        db.session.rollback()  # Revierte cambios en la base de datos
+        print("Error interno en delete_restaurant:", str(e))  # Registro del error en consola
+        return jsonify({"error": "Error interno del servidor", "details": str(e)}), 500
+
+@api.route('/hello', methods=['GET'])
+def hello():
+    return jsonify({"message": "Hello from the backend!"}), 200
+=======
 """/////////////////////////////////// ORGINS ////////////////////////////////////////"""
 
 @api.route('/origin', methods=['POST'])
@@ -527,3 +475,4 @@ def modify_category(category_id):
     db.session.commit()
 
     return jsonify({"message": "Category successfully modified"}), 200
+>>>>>>> develop
