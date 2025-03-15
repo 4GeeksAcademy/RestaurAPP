@@ -21,6 +21,9 @@ const getState = ({ getStore, getActions, setStore }) => {
             origins: [],
             categories: [],
             specificCategory: null,
+            restaurantCategories: [],
+            specificRestaurantCategory: [],
+            restaurants: []
         },
         actions: {
             // Use getActions to call a function within a function
@@ -166,15 +169,24 @@ const getState = ({ getStore, getActions, setStore }) => {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
                 };
-
+            
                 fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, requestOptions)
                     .then((response) => response.json())
-                    .then(() => {
-                        const store = getStore();
-                        setStore({ owners: store.owners.filter((owner) => owner.id !== ownerId) });
-
-                        getActions().getAllOwners();
-                    });
+                    .then((data) => {
+                        if (data.message) {
+                            alert(`❌ Error: ${data.message}`);
+                        } else {
+                            alert("✅ Owner successfully deleted");
+                            const store = getStore();
+                            setStore({ owners: store.owners.filter((owner) => owner.id !== ownerId) });
+            
+                            getActions().getAllOwners();
+                        }
+                    }) // <--- Chiusura del secondo .then()
+                    .catch((error) => {
+                        console.error("Error:", error);
+                        alert("❌ An unexpected error occurred");
+                    }); // <--- Chiusura del .catch()
             },
 
             modifyOwner: (ownerId, updatedOwner) => {
@@ -385,10 +397,99 @@ const getState = ({ getStore, getActions, setStore }) => {
                             category.id === categoryId ? data : category
                         );
                         setStore({ categories: updatedCategories });
-
                         getActions().getAllCategories();
                     });
             },
+
+            getAllRestaurantCategories: () => {
+                fetch(process.env.BACKEND_URL + "/api/restaurant_categories")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Dati ricevuti:", data);
+                        setStore({ restaurantCategories: data });
+                        getActions().getAllCategories();
+                        getActions().getAllRestaurants();
+                    });
+            },
+            
+            getSpecificRestaurantCategory: (restaurantCategoryId) => {
+                fetch(process.env.BACKEND_URL + "/api/restaurant_categories/" + restaurantCategoryId)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Dati ricevuti:", data);
+                        setStore({ specificRestaurantCategory: data });
+                    });
+            },
+            
+            addRestaurantCategory: (newRestaurantCategory) => {
+                const requestOptions = {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newRestaurantCategory),
+                };
+            
+                fetch(process.env.BACKEND_URL + "/api/restaurant_categories", requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+
+                        const store = getStore();
+                        setStore({ restaurantCategories: [...store.restaurantCategories, data] });
+            
+                        getActions().getAllRestaurantCategories();
+                    });
+            },
+            
+            deleteRestaurantCategory: (restaurantCategoryId) => {
+                const requestOptions = {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                };
+            
+                fetch(process.env.BACKEND_URL + "/api/restaurant_categories/" + restaurantCategoryId, requestOptions)
+                    .then((response) => response.json())
+                    .then(() => {
+                        const store = getStore();
+                        setStore({ 
+                            restaurantCategories: store.restaurantCategories.filter(
+                                (rc) => rc.id !== restaurantCategoryId
+                            ) 
+                        });
+            
+                        getActions().getAllRestaurantCategories();
+                    });
+            },
+            
+            modifyRestaurantCategory: (restaurantCategoryId, updatedRestaurantCategory) => {
+                console.log("Modifica da actions");
+            
+                const requestOptions = {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updatedRestaurantCategory),
+                };
+            
+                fetch(process.env.BACKEND_URL + "/api/restaurant_categories/" + restaurantCategoryId, requestOptions)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const store = getStore();
+                        const updatedRestaurantCategories = store.restaurantCategories.map((rc) =>
+                            rc.id === restaurantCategoryId ? data : rc
+                        );
+                        setStore({ restaurantCategories: updatedRestaurantCategories });
+            
+                        getActions().getAllRestaurantCategories();
+                    });
+            },
+
+            getAllRestaurants: () => {
+                fetch(process.env.BACKEND_URL + "/api/restaurants")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Restaurantes recibidos:", data);
+                        setStore({ restaurants: data });
+                    });
+            },
+
 
             changeColor: (index, color) => {
                 const store = getStore();

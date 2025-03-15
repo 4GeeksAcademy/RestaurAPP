@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 const OwnerForm = () => {
   const [name, setName] = useState("");
@@ -52,76 +52,80 @@ const OwnerForm = () => {
 
   return (
     <>
-      <h1 className="container mt-3">Owner Sign up</h1>
-      <form className="container mt-4" onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="exampleInputname" className="form-label">
-            Full name
-          </label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="form-control"
-            id="exampleInputname"
-            aria-describedby="textHelp"
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="exampleInputtext1" className="form-label">
-            Location
-          </label>
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="form-control"
-            id="exampleInputlocation"
-            aria-describedby="textHelp"
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="exampleInputtelephone" className="form-label">
-            Telephone
-          </label>
-          <input
-            type="text"
-            value={telephone}
-            onChange={(e) => setTelephone(e.target.value)}
-            className="form-control"
-            id="exampleInputtelephone"
-            aria-describedby="textHelp"
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="exampleInputEmail1" className="form-label">
-            Email address
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="form-control"
-            id="exampleInputEmail"
-            aria-describedby="emailHelp"
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="exampleInputPassword1" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="form-control"
-            id="exampleInputPassword"
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">
-          {ownerId ? "Save changes" : "Sign up"}
-        </button>
-      </form>
+      <div className="container">
+        <h1 className="my-4">RestaurApp</h1>
+        <h2 className="container mt-3">Owner Sign up</h2>
+        <form className="container mt-4" onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="exampleInputname" className="form-label">
+              Full name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="form-control"
+              id="exampleInputname"
+              aria-describedby="textHelp"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="exampleInputtext1" className="form-label">
+              Location
+            </label>
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="form-control"
+              id="exampleInputlocation"
+              aria-describedby="textHelp"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="exampleInputtelephone" className="form-label">
+              Telephone
+            </label>
+            <input
+              type="text"
+              value={telephone}
+              onChange={(e) => setTelephone(e.target.value)}
+              className="form-control"
+              id="exampleInputtelephone"
+              aria-describedby="textHelp"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="exampleInputEmail1" className="form-label">
+              Email address
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-control"
+              id="exampleInputEmail"
+              aria-describedby="emailHelp"
+            />
+          </div>
+          <div className="mb-3">
+            <label htmlFor="exampleInputPassword1" className="form-label">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-control"
+              id="exampleInputPassword"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            {ownerId ? "Save changes" : "Sign up"}
+          </button>
+          <p className="mt-4">Already have an account?<Link to="/owners/login" className="text-primary fw-bold">Log in here</Link></p>
+        </form>
+      </div>
     </>
   );
 };

@@ -2,7 +2,7 @@
 
 from flask import Flask, request, jsonify, url_for, Blueprint
 
-from api.models import db, User, Diner, Origin, Restaurant, Owner, Categories
+from api.models import db, User, Diner, Origin, Restaurant, Owner, Categories, RestaurantCategories
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -182,6 +182,10 @@ def add_owner():
 @api.route('/owners/<int:owner_id>', methods=['DELETE'])
 def delete_owner(owner_id):
 
+    restaurants = Restaurant.query.filter_by(owner_id=owner_id).all()
+    if restaurants:
+        return jsonify({"message": "Cannot delete owner with associated restaurants."}), 400
+    
     single_owner = Owner.query.get(owner_id)
 
     if not single_owner : 
@@ -527,3 +531,84 @@ def modify_category(category_id):
     db.session.commit()
 
     return jsonify({"message": "Category successfully modified"}), 200
+
+
+"""/////////////////////////////////// RESTAURANT_CATEGORIES ////////////////////////////////////////"""
+
+
+@api.route('/restaurant_categories', methods=['GET'])
+def get_all_restaurant_categories():
+
+    all_restaurant_categories = RestaurantCategories.query.all()
+
+    if not all_restaurant_categories:                                           
+        return jsonify({"message": "No restaurant categories found"}), 404
+
+    results = list(map(lambda restaurant_category: restaurant_category.serialize(), all_restaurant_categories))
+
+    return jsonify(results), 200
+
+
+@api.route('/restaurant_categories/<int:restaurant_category_id>', methods=['GET'])
+def get_single_restaurant_category(restaurant_category_id):
+
+    single_restaurant_category = RestaurantCategories.query.get(restaurant_category_id)
+    print(single_restaurant_category)
+    print(single_restaurant_category.serialize())
+
+    if not single_restaurant_category:
+        return jsonify({"message": "Restaurant category not found"}), 404
+
+    return jsonify(single_restaurant_category.serialize()), 200
+
+
+@api.route('/restaurant_categories', methods=['POST'])
+def add_restaurant_category():
+
+    id_restaurant = request.json.get("id_restaurant", None)
+    id_category = request.json.get("id_category", None)
+
+    if not all([id_restaurant, id_category]):
+        return jsonify({"error": "All fields are required"}), 400
+
+    new_restaurant_category = RestaurantCategories(id_restaurant=id_restaurant, id_category=id_category)
+
+    db.session.add(new_restaurant_category)
+    db.session.commit()
+
+    return jsonify({"message": "Restaurant category added successfully", "restaurant_category": new_restaurant_category.serialize()}), 201
+
+
+@api.route('/restaurant_categories/<int:restaurant_category_id>', methods=['DELETE'])
+def delete_restaurant_category(restaurant_category_id):
+
+    single_restaurant_category = RestaurantCategories.query.get(restaurant_category_id)
+
+    if not single_restaurant_category:
+        return jsonify({"message": "Restaurant category not found"}), 404
+
+    db.session.delete(single_restaurant_category)
+    db.session.commit()
+
+    return jsonify({"message": "Restaurant category successfully deleted"}), 200
+
+
+@api.route('/restaurant_categories/<int:restaurant_category_id>', methods=['PUT'])
+def modify_restaurant_category(restaurant_category_id):
+
+    single_restaurant_category = RestaurantCategories.query.get(restaurant_category_id)
+
+    if not single_restaurant_category:
+        return jsonify({"message": "Restaurant category not found"}), 404
+
+    id_restaurant = request.json.get("id_restaurant", single_restaurant_category.id_restaurant)
+    id_category = request.json.get("id_category", single_restaurant_category.id_category)
+
+    single_restaurant_category.id_restaurant = id_restaurant
+    single_restaurant_category.id_category = id_category
+
+    db.session.commit()
+
+    return jsonify({"message": "Restaurant category successfully modified"}), 200
+
+    

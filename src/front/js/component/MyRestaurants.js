@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import RestaurantCategoriesForm from "./RestaurantCategoriesForm";
 
 const BACKEND_URL = process.env.BACKEND_URL || "https://zany-space-lamp-r5wg7q95j5xfw4j-3001.app.github.dev";
 
@@ -15,8 +16,7 @@ const MyRestaurants = () => {
     const ownerId = queryParams.get("owner_id");
 
     useEffect(() => {
-        // Fetch restaurants for the owner
-        const fetchRestaurants = async () => {
+        const fetchRestaurants = async () => {                        //get restaurant de un owner particular
             try {
                 const response = await axios.get(`${BACKEND_URL}/api/restaurants`, {
                     params: { owner_id: ownerId }
@@ -27,10 +27,10 @@ const MyRestaurants = () => {
             }
         };
 
-        // Fetch all available restaurants to add
-        const fetchAvailableRestaurants = async () => {
+        const fetchAvailableRestaurants = async () => {                           //get all rests
             try {
                 const response = await axios.get(`${BACKEND_URL}/api/restaurants`);
+                console.log("desde axios retorna available restaurants:", response.data); 
                 setAvailableRestaurants(response.data);
             } catch (error) {
                 console.error("Error fetching all restaurants:", error);
@@ -75,7 +75,7 @@ const MyRestaurants = () => {
             {availableRestaurants.length > 0 ? (
                 <ul>
                     {availableRestaurants
-                        .filter((r) => !restaurants.some((rest) => rest.id === r.id)) // Filtra los que ya están añadidos
+                        .filter((r) => !restaurants.some((rest) => rest.id === r.id)) 
                         .map((restaurant) => (
                             <li key={restaurant.id}>
                                 <span>{restaurant.name} - {restaurant.location}</span>
@@ -91,6 +91,7 @@ const MyRestaurants = () => {
             ) : (
                 <p>No hay restaurantes disponibles para añadir.</p>
             )}
+            <RestaurantCategoriesForm restaurants={restaurants} />      {/* Passiamo restaurants come prop */}
         </div>
     );
 };

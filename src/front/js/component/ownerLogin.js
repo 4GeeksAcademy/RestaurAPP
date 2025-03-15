@@ -35,7 +35,7 @@ const OwnerLogin = () => {
                 </div>
                 <button type="submit" className="btn btn-primary">Log in</button>
             </form>
-            <p className="mt-4">Don't have an account? <Link to="/new" className="text-primary fw-bold">Sign up here</Link></p>
+            <p className="mt-4">Don't have an account? <Link to="/owners/new" className="text-primary fw-bold">Sign up here</Link></p>
         </div>
         
     )
