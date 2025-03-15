@@ -3,7 +3,7 @@ import axios from "axios";
 
 const BACKEND_URL =
   process.env.BACKEND_URL ||
-  "https://glorious-space-capybara-575qvj6jgqqh767x-3001.app.github.dev";
+  "https://cuddly-palm-tree-r5wg7q9qgg5hx579-3001.app.github.dev";
 
 const SearchRestaurants = () => {
   const [city, setCity] = useState("");
@@ -13,16 +13,55 @@ const SearchRestaurants = () => {
   const [message, setMessage] = useState("");
 
   const handleSearch = async () => {
+    // Verifica si los valores de entrada son válidos
+    if (capacity <= 0) {
+      setMessage("Por favor, ingresa una capacidad mayor a 0.");
+      return;
+    }
+  
     try {
+      console.log(
+        city.trim()
+          ? `Buscando restaurantes en "${city}" con capacidad para ${capacity} personas.`
+          : `Buscando los primeros 10 restaurantes con capacidad para ${capacity} personas.`
+      );
+  
+      // Configura los parámetros de la solicitud
+      const params = city.trim()
+        ? { location: city, capacity }
+        : { capacity }; // Sin "location" si no se especifica una ciudad
+  
       const response = await axios.get(`${BACKEND_URL}/api/restaurants`, {
-        params: { location: city, capacity },
+        params,
       });
-      setRestaurants(response.data);
+  
+      console.log("Respuesta del backend:", response.data);
+  
+      // Filtrar y limitar resultados si no hay una ciudad especificada
+      const restaurantList = response.data.data || [];
+      const filteredRestaurants = !city.trim()
+        ? restaurantList.slice(0, 10) // Obtener los primeros 10
+        : restaurantList;
+  
+      if (filteredRestaurants.length > 0) {
+        setRestaurants(filteredRestaurants);
+        setMessage("");
+      } else {
+        setMessage(
+          city.trim()
+            ? "No se encontraron restaurantes para los criterios especificados."
+            : "No hay restaurantes disponibles en este momento."
+        );
+        setRestaurants([]);
+      }
     } catch (error) {
-      console.error("Error al buscar restaurantes:", error);
-      setMessage("Error al buscar restaurantes");
+      console.error("Error al buscar restaurantes:", error.response?.data || error.message);
+      setMessage("Error al buscar restaurantes. Por favor, inténtalo de nuevo.");
     }
   };
+  
+  
+
 
   const handleDelete = async (restaurant_id) => {
     try {
@@ -94,7 +133,7 @@ const SearchRestaurants = () => {
           className="form-control"
           min="1"
           value={capacity}
-          onChange={(e) => setCapacity(e.target.value)}
+          onChange={(e) => setCapacity(parseInt(e.target.value, 10) || 0)} // Conviertes el valor a un número
         />
       </div>
       <button className="btn btn-primary mb-4" onClick={handleSearch}>

@@ -20,7 +20,7 @@ def setup_admin(app):
     admin.add_view(ModelView(User, db.session))
     admin.add_view(ModelView(Diner, db.session))
     admin.add_view(ModelView(Owner, db.session))
-    admin.add_view(ModelView(Restaurant, db.session))  # Agregar modelo Restaurant
+    admin.add_view(ModelView(Restaurant, db.session, endpoint='admin_restaurant'))  # Agregar modelo Restaurant
     admin.add_view(ModelView(Reservation, db.session))  # Agregar modelo Reservation
 
 

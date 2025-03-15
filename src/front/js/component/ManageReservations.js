@@ -137,7 +137,7 @@ export default ManageReservations;
 import React, { useEffect, useState } from "react";
 
 // URL base del backend
-const BASE_URL = process.env.REACT_APP_BASE_URL || "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev";
+const BASE_URL = process.env.REACT_APP_BASE_URL || "https://cuddly-palm-tree-r5wg7q9qgg5hx579-3001.app.github.dev";
 
 const ManageReservations = () => {
     const [reservations, setReservations] = useState([]); // Lista de reservas
@@ -158,8 +158,9 @@ const ManageReservations = () => {
                 }
 
                 const data = await response.json();
-                // Filtra solo las reservas pendientes
-                setReservations(data.filter((r) => r.state === "Pending"));
+                console.log("Datos recibidos de Manage antes del filter:", data); // Depurar la respuesta
+
+                setReservations(data.data.filter((r) => r.state === "Pending"));
             } catch (err) {
                 console.error(err);
                 setError("No se pudo cargar las reservas. Intenta de nuevo más tarde.");

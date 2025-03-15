@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://special-yodel-4jgq5rp6qp5gc5xwp-3001.app.github.dev/';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://cuddly-palm-tree-r5wg7q9qgg5hx579-3001.app.github.dev';
 
 const AddRestaurant = () => {
     const navigate = useNavigate();
@@ -18,7 +18,7 @@ const AddRestaurant = () => {
         longitude: "0.0000",
         capacity: "",
 
-        owner_id: 1 // Asignamos el owner_id desde localStorage o un valor predeterminado
+        
 
         owner_id: ownerId // Usamos el ID dinámico
 
@@ -38,20 +38,6 @@ const AddRestaurant = () => {
 
         const token = localStorage.getItem('access_token');
 
-        try {
-            const response = await axios.post(
-                `${BACKEND_URL}/api/restaurants`,
-                formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-            setMessage(response.data.message || "Restaurante añadido exitosamente");
-
-            // Limpia el formulario después de enviar
-       
         setIsLoading(true); // Muestra el indicador de carga
         setMessage("");
 
@@ -74,7 +60,11 @@ const AddRestaurant = () => {
 
         try {
             // Realiza la solicitud al backend
-            const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData);
+            const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             setMessage(response.data.message || "Restaurante añadido exitosamente");
             // Resetea el formulario excepto el owner_id
 
@@ -110,6 +100,7 @@ const AddRestaurant = () => {
 
         }
     };
+    
 
     return (
         <div className="add-restaurant container mt-5">

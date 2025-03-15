@@ -1,12 +1,8 @@
-<<<<<<< HEAD
 
 
 
 
 import React, { useContext, useEffect, useState } from "react";
-=======
-import React, { useContext, useEffect } from "react";
->>>>>>> develop
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 

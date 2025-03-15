@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-const BACKEND_URL = process.env.BACKEND_URL || "https://glorious-space-capybara-575qvj6jgqqh767x-3001.app.github.dev";
+const BACKEND_URL = process.env.BACKEND_URL || "https://cuddly-palm-tree-r5wg7q9qgg5hx579-3001.app.github.dev";
 
 const OwnerRestaurants = () => {
     const { owner_id } = useParams(); // Extraemos el owner_id de la URL

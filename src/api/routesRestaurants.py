@@ -3,21 +3,36 @@ from src.api.models import Restaurant, db
 
 restaurants_api = Blueprint('restaurants_api', __name__)
 
+# Funciones auxiliares
+def create_response(data=None, message=None, status=200, error=None):
+    if error:
+        return jsonify({"error": error}), status
+    return jsonify({"message": message, "data": data}), status
+
+def serialize_list(query_result):
+    return [item.serialize() for item in query_result]
+
+# **GET**: Buscar restaurantes por localidad y capacidad
 @restaurants_api.route('/search', methods=['GET'])
 def search_restaurants():
     locality = request.args.get('locality', type=str)
     people = request.args.get('people', type=int)
 
+    # Validar parámetros obligatorios
     if not locality or not people:
-        return jsonify({"error": "Localidad y número de personas son obligatorios"}), 400
+        return create_response(error="Localidad y número de personas son obligatorios", status=400)
 
-    # Filtrar restaurantes por localidad y capacidad
-    restaurants = Restaurant.query.filter(
-        Restaurant.location.ilike(f"%{locality}%"),
-        Restaurant.capacity >= people
-    ).all()
+    try:
+        # Filtrar restaurantes por localidad y capacidad
+        restaurants = Restaurant.query.filter(
+            Restaurant.location.ilike(f"%{locality}%"),
+            Restaurant.capacity >= people
+        ).all()
 
-    if not restaurants:
-        return jsonify({"error": "No se encontraron restaurantes con estos criterios"}), 404
+        if not restaurants:
+            return create_response(error="No se encontraron restaurantes con estos criterios", status=404)
 
-    return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
+        return create_response(data=serialize_list(restaurants), status=200)
+    except Exception as e:
+        print(f"Error al buscar restaurantes: {e}")
+        return create_response(error="Error interno del servidor", status=500)

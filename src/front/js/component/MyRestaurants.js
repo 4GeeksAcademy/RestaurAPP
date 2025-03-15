@@ -3,76 +3,43 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import restaurappImageUrl from "../../img/imagenRestaurapp.jpg";
 
-const BACKEND_URL = process.env.BACKEND_URL || "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev";
+const BACKEND_URL = process.env.BACKEND_URL || "https://cuddly-palm-tree-r5wg7q9qgg5hx579-3001.app.github.dev";
 
 const MyRestaurants = () => {
-    const [restaurants, setRestaurants] = useState([]);
+    const [restaurants, setRestaurants] = useState([]); // Restaurantes del propietario
+    const [availableRestaurants, setAvailableRestaurants] = useState([]); // Restaurantes disponibles
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
-
 
     // Obtén el owner_id desde la URL
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const owner_id = queryParams.get("owner_id"); // Cambiado a owner_id
+    const owner_id = queryParams.get("owner_id");
 
     useEffect(() => {
         const fetchRestaurants = async () => {
-
-            const token = localStorage.getItem('access_token');
-            const ownerId = 1;  
+            const token = localStorage.getItem("access_token");
 
             try {
-                const response = await axios.get(`${BACKEND_URL}/api/restaurants`, {
-                    params: { owner_id }, // Se asegura de usar "owner_id"
+                // Obtén los restaurantes del propietario
+                const response = await axios.get(`${BACKEND_URL}/api/owners/${owner_id}/restaurants`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 });
                 setRestaurants(response.data);
             } catch (err) {
                 console.error("Error al obtener los restaurantes del propietario:", err);
                 setError("Error al cargar los restaurantes del propietario.");
             }
-        };
-
 
             try {
-
-                const response = await axios.get(
-                    `${BACKEND_URL}/api/owners/${ownerId}/restaurants`, 
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}` 
-                        }
+                // Obtén todos los restaurantes disponibles
+                const response = await axios.get(`${BACKEND_URL}/api/restaurants`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
-                );
-                setRestaurants(response.data); 
-            } catch (error) {
-                setMessage("No se pudieron cargar los restaurantes.");
-            }
-        };
-
-        fetchRestaurants();
-    }, []);
-
-    return (
-        <div className="restaurants-list container mt-5">
-            <h2 className="mb-4">Mis Restaurantes</h2>
-            {message && <p>{message}</p>}
-            {restaurants.length > 0 ? (
-                restaurants.map((restaurant) => (
-                    <div key={restaurant.id} className="card mb-2" style={{ width: '18rem' }}>
-                        <img src={restaurappImageUrl} className="card-img-top" alt="..." />
-                        <div className="card-body">
-                            <h5 className="card-title">{restaurant.name}</h5>
-                            <p className="card-text">{restaurant.location}</p>
-                        </div>
-                        <ul className="list-group list-group-flush">
-                            <li className="list-group-item">{restaurant.telephone}</li>
-                            <li className="list-group-item">{restaurant.capacity} personas</li>
-                        </ul>
-                    </div>
-                ))
-
-                const response = await axios.get(`${BACKEND_URL}/api/restaurants`);
+                });
                 setAvailableRestaurants(response.data);
             } catch (err) {
                 console.error("Error al obtener todos los restaurantes:", err);
@@ -80,24 +47,29 @@ const MyRestaurants = () => {
             }
         };
 
-        if (owner_id) {
-            fetchRestaurants();
-            fetchAvailableRestaurants();
-        }
+        if (owner_id) fetchRestaurants();
     }, [owner_id]);
 
     const handleAddRestaurant = async (restaurant_id) => {
+        const token = localStorage.getItem("access_token");
+
         try {
+            // Asigna el restaurante al propietario
             const response = await axios.put(
                 `${BACKEND_URL}/api/restaurants/${restaurant_id}`,
-                { owner_id } // Usa owner_id como parte de la solicitud
+                { owner_id },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             );
             setMessage("Restaurante añadido exitosamente.");
-            // Actualiza el estado local para reflejar el cambio
-            setRestaurants([...restaurants, availableRestaurants.find(r => r.id === restaurant_id)]);
-            setAvailableRestaurants(
-                availableRestaurants.filter(r => r.id !== restaurant_id) // Elimina el añadido de la lista disponible
-            );
+
+            // Actualiza los estados locales
+            const addedRestaurant = availableRestaurants.find((r) => r.id === restaurant_id);
+            setRestaurants([...restaurants, addedRestaurant]);
+            setAvailableRestaurants(availableRestaurants.filter((r) => r.id !== restaurant_id));
         } catch (err) {
             console.error("Error al añadir el restaurante al propietario:", err);
             setMessage("");
@@ -115,7 +87,7 @@ const MyRestaurants = () => {
             {restaurants.length > 0 ? (
                 <ul>
                     {restaurants.map((restaurant) => (
-                        <li key={restaurant.restaurant_id}>
+                        <li key={restaurant.id}>
                             <span>
                                 {restaurant.name} - {restaurant.location}
                             </span>
@@ -130,15 +102,15 @@ const MyRestaurants = () => {
             {availableRestaurants.length > 0 ? (
                 <ul>
                     {availableRestaurants
-                        .filter((r) => !restaurants.some((rest) => rest.restaurant_id === r.id)) // Filtra los que ya están añadidos
+                        .filter((r) => !restaurants.some((rest) => rest.id === r.id))
                         .map((restaurant) => (
-                            <li key={restaurant.restaurant_id}>
+                            <li key={restaurant.id}>
                                 <span>
                                     {restaurant.name} - {restaurant.location}
                                 </span>
                                 <button
                                     className="btn btn-primary ms-3"
-                                    onClick={() => handleAddRestaurant(restaurant.restaurant_id)}
+                                    onClick={() => handleAddRestaurant(restaurant.id)}
                                 >
                                     Añadir
                                 </button>
@@ -146,11 +118,10 @@ const MyRestaurants = () => {
                         ))}
                 </ul>
             ) : (
-                <p>No tienes restaurantes.</p>
+                <p>No hay restaurantes disponibles para añadir.</p>
             )}
         </div>
     );
 };
 
 export default MyRestaurants;
-
