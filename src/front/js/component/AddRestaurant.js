@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev';
-;
+const BACKEND_URL = process.env.BACKEND_URL || 'https://special-yodel-4jgq5rp6qp5gc5xwp-3001.app.github.dev/';
 
 const AddRestaurant = () => {
+    const navigate = useNavigate();
+  
     // Obtiene dinámicamente el ID del propietario logueado (por ejemplo, desde localStorage)
     const ownerId = localStorage.getItem("owner_id") || 1; // Reemplaza 1 con un valor adecuado
 
@@ -15,21 +17,41 @@ const AddRestaurant = () => {
         latitude: "0.0000",
         longitude: "0.0000",
         capacity: "",
+
+        owner_id: 1 // Asignamos el owner_id desde localStorage o un valor predeterminado
+
         owner_id: ownerId // Usamos el ID dinámico
+
     });
 
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false); // Indicador de carga
 
-    // Manejador de cambios en el formulario
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    // Manejador de envío del formulario
     const handleSubmit = async (e) => {
+
         e.preventDefault(); // Evita el refresh del navegador
+
+        const token = localStorage.getItem('access_token');
+
+        try {
+            const response = await axios.post(
+                `${BACKEND_URL}/api/restaurants`,
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            setMessage(response.data.message || "Restaurante añadido exitosamente");
+
+            // Limpia el formulario después de enviar
+       
         setIsLoading(true); // Muestra el indicador de carga
         setMessage("");
 
@@ -55,6 +77,7 @@ const AddRestaurant = () => {
             const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData);
             setMessage(response.data.message || "Restaurante añadido exitosamente");
             // Resetea el formulario excepto el owner_id
+
             setFormData({
                 name: "",
                 location: "",
@@ -62,9 +85,19 @@ const AddRestaurant = () => {
                 latitude: "0.0000",
                 longitude: "0.0000",
                 capacity: "",
-                owner_id: ownerId // Conservamos el owner_id
+
+                owner_id: formData.owner_id
+
             });
+
+            // Redirigir a otra página después de añadir el restaurante si es necesario
+            // navigate("/my-restaurants"); // Descomenta esto si quieres redirigir
+
         } catch (error) {
+
+            console.error("Error al enviar el restaurante:", error);
+            setMessage(error.response?.data?.error || "Hubo un error al añadir el restaurante");
+
             if (error.response) {
                 setMessage(error.response.data.error || "Error del servidor.");
             } else if (error.request) {
@@ -74,6 +107,7 @@ const AddRestaurant = () => {
             }
         } finally {
             setIsLoading(false); // Oculta el indicador de carga
+
         }
     };
 

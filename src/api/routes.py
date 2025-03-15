@@ -1,5 +1,5 @@
 
-<<<<<<< HEAD
+
 from flask import request, jsonify, Blueprint
 from src.api.models import Restaurant, db
 from sqlalchemy.exc import IntegrityError
@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 api = Blueprint('api', __name__)
 
 # Obtener todos los restaurantes
-=======
+
 
 from flask import Flask, request, jsonify, url_for, Blueprint
 
@@ -249,7 +249,7 @@ def ownerLogin():
 
 """/////////////////////////////////// RESTAURANTS ////////////////////////////////////////"""
 
->>>>>>> develop
+
 @api.route('/restaurants', methods=['GET'])
 def get_restaurants():
     location = request.args.get('location')
@@ -317,7 +317,54 @@ def update_restaurant(restaurant_id):
     db.session.commit()
     return jsonify({"message": "Restaurante modificado exitosamente", "restaurant": restaurant.serialize()}), 200
 
-<<<<<<< HEAD
+
+
+@api.route('/create_restaurant', methods=['POST'])
+@jwt_required()
+def create_restaurant():
+    
+    owner_email = get_jwt_identity()  
+
+   
+    owner = Owner.query.filter_by(email=owner_email).first()
+    if not owner:
+        return jsonify({"message": "Owner not found"}), 404  
+
+    
+    data = request.get_json()
+
+    name = data.get('name')
+    location = data.get('location')
+    telephone = data.get('telephone')
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+    capacity = data.get('capacity')
+
+    new_restaurant = Restaurant(
+        name=name,
+        location=location,
+        telephone=telephone,
+        latitude=latitude,
+        longitude=longitude,
+        capacity=capacity,
+        owner_id=owner.id  
+    )
+
+    
+    db.session.add(new_restaurant)
+    db.session.commit()
+
+    
+    response_data = new_restaurant.serialize()
+    response_data["access_token"] = create_access_token(identity=owner_email)  
+    response_data["owner_id"] = owner.id  
+
+    return jsonify(response_data), 201
+
+
+
+
+
 # Eliminar un restaurante
 @api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
 def delete_restaurant(restaurant_id):
@@ -343,6 +390,7 @@ def delete_restaurant(restaurant_id):
 def hello():
     return jsonify({"message": "Hello from the backend!"}), 200
 =======
+
 """/////////////////////////////////// ORGINS ////////////////////////////////////////"""
 
 @api.route('/origin', methods=['POST'])
@@ -475,4 +523,4 @@ def modify_category(category_id):
     db.session.commit()
 
     return jsonify({"message": "Category successfully modified"}), 200
->>>>>>> develop
+

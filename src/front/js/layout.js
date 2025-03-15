@@ -47,6 +47,7 @@ import ManageReservations from "./component/ManageReservations"; // Importar el 
 import RequestReservation from "./component/RequestReservation";
 =======
 import { Context } from "./store/appContext";
+import CreateRestaurant from "./component/createRestaurant";
 
 >>>>>>> develop
 
@@ -127,6 +128,7 @@ const Layout = () => {
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<SearchRestaurants />} path="/search-restaurants" />  {/* Ruta de búsqueda de restaurantes */}
                         <Route element={<AddRestaurant />} path="/add-restaurant" />  {/* Ruta de añadir restaurante */}
+                        <Route element={<CreateRestaurant />} path="/create_restaurant" />
 
                         {/* Ruta protegida para propietarios */}
                         <Route

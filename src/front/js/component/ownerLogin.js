@@ -11,8 +11,9 @@ const OwnerLogin = () => {
 
     function sendData(e) {
         e.preventDefault();
-        actions.ownerLogin(email, password).then(() => {
-            setRedirect(true);                            // después del login pasa a true
+        actions.ownerLogin(email, password)
+        .then(() => {
+        setRedirect(true);                            // después del login pasa a true
         });
     }
 

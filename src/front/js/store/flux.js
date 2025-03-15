@@ -1,19 +1,4 @@
 const getState = ({ getStore, getActions, setStore }) => {
-<<<<<<< HEAD
-  return {
-    store: {
-      message: null,
-      demo: [
-        {
-          title: "FIRST",
-          background: "white",
-          initial: "white",
-        },
-        {
-          title: "SECOND",
-          background: "white",
-          initial: "white",
-=======
     return {
         store: {
             message: null,
@@ -34,6 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             owners: [],
             specificOwner: null,
             origins: [],
+            restaurants: [],
             categories: [],
             specificCategory: null,
         },
@@ -215,8 +201,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             ownerLogin: (email, password) => {
                 console.log("login from actions");
                 const backendUrl = process.env.BACKEND_URL + "/api/owners/login";
-                console.log("Backend URL:", backendUrl); // Stampa l'URL in console
-
+                console.log("Backend URL:", backendUrl); 
+           
                 const requestOption = {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -225,39 +211,121 @@ const getState = ({ getStore, getActions, setStore }) => {
                         password: password,
                     }),
                 };
-                fetch(process.env.BACKEND_URL + "/api/owners/login", requestOption)
+
+                return fetch(backendUrl, requestOption)
                     .then((response) => {
                         console.log(response.status);
-                        if (response.status == 200) {
+                        if (response.status === 200) {
+
+//                 fetch(process.env.BACKEND_URL + "/api/owners/login", requestOption)
+//                     .then((response) => {
+//                         console.log(response.status);
+//                         if (response.status == 200) {
+
                             setStore({ auth: true });
                         } else {
                             setStore({ auth: false });
                         }
-                        return response.json();
+
+                        return response.json(); 
                     })
                     .then((data) => {
                         if (data.msg) {
-                            // Si el servidor restituye un mensaje de error (ejemplo "wrong email o password")
-                            alert(data.msg); // Muestra el mensaje del servidor del back
+                            alert(data.msg); 
                         } else {
-                            localStorage.setItem("token", data.access_token);    //guarda el token en el local storage
-                            localStorage.setItem("ownerName", data.owner_name);  //guarda el nombre del owner en el local Storage
-
+                            localStorage.setItem("token", data.access_token); 
+                            localStorage.setItem("ownerName", data.owner_name); 
+            
                             setStore({
                                 auth: true,
-                                ownerName: data.owner_name, // Asigna el valor del nombre a la variable del Store 
+                                ownerName: data.owner_name, 
                             });
-
-                            console.log(data.access_token);
+            
+                            console.log(data.access_token); 
                         }
+                    })
+                    .catch((error) => {
+                        console.error("Login error:", error);
+                        alert("There was an error during login.");
                     });
             },
+            
+
+//                         return response.json();
+//                     })
+//                     .then((data) => {
+//                         if (data.msg) {
+//                             // Si el servidor restituye un mensaje de error (ejemplo "wrong email o password")
+//                             alert(data.msg); // Muestra el mensaje del servidor del back
+//                         } else {
+//                             localStorage.setItem("token", data.access_token);    //guarda el token en el local storage
+//                             localStorage.setItem("ownerName", data.owner_name);  //guarda el nombre del owner en el local Storage
+
+//                             setStore({
+//                                 auth: true,
+//                                 ownerName: data.owner_name, // Asigna el valor del nombre a la variable del Store 
+//                             });
+
+//                             console.log(data.access_token);
+//                         }
+//                     });
+//             },
+
 
             ownerLogout: () => {
                 console.log("logout desde actions");
                 setStore({ auth: false });
                 localStorage.removeItem("token");
             },
+
+
+            getAllRestaurants: () => {
+                fetch(process.env.BACKEND_URL + "/api/restaurants")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Datos recibidos:", data);
+                        setStore({ restaurants: data });
+                    });
+            },
+
+            createRestaurant: (newRestaurant, token) => {
+                return new Promise((resolve, reject) => { 
+                  const requestOptions = {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${token}`, 
+                    },
+                    body: JSON.stringify(newRestaurant),
+                  };
+              
+                  fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
+                    .then((response) => {
+                      if (!response.ok) {
+                        reject('Error en la creación del restaurante');
+                      }
+                      return response.json();
+                    })
+                    .then((data) => {
+                      const store = getStore();
+                      setStore({ restaurants: [...store.restaurants, data] });
+                      setStore({ auth: true });
+                      localStorage.setItem("token", data.access_token);
+                      localStorage.setItem("ownerId", data.owner_id);
+                      localStorage.setItem("ownerName", data.owner_name);
+                      getActions().getAllRestaurants();
+                      resolve(); 
+                    })
+                    .catch((error) => {
+                      console.error("Error al crear restaurante:", error);
+                      reject(error);
+                    });
+                });
+              },
+              
+              
+
+
 
             getMessage: async () => {
                 try {
@@ -332,6 +400,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
+
+
             getAllCategories: () => {
                 fetch(process.env.BACKEND_URL + "/api/categories")
                     .then((response) => response.json())
@@ -405,6 +475,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
+
             changeColor: (index, color) => {
                 const store = getStore();
                 const demo = store.demo.map((elm, i) => {
@@ -414,7 +485,10 @@ const getState = ({ getStore, getActions, setStore }) => {
                 setStore({ demo });
 
             },
->>>>>>> develop
+
+//         },
+    };
+
         },
       ],
       diners: [],
@@ -837,5 +911,6 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
     },
   };
+
 };
 export default getState;

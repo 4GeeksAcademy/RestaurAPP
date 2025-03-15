@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import restaurappImageUrl from "../../img/imagenRestaurapp.jpg";
 
 const BACKEND_URL = process.env.BACKEND_URL || "https://potential-telegram-9gw96rvrqwjfpvx6-3001.app.github.dev";
 
 const MyRestaurants = () => {
     const [restaurants, setRestaurants] = useState([]);
-    const [availableRestaurants, setAvailableRestaurants] = useState([]);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+
 
     // Obtén el owner_id desde la URL
     const location = useLocation();
@@ -16,8 +17,11 @@ const MyRestaurants = () => {
     const owner_id = queryParams.get("owner_id"); // Cambiado a owner_id
 
     useEffect(() => {
-        // Fetch restaurants for the owner
         const fetchRestaurants = async () => {
+
+            const token = localStorage.getItem('access_token');
+            const ownerId = 1;  
+
             try {
                 const response = await axios.get(`${BACKEND_URL}/api/restaurants`, {
                     params: { owner_id }, // Se asegura de usar "owner_id"
@@ -29,9 +33,45 @@ const MyRestaurants = () => {
             }
         };
 
-        // Fetch all available restaurants to add
-        const fetchAvailableRestaurants = async () => {
+
             try {
+
+                const response = await axios.get(
+                    `${BACKEND_URL}/api/owners/${ownerId}/restaurants`, 
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}` 
+                        }
+                    }
+                );
+                setRestaurants(response.data); 
+            } catch (error) {
+                setMessage("No se pudieron cargar los restaurantes.");
+            }
+        };
+
+        fetchRestaurants();
+    }, []);
+
+    return (
+        <div className="restaurants-list container mt-5">
+            <h2 className="mb-4">Mis Restaurantes</h2>
+            {message && <p>{message}</p>}
+            {restaurants.length > 0 ? (
+                restaurants.map((restaurant) => (
+                    <div key={restaurant.id} className="card mb-2" style={{ width: '18rem' }}>
+                        <img src={restaurappImageUrl} className="card-img-top" alt="..." />
+                        <div className="card-body">
+                            <h5 className="card-title">{restaurant.name}</h5>
+                            <p className="card-text">{restaurant.location}</p>
+                        </div>
+                        <ul className="list-group list-group-flush">
+                            <li className="list-group-item">{restaurant.telephone}</li>
+                            <li className="list-group-item">{restaurant.capacity} personas</li>
+                        </ul>
+                    </div>
+                ))
+
                 const response = await axios.get(`${BACKEND_URL}/api/restaurants`);
                 setAvailableRestaurants(response.data);
             } catch (err) {
@@ -106,7 +146,7 @@ const MyRestaurants = () => {
                         ))}
                 </ul>
             ) : (
-                <p>No hay restaurantes disponibles para añadir.</p>
+                <p>No tienes restaurantes.</p>
             )}
         </div>
     );
