@@ -490,6 +490,41 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
+            createRestaurant: (newRestaurant, token) => {
+                return new Promise((resolve, reject) => { 
+                  const requestOptions = {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${token}`, 
+                    },
+                    body: JSON.stringify(newRestaurant),
+                  };
+              
+                  fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
+                    .then((response) => {
+                      if (!response.ok) {
+                        reject('Error en la creación del restaurante');
+                      }
+                      return response.json();
+                    })
+                    .then((data) => {
+                      const store = getStore();
+                      setStore({ restaurants: [...store.restaurants, data] });
+                      setStore({ auth: true });
+                      localStorage.setItem("token", data.access_token);
+                      localStorage.setItem("ownerId", data.owner_id);
+                      localStorage.setItem("ownerName", data.owner_name);
+                      getActions().getAllRestaurants();
+                      resolve(); 
+                    })
+                    .catch((error) => {
+                      console.error("Error al crear restaurante:", error);
+                      reject(error);
+                    });
+                });
+              },
+
 
             changeColor: (index, color) => {
                 const store = getStore();
