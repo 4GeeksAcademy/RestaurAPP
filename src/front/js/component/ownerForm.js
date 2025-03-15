@@ -3,99 +3,142 @@ import { Context } from "../store/appContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 const OwnerForm = () => {
+
+  const { store, actions } = useContext(Context); // Estado global y acciones
+  const navigate = useNavigate();
+  const { owner_id } = useParams();
+  // Estados del formulario
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [telephone, setTelephone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { store, actions } = useContext(Context);
-  const navigate = useNavigate();
-  const { ownerId } = useParams();
+  
 
+  // Cargar datos del propietario si está editando
   useEffect(() => {
-    if (ownerId) {
+    if (owner_id) {
       const owner = store.owners.find(
-        (owner) => owner.id === parseInt(ownerId)
+        (owner) => owner.id === parseInt(owner_id)
       );
       if (owner) {
-        setName(owner.name || "");
+        setName(owner.name || "name");
         setLocation(owner.location || "");
         setTelephone(owner.telephone || "");
         setEmail(owner.email || "");
-        setPassword(owner.password || "");
+        setPassword(""); // Por seguridad no pre-poblamos la contraseña
       }
     } else {
+      // Limpiar los campos si no se está editando
       setName("");
       setLocation("");
       setTelephone("");
       setEmail("");
       setPassword("");
     }
-  }, [ownerId, store.owners]);
+  }, [owner_id, store.owners]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (ownerId) {
-      actions.modifyOwner(ownerId, {
-        name,
-        telephone,
-        email,
-        location,
-        password,
-      });
-    } else {
-      actions.addOwner({ name, telephone, email, location, password });
+  // Validación del formulario
+  const validateForm = () => {
+    if (!name || !location || !telephone || !email || !password) {
+      alert("Todos los campos son obligatorios.");
+      return false;
     }
-    navigate("/owners/login");
+    // Validación básica de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Por favor, introduce un correo electrónico válido.");
+      return false;
+    }
+    return true;
   };
+
+  // Envío del formulario
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Prevenir recarga de la página al enviar el formulario
+  
+    // Construir formData desde los estados individuales
+    const formData = {
+      name,
+      location,
+      telephone,
+      email,
+      password, // Solo se usa en creación, no en edición
+    };
+  
+    try {
+      if (owner_id) {
+        // Si estamos editando un propietario existente
+        console.log(`Modificando propietario con ID ${owner_id}`);
+        await actions.updateOwner(owner_id, {
+          name: formData.name,
+          location: formData.location,
+          telephone: formData.telephone,
+          email: formData.email,
+        });
+      } else {
+        // Si estamos creando un nuevo propietario
+        console.log("Creando un nuevo propietario");
+        await actions.addOwner(formData); // Usar formData directamente en creación
+      }
+  
+      alert("Operación completada exitosamente");
+      navigate("/owners"); // Redirige a la lista de propietarios
+    } catch (error) {
+      console.error("Error al guardar el propietario:", error.message);
+      alert("Error al realizar la operación: " + error.message);
+    }
+  };
+  
+  
 
   return (
     <>
-      <h1 className="container mt-3">Owner Sign up</h1>
+      <h1 className="container mt-3">{owner_id ? "Editar Propietario" : "Registro de Propietario"}</h1>
       <form className="container mt-4" onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="exampleInputname" className="form-label">
-            Full name
+          <label htmlFor="exampleInputName" className="form-label">
+            Nombre Completo
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="form-control"
-            id="exampleInputname"
-            aria-describedby="textHelp"
+            id="exampleInputName"
+            required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="exampleInputtext1" className="form-label">
-            Location
+          <label htmlFor="exampleInputLocation" className="form-label">
+            Ubicación
           </label>
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             className="form-control"
-            id="exampleInputlocation"
-            aria-describedby="textHelp"
+            id="exampleInputLocation"
+            required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="exampleInputtelephone" className="form-label">
-            Telephone
+          <label htmlFor="exampleInputTelephone" className="form-label">
+            Teléfono
           </label>
           <input
             type="text"
             value={telephone}
             onChange={(e) => setTelephone(e.target.value)}
             className="form-control"
-            id="exampleInputtelephone"
-            aria-describedby="textHelp"
+            id="exampleInputTelephone"
+            required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="exampleInputEmail1" className="form-label">
-            Email address
+          <label htmlFor="exampleInputEmail" className="form-label">
+            Dirección de Correo Electrónico
           </label>
           <input
             type="email"
@@ -103,12 +146,12 @@ const OwnerForm = () => {
             onChange={(e) => setEmail(e.target.value)}
             className="form-control"
             id="exampleInputEmail"
-            aria-describedby="emailHelp"
+            required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="exampleInputPassword1" className="form-label">
-            Password
+          <label htmlFor="exampleInputPassword" className="form-label">
+            Contraseña
           </label>
           <input
             type="password"
@@ -116,10 +159,15 @@ const OwnerForm = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="form-control"
             id="exampleInputPassword"
+            required
           />
         </div>
         <button type="submit" className="btn btn-primary">
+<<<<<<< HEAD
+          {owner_id ? "Actualizar" : "Registrar"}
+=======
           {ownerId ? "Save changes" : "Sign up"}
+>>>>>>> develop
         </button>
       </form>
     </>

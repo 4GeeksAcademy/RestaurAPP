@@ -66,6 +66,7 @@ export const Dinerform = () => {
                                     placeholder="Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    autoComplete="current-password"
                                 />
                                 <label htmlFor="floatingPassword">Password</label>
                             </div>

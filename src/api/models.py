@@ -1,10 +1,23 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date, Time, Enum
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+from src import db
+import enum
 
-db = SQLAlchemy()
+# Enum para el estado de las reservas
+class ReservationState(enum.Enum):
+    PENDING = "Pending"
+    ACCEPTED = "Accepted"
+    REHUSED = "Refused"
+    CANCELED = "Canceled"
 
+    @classmethod
+    def list_values(cls):
+        return [state.value for state in cls]
+
+
+# Modelo de Usuario
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -22,56 +35,53 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            # do not serialize the password, its a security breach
         }
 
 
+# Modelo de Propietario
 class Owner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=False, nullable=False)
-    location = db.Column(db.String(120), unique=False, nullable=True)
+    name = db.Column(db.String(120), nullable=False)
+    location = db.Column(db.String(120), nullable=True)
     telephone = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    
-     # Relación con restaurantes
-    restaurants = relationship("Restaurant", back_populates="owner")
+    password = db.Column(db.String(128), nullable=False)
 
-    def __repr__(self):
-        return f'<Owner {self.email}>'
+    # Relación con restaurantes, usando cascada para eliminaciones
+    restaurants = relationship("Restaurant", back_populates="owner", cascade="all, delete-orphan")
 
     def serialize(self):
         return {
             "id": self.id,
-            "name" : self.name,
-            "telephone" : self.telephone,
+            "name": self.name,
+            "telephone": self.telephone,
             "email": self.email,
-            # do not serialize the password, its a security breach
+            "restaurants": [restaurant.serialize() for restaurant in self.restaurants]  # Serializar restaurantes
+        }
 
-        }  
 
+# Modelo de Comensal
 class Diner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fullname = db.Column(db.String(120), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     telephone = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    
-    def __repr__(self):
-        return f'<Diner {self.fullname}>'
+    password = db.Column(db.String(128), nullable=False)
 
-    def to_dict(self):
+    # Relación con reservas
+    reservations = relationship("Reservation", back_populates="diner")
+
+    def serialize(self):
         return {
             'id': self.id,
             'fullname': self.fullname,
-            'email': self.email,  
+            'email': self.email,
             'telephone': self.telephone,
-            'password': self.password,         
+            'reservations': [reservation.serialize() for reservation in self.reservations]
         }
 
-        
-           
 
+# Modelo de Restaurante
 class Restaurant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -80,13 +90,18 @@ class Restaurant(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
-    
-     # Foreign Key para relacionar con Owner
-    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
 
-    # Relación con Owner
+    # Relación con propietario
+    owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
     owner = relationship("Owner", back_populates="restaurants")
-    
+
+    # Relación con reservas
+    reservations = relationship(
+        "Reservation", 
+        back_populates="restaurant",
+        cascade="all, delete-orphan"  # Habilitar cascada para eliminar reservas asociadas
+    )
+
     def serialize(self):
         return {
             "id": self.id,
@@ -96,7 +111,7 @@ class Restaurant(db.Model):
             "latitude": self.latitude,
             "longitude": self.longitude,
             "capacity": self.capacity,
-            "owner_id": self.owner_id  # Incluye el ID del propietario en la serialización
+            "owner": {"id": self.owner.id, "name": self.owner.name},  # Información básica del propietario
         }
     
 class Origin(db.Model):
@@ -109,3 +124,54 @@ class Origin(db.Model):
             "name": self.name,      
         }
 
+<<<<<<< HEAD
+
+# Modelo de Reserva
+class Reservation(db.Model):  # Cambia de Reservations a Reservation
+    __tablename__ = 'reservations'  # Asegúrate de que el nombre de la tabla sea correcto
+    id = db.Column(db.Integer, primary_key=True)
+    id_fk_restaurant = db.Column(
+    db.Integer,
+    db.ForeignKey('restaurant.id', ondelete="CASCADE"),  # Añade ondelete="CASCADE"
+    nullable=False
+)
+
+    id_fk_diner = db.Column(db.Integer, db.ForeignKey('diner.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    hour = db.Column(db.Time, nullable=False)
+    state = db.Column(db.Enum(ReservationState), default=ReservationState.PENDING, nullable=False)
+    people = db.Column(db.Integer, nullable=False)
+
+    # Relación con restaurante
+    restaurant = relationship("Restaurant", back_populates="reservations")
+
+    # Relación con comensal
+    diner = relationship("Diner", back_populates="reservations")
+=======
+class Categories(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True, nullable=False)
+    
+
+    def __repr__(self):
+        return f'<Categories {self.name}>'
+>>>>>>> develop
+
+    def serialize(self):
+        return {
+            "id": self.id,
+<<<<<<< HEAD
+            "restaurant_id": self.id_fk_restaurant,
+            "diner_id": self.id_fk_diner,
+            "date": self.date.strftime('%d/%m/%Y'),
+            "hour": self.hour.strftime('%H:%M'),
+            "state": self.state.value,
+            "people": self.people,
+            "restaurant": self.restaurant.name if self.restaurant else None,  # Nombre del restaurante
+            "diner": self.diner.fullname if self.diner else None  # Nombre del comensal
+        }
+=======
+            "name" : self.name
+            # do not serialize the password, its a security breach
+        }  
+>>>>>>> develop

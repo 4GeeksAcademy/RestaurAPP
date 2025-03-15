@@ -4,24 +4,57 @@ import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Dinerlist = () => {
-    const { store, actions } = useContext(Context);
-    const navigate = useNavigate();
+  const { store, actions } = useContext(Context);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        actions.getDinerList();
-    }, []);
+  useEffect(() => {
+    actions.getDinerList();
+  }, []);
 
-    function handleDelete(id){ 
-        actions.handleDelete(id)
-        console.log('se elimino')
-    }
+  function handleDelete(id) {
+    actions.handleDelete(id);
+    console.log("se elimino");
+  }
 
-    function handleEdit(id, fullname, email, telephone, password) {
-        console.log('se edito');
-        navigate(`/dineredit/${id}`, { state: { id, fullname, email, telephone, password } });
-    }
-    
+  function handleEdit(id, fullname, email, telephone, password) {
+    console.log("se edito");
+    navigate(`/dineredit/${id}`, {
+      state: { id, fullname, email, telephone, password },
+    });
+  }
 
+<<<<<<< HEAD
+  return (
+    <>
+      <div className="container">
+        <h2>List of Diners</h2>
+        <ul className="list-group">
+          {store.diners.length > 0 ? (
+            store.diners.map((diner, index) => (
+              <li key={index} className="list-group-item">
+                <h5>{diner.fullname}</h5>
+                <p>{diner.email}</p>
+                <p>{diner.telephone}</p>
+                <button
+                  onClick={() => navigate(`/diners/${diner.id}/edit`)} // Redirige al formulario de edición
+                  className="btn btn-warning"
+                >
+                  Edit
+                </button>
+              </li>
+            ))
+          ) : (
+            <p>No diners found.</p>
+          )}
+        </ul>
+        <br />
+        <Link to="/dinerform">
+          <button className="btn btn-primary">Diner form</button>
+        </Link>
+      </div>
+    </>
+  );
+=======
     return (
         <>
             <div className="container">
@@ -49,4 +82,5 @@ export const Dinerlist = () => {
             </div>
         </>
     );
+>>>>>>> develop
 };

@@ -6,6 +6,10 @@ const BACKEND_URL = process.env.BACKEND_URL || 'https://special-yodel-4jgq5rp6qp
 
 const AddRestaurant = () => {
     const navigate = useNavigate();
+  
+    // Obtiene dinámicamente el ID del propietario logueado (por ejemplo, desde localStorage)
+    const ownerId = localStorage.getItem("owner_id") || 1; // Reemplaza 1 con un valor adecuado
+
     const [formData, setFormData] = useState({
         name: "",
         location: "",
@@ -13,9 +17,15 @@ const AddRestaurant = () => {
         latitude: "0.0000",
         longitude: "0.0000",
         capacity: "",
+
         owner_id: 1 // Asignamos el owner_id desde localStorage o un valor predeterminado
+
+        owner_id: ownerId // Usamos el ID dinámico
+
     });
+
     const [message, setMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false); // Indicador de carga
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,7 +33,8 @@ const AddRestaurant = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+
+        e.preventDefault(); // Evita el refresh del navegador
 
         const token = localStorage.getItem('access_token');
 
@@ -40,6 +51,33 @@ const AddRestaurant = () => {
             setMessage(response.data.message || "Restaurante añadido exitosamente");
 
             // Limpia el formulario después de enviar
+       
+        setIsLoading(true); // Muestra el indicador de carga
+        setMessage("");
+
+        // Validaciones antes de enviar
+        if (!formData.name || !formData.location || !formData.telephone || !formData.latitude || !formData.longitude || !formData.capacity) {
+            setMessage("Todos los campos son obligatorios.");
+            setIsLoading(false);
+            return;
+        }
+        if (isNaN(formData.latitude) || isNaN(formData.longitude)) {
+            setMessage("Latitud y longitud deben ser números válidos.");
+            setIsLoading(false);
+            return;
+        }
+        if (formData.capacity <= 0) {
+            setMessage("La capacidad debe ser un número entero positivo.");
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            // Realiza la solicitud al backend
+            const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData);
+            setMessage(response.data.message || "Restaurante añadido exitosamente");
+            // Resetea el formulario excepto el owner_id
+
             setFormData({
                 name: "",
                 location: "",
@@ -47,15 +85,29 @@ const AddRestaurant = () => {
                 latitude: "0.0000",
                 longitude: "0.0000",
                 capacity: "",
+
                 owner_id: formData.owner_id
+
             });
 
             // Redirigir a otra página después de añadir el restaurante si es necesario
             // navigate("/my-restaurants"); // Descomenta esto si quieres redirigir
 
         } catch (error) {
+
             console.error("Error al enviar el restaurante:", error);
             setMessage(error.response?.data?.error || "Hubo un error al añadir el restaurante");
+
+            if (error.response) {
+                setMessage(error.response.data.error || "Error del servidor.");
+            } else if (error.request) {
+                setMessage("No se pudo conectar al servidor. Por favor, intenta más tarde.");
+            } else {
+                setMessage("Ocurrió un error inesperado.");
+            }
+        } finally {
+            setIsLoading(false); // Oculta el indicador de carga
+
         }
     };
 
@@ -129,7 +181,9 @@ const AddRestaurant = () => {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-success">Añadir Restaurante</button>
+                <button type="submit" className="btn btn-success">
+                    {isLoading ? "Procesando..." : "Añadir Restaurante"}
+                </button>
             </form>
             {message && <p className="mt-3">{message}</p>}
         </div>
