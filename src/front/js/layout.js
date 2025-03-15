@@ -34,6 +34,7 @@ import CategoriesForm from "./component/categoryForm";
 
 import RestaurantCategoriesList from "./component/restaurantCategoriesList";
 import RestaurantCategoriesForm from "./component/RestaurantCategoriesForm";
+import CreateRestaurant from "./component/createRestaurant";
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 import { Context } from "./store/appContext";
@@ -83,7 +84,7 @@ const Layout = () => {
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<SearchRestaurants />} path="/search-restaurants" />  {/* Ruta de búsqueda de restaurantes */}
                         <Route element={<AddRestaurant />} path="/add-restaurant" />  {/* Ruta de añadir restaurante */}
-                        
+                        <Route element={<CreateRestaurant />} path="/create_restaurant" />  {/* añade rest a un owner */}
 
                         {/* Ruta protegida para propietarios */}
                         <Route

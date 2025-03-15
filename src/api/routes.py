@@ -399,6 +399,49 @@ def delete_restaurant(restaurant_id):
     db.session.commit()
     return jsonify({"message": "Restaurante eliminado exitosamente."}), 200
 
+
+@api.route('/create_restaurant', methods=['POST'])
+@jwt_required()
+def create_restaurant():
+    
+    owner_email = get_jwt_identity()  
+
+   
+    owner = Owner.query.filter_by(email=owner_email).first()
+    if not owner:
+        return jsonify({"message": "Owner not found"}), 404  
+
+    
+    data = request.get_json()
+
+    name = data.get('name')
+    location = data.get('location')
+    telephone = data.get('telephone')
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+    capacity = data.get('capacity')
+
+    new_restaurant = Restaurant(
+        name=name,
+        location=location,
+        telephone=telephone,
+        latitude=latitude,
+        longitude=longitude,
+        capacity=capacity,
+        owner_id=owner.id  
+    )
+
+    
+    db.session.add(new_restaurant)
+    db.session.commit()
+
+    
+    response_data = new_restaurant.serialize()
+    response_data["access_token"] = create_access_token(identity=owner_email)  
+    response_data["owner_id"] = owner.id  
+
+    return jsonify(response_data), 201
+
 """/////////////////////////////////// ORGINS ////////////////////////////////////////"""
 
 @api.route('/origin', methods=['POST'])
