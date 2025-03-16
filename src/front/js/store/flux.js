@@ -33,39 +33,45 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
             createReservation: async (reservationData) => {
                 try {
-                  const response = await fetch(`${process.env.BACKEND_URL}/api/reservations/`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(reservationData),
-                  });
-              
-                  if (!response.ok) {
-                    throw new Error("Error al crear la reserva");
-                  }
-              
-                  const data = await response.json();
-                  console.log("Reserva creada exitosamente:", data);
-                  return data; // Puedes devolver la respuesta si es necesario
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/reservations/`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(reservationData),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Error al crear la reserva");
+                    }
+
+                    const data = await response.json();
+                    console.log("Reserva creada exitosamente:", data);
+                    return data; // Puedes devolver la respuesta si es necesario
                 } catch (error) {
-                  console.error("Error en createReservation:", error.message);
+                    console.error("Error en createReservation:", error.message);
                 }
-              },
-              
+            },
+
 
             // Obtener lista de comensales
             getDinerList: async () => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/diners`, {
-                        method: "GET",
-                        headers: { "Content-Type": "application/json" },
-                    });
-                    if (!response.ok) throw new Error("Error al obtener la lista de comensales.");
-                    const result = await response.json();
-                    setStore({ diners: result });
+                  const response = await fetch(`${process.env.BACKEND_URL}/api/diners`, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                  });
+                  if (!response.ok) throw new Error("Error al obtener la lista de comensales.");
+                  
+                  const result = await response.json();
+                  console.log("Datos de comensales recibidos del backend:", result); // Depuración
+                  
+                  // Acceder al array dentro de la clave "data"
+                  setStore({ diners: result.data });
+                  console.log("Diners guardados en el estado global:", result.data); // Depuración
                 } catch (error) {
-                    console.error("Error en getDinerList:", error.message);
+                  console.error("Error en getDinerList:", error.message);
                 }
             },
+              
 
             getAvailableRestaurants: async (location, people) => {
                 const params = new URLSearchParams();
@@ -120,9 +126,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                         method: "GET",
                         headers: { "Content-Type": "application/json" },
                     });
+                    console.log("URL solicitada EESSS:", `${process.env.BACKEND_URL}/api/owners`);
+
                     if (!response.ok) throw new Error("Error al obtener propietarios.");
                     const data = await response.json();
-                    setStore({ owners: data });
+                    
+                    console.log("Datos de propietarios recibidos del backend:", data);
+
+                    setStore({ owners: data.data });
                 } catch (error) {
                     console.error("Error en getAllOwners:", error.message);
                 }

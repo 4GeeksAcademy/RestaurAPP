@@ -9,7 +9,9 @@ export const Dinerlist = () => {
 
   useEffect(() => {
     actions.getDinerList();
+    console.log("Diners en el estado global:", store.diners);
   }, []);
+  
 
   function handleDelete(id) {
     actions.handleDelete(id);
