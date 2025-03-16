@@ -32,7 +32,7 @@ import { OriginList } from "./component/originList";
 
 import CategoriesList from "./component/categoriesList";
 import CategoriesForm from "./component/categoryForm";
-
+import RestaurantList from "./component/RestaurantList";
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 import ReservationList from "./component/ReservationList"; // Importar el componente del listado de reservas
 
@@ -65,8 +65,9 @@ const Layout = () => {
                         <Route element={<DinerEdit />} path="/dineredit/:id" />
                         <Route element={<DinerLogin />} path="/diner/login" />
                         <Route element={<DinerDashboard />} path="/diner/dashboard" />
-
-                        <Route element={<OriginList />} path="/origins" />
+                        <Route element={<RestaurantList />} path="/restaurants" />
+                       
+                        
 
                         <Route element={<CategoriesList />} path="/categories" />
                         <Route element={<CategoriesForm />} path="/categories/new" />

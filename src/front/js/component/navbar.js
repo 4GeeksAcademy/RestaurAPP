@@ -17,6 +17,12 @@ export const Navbar = () => {
           <span className="navbar-brand mb-0 h1">Volver a Home</span>
         </Link>
         <div className="ml-auto">
+          {/* Botón nuevo para el mapa de restaurantes */}
+          <Link to="/restaurants">
+            <button className="btn btn-success">Mapa de Restaurantes</button>
+          </Link>
+          
+          {/* Botón existente: Buscar restaurantes */}
           <Link to="/search-restaurants">
             <button className="btn btn-primary">Buscar Restaurantes</button>
           </Link>
@@ -51,11 +57,11 @@ export const Navbar = () => {
               <Link to="/manage-reservations">
                 <button className="btn btn-warning">Gestionar Reservas (Owner)</button>
               </Link>
-    
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  </div>
-</nav>
-);
+      </div>
+    </nav>
+  );
 };
+

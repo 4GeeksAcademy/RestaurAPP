@@ -12,6 +12,21 @@ def create_response(data=None, message=None, status=200, error=None):
 def serialize_list(query_result):
     return [item.serialize() for item in query_result]
 
+@restaurants_api.route('/restaurants', methods=['GET'])
+def get_all_restaurants():
+    try:
+        # Obtener todos los restaurantes
+        restaurants = Restaurant.query.all()
+
+        if not restaurants:
+            return create_response(error="No se encontraron restaurantes", status=404)
+
+        return create_response(data=serialize_list(restaurants), status=200)
+    except Exception as e:
+        print(f"Error al obtener los restaurantes: {e}")
+        return create_response(error="Error interno del servidor", status=500)
+
+
 # **GET**: Buscar restaurantes por localidad y capacidad
 @restaurants_api.route('/search', methods=['GET'])
 def search_restaurants():
@@ -21,6 +36,7 @@ def search_restaurants():
     # Validar parámetros obligatorios
     if not location or not people:
         return create_response(error="Localidad y número de personas son obligatorios", status=400)
+
 
     try:
         # Filtrar restaurantes por localidad y capacidad

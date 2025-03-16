@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 import os
+
 from flask_migrate import Migrate
 from flask_cors import CORS
 from src.api.utils import APIException, generate_sitemap
@@ -55,7 +56,7 @@ app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(reservations, url_prefix='/api/reservations', strict_slashes=False)
 app.register_blueprint(owner_api, url_prefix='/api/owners', strict_slashes=False)
 app.register_blueprint(diner_api, url_prefix='/api/diners', strict_slashes=False)
-app.register_blueprint(restaurants_api, url_prefix='/api/restaurants', strict_slashes=False)
+app.register_blueprint(restaurants_api, url_prefix='/api', strict_slashes=False)
 # Configuración de clave secreta para JWT
 app.config["JWT_SECRET_KEY"] = "your-secure-secret-keyasdfghjklzxcvbnm"  # Cambiar en producción
 jwt = JWTManager(app)
