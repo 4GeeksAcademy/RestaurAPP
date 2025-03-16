@@ -138,25 +138,25 @@ def get_all_owners():
     return jsonify(results), 200
 
 
+
 @api.route('/owners/<int:owner_id>', methods=['GET'])
+@jwt_required()
 def get_single_owner(owner_id):
+ 
+    email_from_token = get_jwt_identity()  # L'email è stata usata come identity
 
-    single_owner = Owner.query.get(owner_id)
-    print(single_owner)
-    print(single_owner.serialize())
+    # Usa l'email per trovare l'owner_id dal database
+    owner = Owner.query.filter_by(email=email_from_token).first()
 
-    return jsonify(single_owner.serialize()), 200
+    if owner is None:
+        return jsonify({"message": "Owner not found"}), 404
 
-@api.route('/owners/<int:owner_id>/restaurants', methods=['GET'])
-def get_restaurants_by_owner(owner_id):
-    # Filtra los restaurantes por owner_id
-    restaurants = Restaurant.query.filter_by(owner_id=owner_id).all()
+    if owner.id != owner_id:
+        return jsonify({"message": "Unauthorized"}), 401
 
-    if not restaurants:
-        return jsonify({"message": "No se encontraron restaurantes para este propietario."}), 404
+    print(f"Owner ID from token: {owner.id}")
+    return jsonify(owner.serialize()), 200
 
-    # Devuelve los restaurantes serializados
-    return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
 
 
 @api.route('/owners', methods=['POST'])
@@ -239,7 +239,7 @@ def ownerLogin():
         return jsonify({"msg": "Bad email or password"}), 401
 
     access_token = create_access_token(identity=email)
-    return jsonify({"access_token": access_token, "owner_name": owner.name}), 200
+    return jsonify({"access_token": access_token, "owner_name": owner.name, "owner_id": owner.id}), 200
 
 
 """/////////////////////////////////// RESTAURANTS ////////////////////////////////////////"""
@@ -273,22 +273,22 @@ def get_restaurants():
     return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
 
 
-"""
-@api.route('/restaurants', methods=['GET'])
-def get_restaurants():
-    location = request.args.get('location')
-    capacity = request.args.get('capacity', type=int)  # type=int asegura que 'capacity' sea un entero
+@api.route('/owners/<int:owner_id>/restaurants', methods=['GET'])
+def get_restaurants_by_owner(owner_id):
+    # Filtra los restaurantes por owner_id
+    restaurants = Restaurant.query.filter_by(owner_id=owner_id).all()
 
-    query = Restaurant.query
+    if not restaurants:
+        return jsonify({"message": "No se encontraron restaurantes para este propietario."}), 404
 
-    if location:
-        query = query.filter_by(location=location)
-    if capacity:
-        query = query.filter(Restaurant.capacity >= capacity)
-
-    restaurants = query.all()
+    # Devuelve los restaurantes serializados
     return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
-"""
+
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+
+
+
 @api.route('/restaurants', methods=['POST'])
 def add_restaurant():
     data = request.json
@@ -315,132 +315,212 @@ def add_restaurant():
     return jsonify({"message": "Restaurante añadido exitosamente"}), 201
 
 
-"""
-@api.route('/restaurants', methods=['POST'])
-def add_restaurant():
-    data = request.json
-    if not data.get('name') or not data.get('location') or not data.get('telephone') or not data.get('latitude') or not data.get('longitude') or not data.get('capacity'):
-        return jsonify({"error": "Todos los campos son obligatorios"}), 400
 
-    new_restaurant = Restaurant(
-        name=data['name'],
-        location=data['location'],
-        telephone=data['telephone'],
-        latitude=data['latitude'],
-        longitude=data['longitude'],
-        capacity=data['capacity']
-    )
-    db.session.add(new_restaurant)
-    db.session.commit()
+# @api.route('/restaurants/<int:restaurant_id>', methods=['PUT'])
+# @jwt_required()
+# def update_restaurant(restaurant_id):
+#     try:
+#         data = request.get_json()
 
-    return jsonify({"message": "Restaurante añadido exitosamente"}), 201
-"""
-from flask_jwt_extended import jwt_required, get_jwt_identity
+#         # Busca el restaurante por ID
+#         restaurant = Restaurant.query.get(restaurant_id)
+#         if not restaurant:
+#             return jsonify({"error": "Restaurante no encontrado."}), 404
 
-@api.route('/restaurants/<int:restaurant_id>', methods=['PUT'])
-@jwt_required()  # Protege la ruta para usuarios autenticados
-def update_restaurant(restaurant_id):
-    try:
-        data = request.get_json()
+#         # Obtén el owner_id del usuario autenticado
+#         current_user = get_jwt_identity()  # Extrae la identidad del token
+#         owner_id = current_user.get('owner_id')  # Asegúrate de que el token tenga el owner_id
 
-        # Busca el restaurante por ID
-        restaurant = Restaurant.query.get(restaurant_id)
-        if not restaurant:
-            return jsonify({"error": "Restaurante no encontrado."}), 404
+#         # Validar que el usuario logueado es el propietario
+#         if restaurant.owner_id != owner_id:
+#             return jsonify({"error": "No tienes permisos para modificar este restaurante."}), 403
 
-        # Obtén el owner_id del usuario autenticado
-        current_user = get_jwt_identity()  # Extrae la identidad del token
-        owner_id = current_user.get('owner_id')  # Asegúrate de que el token tenga el owner_id
+#         # Validar datos de entrada
+#         if 'capacity' in data and not isinstance(data['capacity'], int):
+#             return jsonify({"error": "La capacidad debe ser un número entero."}), 400
 
-        # Validar que el usuario logueado es el propietario
-        if restaurant.owner_id != owner_id:
-            return jsonify({"error": "No tienes permisos para modificar este restaurante."}), 403
+#         if 'latitude' in data and not isinstance(data['latitude'], (float, int)):
+#             return jsonify({"error": "La latitud debe ser un número."}), 400
 
-        # Validar datos de entrada
-        if 'capacity' in data and not isinstance(data['capacity'], int):
-            return jsonify({"error": "La capacidad debe ser un número entero."}), 400
+#         # Actualizar los datos del restaurante
+#         restaurant.name = data.get('name', restaurant.name)
+#         restaurant.location = data.get('location', restaurant.location)
+#         restaurant.telephone = data.get('telephone', restaurant.telephone)
+#         restaurant.latitude = data.get('latitude', restaurant.latitude)
+#         restaurant.longitude = data.get('longitude', restaurant.longitude)
+#         restaurant.capacity = data.get('capacity', restaurant.capacity)
 
-        if 'latitude' in data and not isinstance(data['latitude'], (float, int)):
-            return jsonify({"error": "La latitud debe ser un número."}), 400
+#         db.session.commit()
 
-        # Actualizar los datos del restaurante
-        restaurant.name = data.get('name', restaurant.name)
-        restaurant.location = data.get('location', restaurant.location)
-        restaurant.telephone = data.get('telephone', restaurant.telephone)
-        restaurant.latitude = data.get('latitude', restaurant.latitude)
-        restaurant.longitude = data.get('longitude', restaurant.longitude)
-        restaurant.capacity = data.get('capacity', restaurant.capacity)
+#         return jsonify({"message": "Restaurante modificado exitosamente.", "restaurant": restaurant.serialize()}), 200
 
-        db.session.commit()
-
-        return jsonify({"message": "Restaurante modificado exitosamente.", "restaurant": restaurant.serialize()}), 200
-
-    except Exception as e:
-        # Registra el error para propósitos de depuración
-        import logging
-        logging.error(f"Error actualizando restaurante {restaurant_id}: {str(e)}")
-        return jsonify({"error": "Server error"}), 500
+    # except Exception as e:
+    #     # Registra el error para propósitos de depuración
+    #     import logging
+    #     logging.error(f"Error actualizando restaurante {restaurant_id}: {str(e)}")
+    #     return jsonify({"error": "Server error"}), 500
 
 
 
-@api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
-@jwt_required()  # Protege la ruta para usuarios autenticados
-def delete_restaurant(restaurant_id):
-    current_user = get_jwt_identity()  # Obtén el usuario logueado
-    restaurant = Restaurant.query.get(restaurant_id)
-    if not restaurant:
-        return jsonify({"error": "Restaurante no encontrado"}), 404
+# @api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
+# @jwt_required()
+# def delete_restaurant(restaurant_id):
+#     current_user = get_jwt_identity()  # Obtén el usuario logueado
+#     restaurant = Restaurant.query.get(restaurant_id)
+#     if not restaurant:
+#         return jsonify({"error": "Restaurante no encontrado"}), 404
 
-    # Verifica que el usuario sea el propietario
-    if restaurant.owner_id != current_user.get('owner_id'):
-        return jsonify({"error": "No tienes permisos para eliminar este restaurante."}), 403
+#     # Verifica que el usuario sea el propietario
+#     if restaurant.owner_id != current_user.get('owner_id'):
+#         return jsonify({"error": "No tienes permisos para eliminar este restaurante."}), 403
 
-    db.session.delete(restaurant)
-    db.session.commit()
-    return jsonify({"message": "Restaurante eliminado exitosamente."}), 200
+#     db.session.delete(restaurant)
+#     db.session.commit()
+#     return jsonify({"message": "Restaurante eliminado exitosamente."}), 200
 
 
-@api.route('/create_restaurant', methods=['POST'])
+@api.route('/create_restaurant', methods=['POST'])         #añade rest a owner logeado
 @jwt_required()
 def create_restaurant():
-    
     owner_email = get_jwt_identity()  
 
-   
+    # Buscar el owner logueado
     owner = Owner.query.filter_by(email=owner_email).first()
     if not owner:
         return jsonify({"message": "Owner not found"}), 404  
 
-    
+    # datos de la req
     data = request.get_json()
 
-    name = data.get('name')
-    location = data.get('location')
-    telephone = data.get('telephone')
-    latitude = data.get('latitude')
-    longitude = data.get('longitude')
-    capacity = data.get('capacity')
+    required_fields = ["name", "location", "telephone", "latitude", "longitude", "capacity"]
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({"error": f"The field {field} is required"}), 400
 
+    # Verifica si el restaurante ya existe para el owner
+    existing_restaurant = Restaurant.query.filter_by(name=data["name"], owner_id=owner.id).first()
+    if existing_restaurant:
+        return jsonify({"error": "You already have a restaurant with this name"}), 400
+
+    # Crea nuevo rest
     new_restaurant = Restaurant(
-        name=name,
-        location=location,
-        telephone=telephone,
-        latitude=latitude,
-        longitude=longitude,
-        capacity=capacity,
+        name=data["name"],
+        location=data["location"],
+        telephone=data["telephone"],
+        latitude=float(data["latitude"]),  # float por decimales
+        longitude=float(data["longitude"]),  
+        capacity=int(data["capacity"]),  # por numero
         owner_id=owner.id  
     )
 
+    try:
+        db.session.add(new_restaurant)
+        db.session.commit()
+
+        return jsonify(new_restaurant.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Error saving restaurant: {str(e)}"}), 500  
     
-    db.session.add(new_restaurant)
+
+
+@api.route('/restaurants/<int:restaurant_id>', methods=['GET'])        #filtra con id restaurante
+def get_restaurant_by_restaurant_id(restaurant_id):
+    # Cerca il ristorante per ID
+    restaurant = Restaurant.query.get(restaurant_id)
+
+    if not restaurant:
+        return jsonify({"error": "Restaurante no encontrado"}), 404
+
+    # Restituisce il ristorante in formato JSON
+    return jsonify(restaurant.serialize()), 200 
+
+
+@api.route('/owners/restaurants', methods=['GET'])                      #filtra por rest del usaurio logeado
+@jwt_required()
+def get_restaurants_for_loggedin_owner():
+
+    current_owner_email = get_jwt_identity()       # email del owner desde el token
+
+    owner = Owner.query.filter_by(email=current_owner_email).first()
+    if not owner:
+        return jsonify({"message": "Owner not found"}), 404
+
+    # Obtener los restaurantes asociados al owner
+    restaurants = Restaurant.query.filter_by(owner_id=owner.id).all()
+
+    if not restaurants:
+        return jsonify({"message": "No se encontraron restaurantes para este propietario."}), 404
+
+    return jsonify([restaurant.serialize() for restaurant in restaurants]), 200
+
+
+@api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
+@jwt_required()
+def delete_restaurant_owner_loggedin(restaurant_id):
+    current_user_email = get_jwt_identity()  # correo del usuario logueado
+    
+    restaurant = Restaurant.query.get(restaurant_id)
+    
+    if not restaurant:
+        return jsonify({"error": "Restaurante no encontrado"}), 404
+
+    # Obtiene dueño del rist con owner_id de la relación con table restaurant
+    owner = Owner.query.get(restaurant.owner_id)
+    
+    if not owner:
+        return jsonify({"error": "Propietario no encontrado"}), 404
+
+    # Verifica que email del owner = a usuario logueato
+    if owner.email != current_user_email:
+        return jsonify({"error": "No tienes permisos para eliminar este restaurante."}), 403
+
+    db.session.delete(restaurant)
     db.session.commit()
 
-    
-    response_data = new_restaurant.serialize()
-    response_data["access_token"] = create_access_token(identity=owner_email)  
-    response_data["owner_id"] = owner.id  
+    return jsonify({"message": "Restaurante eliminado exitosamente."}), 200
 
-    return jsonify(response_data), 201
+
+@api.route('/restaurants/<int:restaurant_id>', methods=['PUT'])
+@jwt_required()
+def update_restaurant(restaurant_id):
+    current_user_email = get_jwt_identity()  # correo del usuario logueado
+    
+    restaurant = Restaurant.query.get(restaurant_id)
+    
+    if not restaurant:
+        return jsonify({"error": "Restaurante no encontrado"}),
+    
+    owner = Owner.query.get(restaurant.owner_id)   # Obtiene dueño del rist con owner_id de la relación con table restaurant
+    
+    if not owner:
+        return jsonify({"error": "Propietario no encontrado"}), 404
+    
+    # Verifica que email del owner = a usuario logueato
+    if owner.email != current_user_email:
+        return jsonify({"error": "No tienes permisos para editar este restaurante."}), 403  # Si no tiene permiso
+    
+    # Obtén los datos del cuerpo de la solicitud (JSON)
+    data = request.get_json()
+
+    # Actualiza los campos proporcionados en la solicitud
+    if 'name' in data:
+        restaurant.name = data['name']
+    if 'location' in data:
+        restaurant.location = data['location']
+    if 'telephone' in data:
+        restaurant.telephone = data['telephone']
+    if 'latitude' in data:
+        restaurant.latitude = data['latitude']
+    if 'longitude' in data:
+        restaurant.longitude = data['longitude']
+    if 'capacity' in data:
+        restaurant.capacity = data['capacity']
+
+    db.session.commit()
+
+    return jsonify({"message": "Restaurante actualizado exitosamente."}), 200
+
 
 """/////////////////////////////////// ORGINS ////////////////////////////////////////"""
 
