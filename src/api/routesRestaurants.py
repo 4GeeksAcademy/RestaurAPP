@@ -15,17 +15,17 @@ def serialize_list(query_result):
 # **GET**: Buscar restaurantes por localidad y capacidad
 @restaurants_api.route('/search', methods=['GET'])
 def search_restaurants():
-    locality = request.args.get('locality', type=str)
-    people = request.args.get('people', type=int)
+    location = request.args.get('location','' , type=str)
+    people = request.args.get('people',1, type=int)
 
     # Validar parámetros obligatorios
-    if not locality or not people:
+    if not location or not people:
         return create_response(error="Localidad y número de personas son obligatorios", status=400)
 
     try:
         # Filtrar restaurantes por localidad y capacidad
         restaurants = Restaurant.query.filter(
-            Restaurant.location.ilike(f"%{locality}%"),
+            Restaurant.location.ilike(f"%{location}%"),
             Restaurant.capacity >= people
         ).all()
 

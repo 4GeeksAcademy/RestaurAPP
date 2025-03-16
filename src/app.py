@@ -8,6 +8,7 @@ from src.api.routes import api
 from src.api.admin import setup_admin
 from src.api.commands import setup_commands
 from src.api.routesReservations import reservations
+from src.api.routesRestaurants import restaurants_api
 from src.api.routesOwner import owner_api
 from src.api.routesDiner import diner_api
 from flask_jwt_extended import JWTManager
@@ -54,7 +55,7 @@ app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(reservations, url_prefix='/api/reservations', strict_slashes=False)
 app.register_blueprint(owner_api, url_prefix='/api/owners', strict_slashes=False)
 app.register_blueprint(diner_api, url_prefix='/api/diners', strict_slashes=False)
-
+app.register_blueprint(restaurants_api, url_prefix='/api/restaurants', strict_slashes=False)
 # Configuración de clave secreta para JWT
 app.config["JWT_SECRET_KEY"] = "your-secure-secret-keyasdfghjklzxcvbnm"  # Cambiar en producción
 jwt = JWTManager(app)

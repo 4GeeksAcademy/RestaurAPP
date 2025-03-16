@@ -18,19 +18,40 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
             // Nueva función getAllReservations
             getAllReservations: async () => {
-            try {
-                const response = await fetch(`${process.env.BACKEND_URL}/api/reservations`, {
-                    method: "GET",
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/reservations`, {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json" },
+                    });
+                    if (!response.ok) throw new Error("Error al obtener las reservas.");
+                    const data = await response.json();
+                    setStore({ reservations: data }); // Almacena las reservas en el estado
+                } catch (error) {
+                    console.error("Error en getAllReservations:", error.message);
+                }
+
+            },
+            createReservation: async (reservationData) => {
+                try {
+                  const response = await fetch(`${process.env.BACKEND_URL}/api/reservations/`, {
+                    method: "POST",
                     headers: { "Content-Type": "application/json" },
-                });
-                if (!response.ok) throw new Error("Error al obtener las reservas.");
-                const data = await response.json();
-                setStore({ reservations: data }); // Almacena las reservas en el estado
-            } catch (error) {
-                console.error("Error en getAllReservations:", error.message);
-            }
-        },
-  
+                    body: JSON.stringify(reservationData),
+                  });
+              
+                  if (!response.ok) {
+                    throw new Error("Error al crear la reserva");
+                  }
+              
+                  const data = await response.json();
+                  console.log("Reserva creada exitosamente:", data);
+                  return data; // Puedes devolver la respuesta si es necesario
+                } catch (error) {
+                  console.error("Error en createReservation:", error.message);
+                }
+              },
+              
+
             // Obtener lista de comensales
             getDinerList: async () => {
                 try {
@@ -47,21 +68,32 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             getAvailableRestaurants: async (location, people) => {
+                const params = new URLSearchParams();
+                if (location) params.append("location", location.trim());
+                if (people) params.append("people", people);
+
+                const url = `${process.env.BACKEND_URL}/api/restaurants/search?${params.toString()}`;
+                console.log("URL solicitada:", url); // Verifica la URL construida
+
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants/search?location=${location}&people=${people}`, {
+                    const response = await fetch(url, {
                         method: "GET",
                         headers: { "Content-Type": "application/json" },
                     });
-                    if (!response.ok) throw new Error("Error al obtener restaurantes disponibles.");
+
+                    if (!response.ok) {
+                        throw new Error("Error al obtener restaurantes disponibles.");
+                    }
+
                     const data = await response.json();
-                    setStore({ availableRestaurants: data });
-                    console.log("Restaurantes disponibles:", data); // Para depurar
+                    setStore({ availableRestaurants: data.data });
                 } catch (error) {
                     console.error("Error en getAvailableRestaurants:", error.message);
                 }
             },
-            
-  
+
+
+
             // Editar un comensal
             handleEdit: async (dinerId, updatedData) => {
                 try {
@@ -80,7 +112,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en handleEdit:", error.message);
                 }
             },
-  
+
             // Obtener todos los propietarios
             getAllOwners: async () => {
                 try {
@@ -95,7 +127,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en getAllOwners:", error.message);
                 }
             },
-  
+
             // Crear un propietario
             addOwner: async (ownerData) => {
                 try {
@@ -111,7 +143,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en addOwner:", error.message);
                 }
             },
-  
+
             // Eliminar un propietario
             deleteOwner: async (ownerId) => {
                 try {
@@ -126,7 +158,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en deleteOwner:", error.message);
                 }
             },
-  
+
             // Obtener todos los restaurantes
             getAllRestaurants: async () => {
                 try {
@@ -141,7 +173,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en getAllRestaurants:", error.message);
                 }
             },
-  
+
             // Crear un restaurante
             createRestaurant: async (restaurantData) => {
                 try {
@@ -157,7 +189,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en createRestaurant:", error.message);
                 }
             },
-  
+
             // Obtener reservas de un restaurante
             getRestaurantReservations: async (restaurantId) => {
                 try {
@@ -172,7 +204,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en getRestaurantReservations:", error.message);
                 }
             },
-  
+
             // Gestionar una reserva
             manageReservation: async (reservationId, reservationData) => {
                 try {
@@ -193,7 +225,6 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
         },
     };
-  };
-  
-  export default getState;
-  
+};
+
+export default getState;

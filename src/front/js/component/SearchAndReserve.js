@@ -3,13 +3,13 @@ import { Context } from "../store/appContext";
 
 const SearchAndReserve = () => {
     const { store, actions } = useContext(Context);
-    const [locality, setLocality] = useState("");
+    const [location, setLocality] = useState("");
     const [people, setPeople] = useState("");
     const [results, setResults] = useState([]);
 
     const searchRestaurants = async () => {
         try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants/search?locality=${locality}&people=${people}`);
+            const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants/search?location=${location}&people=${people}`);
             if (!response.ok) throw new Error("Error al buscar restaurantes");
             const data = await response.json();
             setResults(data);
@@ -37,7 +37,7 @@ const SearchAndReserve = () => {
                 <input
                     type="text"
                     placeholder="Localidad"
-                    value={locality}
+                    value={location}
                     onChange={(e) => setLocality(e.target.value)}
                 />
                 <input
