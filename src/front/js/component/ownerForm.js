@@ -47,7 +47,7 @@ const OwnerForm = () => {
     } else {
       actions.addOwner({ name, telephone, email, location, password });
     }
-    navigate("/owners");
+    navigate("/owners/dashboard");
   };
 
   return (

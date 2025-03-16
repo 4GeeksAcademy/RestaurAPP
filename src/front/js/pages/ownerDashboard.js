@@ -1,116 +1,191 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
-import { Navigate } from "react-router-dom";
-import AddRestaurant from "../component/AddRestaurant";
-import MyRestaurants from "../component/MyRestaurants";
-import CreateRestaurant from "../component/createRestaurant";
+import { useNavigate, Navigate } from "react-router-dom";
 
 const OwnerDashboard = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-
-
-    const [ownerName, setOwnerName] = useState(localStorage.getItem('ownerName') || 'Owner');
-    const [ownerId, setOwnerId] = useState(localStorage.getItem('ownerId') || 'Id');
+    const [ownerName, setOwnerName] = useState(localStorage.getItem("ownerName") || "Dueño");
+    const [activeTab, setActiveTab] = useState("restaurants");  // Impostato di default su "restaurants"
 
     useEffect(() => {
-
         if (store.ownerName) {
             setOwnerName(store.ownerName);
-            localStorage.setItem('ownerName', store.ownerName);
+            localStorage.setItem("ownerName", store.ownerName);
         }
-
-        if (store.ownerId) {
-            setOwnerId(store.ownerId);
-            localStorage.setItem('ownerId', store.ownerId);
-        }
+        actions.getRestaurantsForLoggedInOwner();
+        actions.getSpecificOwner(store.ownerId); // Obtener detalles del propietario
     }, [store.ownerName, store.ownerId]);
 
     const handleLogout = () => {
         actions.ownerLogout();
-        localStorage.removeItem("ownerName");
-        localStorage.removeItem("ownerId");
-        localStorage.removeItem("authToken");
-        setOwnerName("Owner");
-        setOwnerId("Id");
+        localStorage.clear();
         navigate("/");
     };
 
+    // Eliminar restaurante
+    const handleDeleteRestaurant = (restaurantId) => {
+        actions.deleteRestaurant(restaurantId);
+    };
+
+    // Modificar restaurante
+    const handleModifyRestaurant = (restaurantId) => {
+        navigate(`/create_restaurant/${restaurantId}`);
+    };
+
+    const handleViewMore = (restaurantId) => {
+        navigate(`/restaurants/${restaurantId}`);
+    };
+
+    // Editar perfil
+    const handleEditProfile = () => {
+        navigate(`/owners/${store.ownerId}`);
+    };
+
+    // Eliminar perfil
+    const handleDeleteProfile = () => {
+        const confirmDelete = window.confirm("⚠️ ¿Estás seguro de que deseas eliminar tu cuenta? ¡Esta acción es irreversible!");
+        
+        if (confirmDelete) {
+            actions.deleteOwner(store.specificOwner.id);
+            actions.ownerLogout(); // Effettua il logout
+            navigate("/"); // Reindirizza alla home page
+        }
+    };
+
+
     return (
         <>
-            {store.auth === true ? (
+            {store.auth ? (
                 <>
                     <div className="container mt-4">
-                        <h1>Welcome, {ownerName}</h1>
-                    </div>
-                    <div className="d-flex justify-content-between align-items-start">
-                        <div className="col-3 d-flex justify-content-center">
-                            <button
-                                type="button"
-                                className="btn btn-primary w-100"
-                                onClick={() => navigate("/create_restaurant")}
+                        {/* Bootstrap Tabs */}
+                        <ul className="nav nav-tabs" id="myTab" role="tablist">
+                            <li className="nav-item" role="presentation">
+                                <a
+                                    className={`nav-link ${activeTab === "restaurants" ? "active" : ""}`}
+                                    id="restaurants-tab"
+                                    data-bs-toggle="tab"
+                                    href="#restaurants"
+                                    role="tab"
+                                    onClick={() => setActiveTab("restaurants")}
+                                >
+                                    Restaurantes
+                                </a>
+                            </li>
+                            <li className="nav-item" role="presentation">
+                                <a
+                                    className={`nav-link ${activeTab === "reservations" ? "active" : ""}`}
+                                    id="reservations-tab"
+                                    data-bs-toggle="tab"
+                                    href="#reservations"
+                                    role="tab"
+                                    onClick={() => setActiveTab("reservations")}
+                                >
+                                    Reservas
+                                </a>
+                            </li>
+                            <li className="nav-item" role="presentation">
+                                <a
+                                    className={`nav-link ${activeTab === "details" ? "active" : ""}`}
+                                    id="details-tab"
+                                    data-bs-toggle="tab"
+                                    href="#details"
+                                    role="tab"
+                                    onClick={() => setActiveTab("details")}
+                                >
+                                    Detalles
+                                </a>
+                            </li>
+                        </ul>
+                        <div className="tab-content mt-4" id="myTabContent">
+                            {/* Tab content for Restaurants */}
+                            <div
+                                className={`tab-pane fade ${activeTab === "restaurants" ? "show active" : ""}`}
+                                id="restaurants"
+                                role="tabpanel"
+                                aria-labelledby="restaurants-tab"
                             >
-                                Crear Nuevo Restaurante
-                            </button>
-                        </div>
+                                <h2 className="mb-5">Tus Restaurantes</h2>
+                                {store.restaurants && store.restaurants.length > 0 ? (
+                                    <div className="row">
+                                        {store.restaurants.map((restaurant) => (
+                                            <div key={restaurant.id} className="col-md-4 mb-4">
+                                                <div className="card shadow-sm">
+                                                    <img
+                                                        src={restaurant.image || "https://media.istockphoto.com/id/1428412216/es/foto/un-chef-masculino-vertiendo-salsa-en-la-comida.jpg?s=612x612&w=0&k=20&c=Wze2YwgkFMQOTWoxdiRYsUpa1azCIOm8yRaUEEYOgOU="}
+                                                        className="card-img-top"
+                                                        alt={restaurant.name}
+                                                        style={{ height: "200px", objectFit: "cover" }}
+                                                    />
+                                                    <div className="card-body">
+                                                        <h5 className="card-title">{restaurant.name}</h5>
+                                                        <p className="card-text"><strong>Ubicación:</strong> {restaurant.location}</p>
+                                                        <p className="card-text"><strong>Capacidad:</strong> {restaurant.capacity}</p>
+                                                        <p className="card-text"><strong>Teléfono:</strong> {restaurant.telephone}</p>
 
-
-                        <div className="col-8">
-                            <MyRestaurants />
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        className="btn btn-light ms-5"
-                        data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop"
-                    >
-                        Add new restaurant
-                    </button>
-
-                    {/* Modal */}
-                    <div
-                        className="modal fade"
-                        id="staticBackdrop"
-                        data-bs-backdrop="static"
-                        data-bs-keyboard="false"
-                        tabIndex="-1"
-                        aria-labelledby="staticBackdropLabel"
-                        aria-hidden="true"
-                    >
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                                        Fill in to add a new restaurant
-                                    </h1>
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close"
-                                    ></button>
-                                </div>
-                                <div className="modal-body">
-                                    <AddRestaurant />
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                                        Close
+                                                        <div className="d-flex justify-content-between">
+                                                            <div className="d-flex">
+                                                                <button className="btn border rounded-3 p-2 mx-1 bg-light" onClick={() => handleModifyRestaurant(restaurant.id)}>✏️</button>
+                                                                <button className="btn border rounded-3 p-2 mx-1 bg-light" onClick={() => handleDeleteRestaurant(restaurant.id)}>🗑️</button>
+                                                            </div>
+                                                            <button className="btn border rounded-3 p-2 mx-1 bg-light" onClick={() => handleViewMore(restaurant.id)}>🔎</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p>No tienes restaurantes disponibles.</p>
+                                )}
+                                <div className="container mt-3">
+                                    <button type="button" className="btn btn-primary" onClick={() => navigate("/create_restaurant")}>
+                                        Crear nuevo restaurante
                                     </button>
                                 </div>
+                            </div>
+
+                            {/* Tab content for Reservations */}
+                            <div
+                                className={`tab-pane fade ${activeTab === "reservations" ? "show active" : ""}`}
+                                id="reservations"
+                                role="tabpanel"
+                                aria-labelledby="reservations-tab"
+                            >
+                                <h2>Tus reservas</h2>
+                            </div>
+
+                            {/* Tab content de Details */}
+                            <div
+                                className={`tab-pane fade ${activeTab === "details" ? "show active" : ""}`}
+                                id="details"
+                                role="tabpanel"
+                                aria-labelledby="details-tab"
+                            >
+                                <h2>Detalles del perfil</h2>
+                                {store.specificOwner ? (
+                                    <div>
+                                        <p><strong>Nombre:</strong> {store.specificOwner.name}</p>
+                                        <p><strong>Email:</strong> {store.specificOwner.email}</p>
+                                        <p><strong>Teléfono:</strong> {store.specificOwner.telephone}</p>
+
+                                        <div className="d-flex justify-content-end">
+                                            <button className="btn border bg-light me-2" onClick={handleEditProfile}>✏️</button>
+                                            <button className="btn border bg-light" onClick={handleDeleteProfile}>🗑️</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p>No hay detalles disponibles.</p>
+                                )}
                             </div>
                         </div>
                     </div>
 
                     <div className="container mt-5 d-flex justify-content-between">
-                        <button type="button" className="btn btn-danger" onClick={handleLogout}>
-                            Log Out
-                        </button>
+                        <button type="button" className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
                         <button type="button" className="btn btn-primary" onClick={() => navigate("/")}>
-                            Go back to Home
+                            Home page
                         </button>
                     </div>
                 </>
