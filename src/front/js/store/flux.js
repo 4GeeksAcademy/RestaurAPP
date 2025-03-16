@@ -78,7 +78,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 if (location) params.append("location", location.trim());
                 if (people) params.append("people", people);
 
-                const url = `${process.env.BACKEND_URL}/api/restaurants/search?${params.toString()}`;
+                const url = `${process.env.BACKEND_URL}/api/search?${params.toString()}`;
                 console.log("URL solicitada:", url); // Verifica la URL construida
 
                 try {
