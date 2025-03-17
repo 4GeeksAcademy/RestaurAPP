@@ -16,6 +16,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             ],
             diners: [],
             auth: false,
+            dinerauth: false,
             owners: [],
             specificOwner: null,
             origins: [],
@@ -88,7 +89,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         return response.json();
                     })
                     .then((result) => {
-                        setStore({ auth: true });
+                        setStore({ dinerauth: true });
                         localStorage.setItem("token", result.access_token);
                     });
             },
@@ -109,9 +110,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                 fetch(process.env.BACKEND_URL + "/api/diner/login", requestOption)
                     .then((response) => {
                         if (response.status == 200) {
-                            setStore({ auth: true });
+                            setStore({ dinerauth: true });
                         } else {
-                            setStore({ auth: false });
+                            setStore({ dinerauth: false });
                         }
                         return response.json();
                     })
@@ -120,12 +121,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                             alert(data.msg);
                         } else {
                             localStorage.setItem("dinerFullName", data.diner_fullname);
-                            setStore({ auth: true, dinerFullName: data.diner_fullname });
+                            localStorage.setItem("dinerId", data.diner_id);
+                            localStorage.setItem("token", data.access_token);
+                            setStore({ dinerauth: true, dinerFullName: data.diner_fullname });
                         }
                     });
             },
             dinerLogout: () => {
-                setStore({ auth: false });
+                setStore({ dinerauth: false });
                 localStorage.removeItem("token");
             },
 
@@ -239,13 +242,15 @@ const getState = ({ getStore, getActions, setStore }) => {
                         } else {
                             localStorage.setItem("token", data.access_token);    //guarda el token en el local storage
                             localStorage.setItem("ownerName", data.owner_name);  //guarda el nombre del owner en el local Storage
+                            localStorage.setItem("ownerId", data.owner_id);
 
                             setStore({
                                 auth: true,
                                 ownerName: data.owner_name, // Asigna el valor del nombre a la variable del Store 
+                                ownerId: data.owner_id,
                             });
 
-                            console.log(data.access_token);
+                            console.log(data.access_token, data.owner_id);
                         }
                     });
             },
