@@ -24,7 +24,8 @@ const getState = ({ getStore, getActions, setStore }) => {
             specificCategory: null,
             restaurantCategories: [],
             specificRestaurantCategory: [],
-            restaurants: []
+            restaurants: [],
+            specificRestaurant: []
         },
         actions: {
             // Use getActions to call a function within a function
@@ -141,14 +142,47 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-            getSpecificOwner: (ownerId) => {
-                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId)
-                    .then((response) => response.json())
-                    .then((data) => {
-                        console.log("Datos recibidos:", data);
-                        setStore({ specificOwner: data });
-                    });
+
+            getSpecificOwner: () => {
+                // Recupera il token e l'ownerId dal localStorage
+                const token = localStorage.getItem('token');
+                const ownerId = localStorage.getItem('ownerId');
+                
+                // Verifica se i dati sono disponibili
+                if (!token || !ownerId) {
+                    console.error("Token o Owner ID non trovato nel localStorage");
+                    return;
+                }
+            
+                console.log("Token:", token);
+                console.log("Owner ID:", ownerId);
+            
+                // Effettua la richiesta al back-end
+                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log("Datos recibidos from FRONT specific ownerr:", data);
+            
+                    // Salva l'owner nel store (o nella variabile di stato) del front-end
+                    setStore({ specificOwner: data });
+                })
+                .catch((error) => {
+                    console.error('Error fetching specific owner:', error);
+                });
             },
+            
+            
 
             addOwner: (newOwner) => {
                 const requestOptions = {
@@ -177,9 +211,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.message) {
-                            alert(`❌ Error: ${data.message}`);
+                            alert(`Error: ${data.message}`);
                         } else {
-                            alert("✅ Owner successfully deleted");
+                            alert("Owner successfully deleted");
                             const store = getStore();
                             setStore({ owners: store.owners.filter((owner) => owner.id !== ownerId) });
             
@@ -188,7 +222,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     }) // <--- Chiusura del secondo .then()
                     .catch((error) => {
                         console.error("Error:", error);
-                        alert("❌ An unexpected error occurred");
+                        alert("An unexpected error occurred");
                     }); // <--- Chiusura del .catch()
             },
 
@@ -213,10 +247,10 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             ownerLogin: (email, password) => {
-                console.log("login from actions");
+                console.log("Login from actions");
                 const backendUrl = process.env.BACKEND_URL + "/api/owners/login";
-                console.log("Backend URL:", backendUrl); // Stampa l'URL in console
-
+                console.log("Backend URL:", backendUrl);
+            
                 const requestOption = {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -225,35 +259,41 @@ const getState = ({ getStore, getActions, setStore }) => {
                         password: password,
                     }),
                 };
-                fetch(process.env.BACKEND_URL + "/api/owners/login", requestOption)
+            
+                fetch(backendUrl, requestOption)
                     .then((response) => {
-                        console.log(response.status);
-                        if (response.status == 200) {
-                            setStore({ auth: true });
-                        } else {
-                            setStore({ auth: false });
-                        }
+                        console.log("Response status:", response.status);
                         return response.json();
                     })
                     .then((data) => {
+                        console.log("Dati login ricevuti dal back:", data);
                         if (data.msg) {
-                            // Si el servidor restituye un mensaje de error (ejemplo "wrong email o password")
-                            alert(data.msg); // Muestra el mensaje del servidor del back
+                            // Se il server restituisce un messaggio di errore
+                            alert(data.msg);
+                            setStore({ auth: false });
                         } else {
-                            localStorage.setItem("token", data.access_token);    //guarda el token en el local storage
-                            localStorage.setItem("ownerName", data.owner_name);  //guarda el nombre del owner en el local Storage
-                            localStorage.setItem("ownerId", data.owner_id);
-
+                            // Salva il token, il nome e l'ID dell'owner nel localStorage
+                            localStorage.setItem("token", data.access_token);
+                            localStorage.setItem("ownerName", data.owner_name);
+                            localStorage.setItem("ownerId", data.owner_id); // Salva ID del owner
+            
+                            // Aggiorna lo store globale con i dati dell'owner
                             setStore({
                                 auth: true,
-                                ownerName: data.owner_name, // Asigna el valor del nombre a la variable del Store 
+                                ownerName: data.owner_name,
                                 ownerId: data.owner_id,
                             });
-
-                            console.log(data.access_token, data.owner_id);
+            
+                            console.log("Token:", data.access_token);
+                            console.log("Owner ID:", data.owner_id);
                         }
+                    })
+                    .catch((error) => {
+                        console.error("Error en el login:", error);
+                        setStore({ auth: false });
                     });
             },
+            
 
             ownerLogout: () => {
                 console.log("logout desde actions");
@@ -495,6 +535,51 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
+            getRestaurantById: (restaurantId) => {
+                fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Datos del restaurante:", data);
+                        setStore({ specificRestaurant: data });  // Aggiorna lo store con i dati del ristorante
+            
+                        // Ottieni lo stato aggiornato dopo la chiamata setStore
+                        const updatedStore = getStore();  // Usa getStore per ottenere lo stato corrente
+                        console.log("Stato aggiornato:", updatedStore.specificRestaurant);
+                    })
+                    .catch((error) => {
+                        console.error("Error al obtener el restaurante:", error);
+                    });
+            },
+
+
+            getRestaurantsForLoggedInOwner: () => {
+                const token = localStorage.getItem("token");
+            
+                if (!token) {
+                    console.error("No hay token disponible");
+                    return;
+                }
+            
+                fetch(process.env.BACKEND_URL + "/api/owners/restaurants", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al obtener restaurantes");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Datos recibidos:", data);
+                    setStore({ restaurants: data });  // Guardar los rest en store
+                })
+                .catch(error => console.error("Error obteniendo restaurantes:", error));
+            },
+            
+
             createRestaurant: (newRestaurant, token) => {
                 return new Promise((resolve, reject) => { 
                   const requestOptions = {
@@ -520,7 +605,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                       localStorage.setItem("token", data.access_token);
                       localStorage.setItem("ownerId", data.owner_id);
                       localStorage.setItem("ownerName", data.owner_name);
-                      getActions().getAllRestaurants();
+                      getActions().getRestaurantsForLoggedInOwner();
                       resolve(); 
                     })
                     .catch((error) => {
@@ -530,6 +615,119 @@ const getState = ({ getStore, getActions, setStore }) => {
                 });
               },
 
+              modifyRestaurant: (restaurantId, updatedRestaurant) => {
+                const store = getStore();
+                const token = localStorage.getItem("token");
+            
+                if (!token) {
+                    alert("You must be logged in to modify a restaurant.");
+                    return;
+                }
+            
+                const requestOptions = {
+                    method: "PUT",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(updatedRestaurant),
+                };
+            
+                fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId, requestOptions)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Error updating restaurant");
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        // Aggiorna i ristoranti nel store
+                        const updatedRestaurants = store.restaurants.map((restaurant) =>
+                            restaurant.id === restaurantId ? data : restaurant
+                        );
+                        setStore({ restaurants: updatedRestaurants });
+            
+                        // Aggiorna la lista dei ristoranti
+                        getActions().getRestaurantsForLoggedInOwner();
+                    })
+                    .catch((error) => {
+                        console.error("Error updating restaurant:", error);
+                    });
+            },
+            
+            
+            
+            deleteRestaurant: (restaurantId) => {
+                const store = getStore();
+                const token = localStorage.getItem("token");
+            
+                if (!token) {
+                    alert("You must be logged in to delete a restaurant.");
+                    return;
+                }
+            
+                const requestOptions = {
+                    method: "DELETE",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`, // usa el token guardado en localStorage
+                    },
+                };
+            
+                fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId, requestOptions)
+                    .then((response) => response.json())
+                    .then(() => {
+                        const updatedRestaurants = store.restaurants.filter(
+                            (restaurant) => restaurant.id !== restaurantId
+                        );
+                        setStore({ restaurants: updatedRestaurants });
+                        getActions().getRestaurantsForLoggedInOwner();
+                    })
+                    .catch((error) => {
+                        console.error("Error deleting restaurant:", error);
+                    });
+            },
+            
+            // deleteRestaurant: (restaurantId) => {
+            //     const store = getStore();
+            //     const actions = getActions();
+            
+            //     // Verifica se l'utente è autenticato e ha un token valido
+            //     if (!store.auth) {
+            //         alert("You must be logged in to delete a restaurant.");
+            //         return;
+            //     }
+            
+            //     const requestOptions = {
+            //         method: "DELETE",
+            //         headers: { 
+            //             "Content-Type": "application/json",
+            //             "Authorization": `Bearer ${store.token}`,
+            //         },
+            //     };
+            
+            //     fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}`, requestOptions)
+            //         .then((response) => {
+            //             if (!response.ok) {
+            //                 throw new Error(`Failed to delete. Status: ${response.status}`);
+            //             }
+            //             return response.json();
+            //         })
+            //         .then(() => {
+            //             console.log(`Restaurant ${restaurantId} deleted successfully.`);
+            //             const updatedRestaurants = store.restaurants.filter(
+            //                 (restaurant) => restaurant.id !== restaurantId
+            //             );
+            //             setStore({ restaurants: updatedRestaurants });
+            
+            //             // Assicura di ricaricare i dati solo se necessario
+            //             actions.getRestaurantsForLoggedInOwner();
+            //         })
+            //         .catch((error) => {
+            //             console.error("Error deleting restaurant:", error);
+            //             alert("Failed to delete the restaurant. Please try again.");
+            //         });
+            // },
 
             changeColor: (index, color) => {
                 const store = getStore();
