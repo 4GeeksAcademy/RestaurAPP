@@ -16,7 +16,7 @@ export const DinerLogin = () => {
         });
     }
 
-    if (redirect || store.auth === true) {                   
+    if (redirect || store.dinerauth === true) {                   
         return <Navigate to="/diner/dashboard" />;
     }
 

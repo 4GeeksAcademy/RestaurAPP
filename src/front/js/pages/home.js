@@ -2,10 +2,12 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link } from "react-router-dom";
-import restaurappImageUrl from "../../img/imagenRestaurapp.jpg";
+
+import Restaurapp from './../../img/Restaurapp.jpg';
 
 export const Home = () => {
     const { store, actions } = useContext(Context);
+
     return (
         <div className="home-container text-center mt-5">
             <h1 className="mb-4">Bienvenido a RestaurAPP</h1>
@@ -32,7 +34,7 @@ export const Home = () => {
                 </div>
             </div>
             <div className="img-container mb-4">
-                <img src={restaurappImageUrl} alt="Restaurapp Logo" className="img-fluid" />
+                <img src={Restaurapp} alt="Restaurapp Logo" className="img-fluid" />
             </div>
             <div className="alert alert-info mt-4">
                 {store.message || "Loading message from the backend (make sure your python backend is running)..."}
@@ -40,3 +42,4 @@ export const Home = () => {
         </div>
     );
 };
+

@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { Context } from "../store/appContext";
+
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 
 const CreateRestaurant = () => {
+  
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [telephone, setTelephone] = useState("");
@@ -12,11 +14,12 @@ const CreateRestaurant = () => {
   const [errorMessage, setErrorMessage] = useState("");  // mensaje errores
   const [successMessage, setSuccessMessage] = useState("");  // mensaje ok
 
+
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
   const { id } = useParams();  // Obtiene ID del rist de la URL
   console.log("ID del ristorante:", id);
-  
+
   const token = localStorage.getItem("token");
 
   const hasLoaded = useRef(false);  // Riferimento per evitare il caricamento continuo
@@ -51,6 +54,7 @@ const CreateRestaurant = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+
     const restaurantData = {
       name,
       location,
@@ -59,7 +63,6 @@ const CreateRestaurant = () => {
       longitude,
       capacity,
     };
-
     if (token) {
       if (id) {
         // Modifica rist
@@ -92,6 +95,7 @@ const CreateRestaurant = () => {
       <h1 className="container mt-3">{id ? "Editar Restaurante" : "Crear Nuevo Restaurante"}</h1>
       {store.auth === true ? (
         <form className="container mt-4" onSubmit={handleSubmit}>
+
           {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
@@ -108,7 +112,6 @@ const CreateRestaurant = () => {
               required
             />
           </div>
-
           <div className="mb-3">
             <label htmlFor="location" className="form-label">
               Ubicacion
@@ -135,7 +138,6 @@ const CreateRestaurant = () => {
               required
             />
           </div>
-
           <div className="mb-3">
             <label htmlFor="latitude" className="form-label">
               Latitud
@@ -149,7 +151,6 @@ const CreateRestaurant = () => {
               required
             />
           </div>
-
           <div className="mb-3">
             <label htmlFor="longitude" className="form-label">
               Longitud
@@ -163,7 +164,6 @@ const CreateRestaurant = () => {
               required
             />
           </div>
-
           <div className="mb-3">
             <label htmlFor="capacity" className="form-label">
               Capacidad
@@ -191,5 +191,4 @@ const CreateRestaurant = () => {
     </>
   );
 };
-
 export default CreateRestaurant;

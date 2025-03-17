@@ -16,6 +16,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             ],
             diners: [],
             auth: false,
+            dinerauth: false,
             owners: [],
             specificOwner: null,
             origins: [],
@@ -92,7 +93,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         return response.json();
                     })
                     .then((result) => {
-                        setStore({ auth: true });
+                        setStore({ dinerauth: true });
                         localStorage.setItem("token", result.access_token);
                     });
             },
@@ -113,9 +114,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                 fetch(process.env.BACKEND_URL + "/api/diner/login", requestOption)
                     .then((response) => {
                         if (response.status == 200) {
-                            setStore({ auth: true });
+                            setStore({ dinerauth: true });
                         } else {
-                            setStore({ auth: false });
+                            setStore({ dinerauth: false });
                         }
                         return response.json();
                     })
@@ -124,12 +125,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                             alert(data.msg);
                         } else {
                             localStorage.setItem("dinerFullName", data.diner_fullname);
-                            setStore({ auth: true, dinerFullName: data.diner_fullname });
+                            localStorage.setItem("dinerId", data.diner_id);
+                            localStorage.setItem("token", data.access_token);
+                            setStore({ dinerauth: true, dinerFullName: data.diner_fullname });
                         }
                     });
             },
             dinerLogout: () => {
-                setStore({ auth: false });
+                setStore({ dinerauth: false });
                 localStorage.removeItem("token");
             },
 
