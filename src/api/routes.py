@@ -121,7 +121,11 @@ def dinerLogin():
         return jsonify({"msg": "Bad email or password"}), 401
 
     access_token = create_access_token(identity=email)
-    return jsonify({"access_token": access_token, "diner_fullname": diner.fullname}), 200
+    return jsonify({
+        "access_token": access_token,
+        "diner_fullname": diner.fullname,
+        "diner_id": diner.id  
+    }), 200
 
 """/////////////////////////////////// OWNERS ////////////////////////////////////////"""
 
