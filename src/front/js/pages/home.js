@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.css";
 import { Link } from "react-router-dom";
+
 import Restaurapp from './../../img/Restaurapp.jpg';
 
 export const Home = () => {
@@ -41,3 +42,4 @@ export const Home = () => {
         </div>
     );
 };
+

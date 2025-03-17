@@ -23,6 +23,7 @@ export const Navbar = () => {
                     </Link>
 
                     {store.auth ? (
+
                         <>
                             <Link to="/add-restaurant">
                                 <button className="btn btn-secondary">Añadir Restaurante</button>

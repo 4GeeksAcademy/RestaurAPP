@@ -44,10 +44,11 @@ const OwnerForm = () => {
         location,
         password,
       });
+      navigate("/owners/dashboard");
     } else {
       actions.addOwner({ name, telephone, email, location, password });
     }
-    navigate("/owners/dashboard");
+    navigate("/owners/login");
   };
 
   return (

@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+import enum
 
 db = SQLAlchemy()
 
@@ -56,6 +57,9 @@ class Diner(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     telephone = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
+
+        # Relación con reservas
+    reservations = relationship("Reservation", back_populates="diner")
     
     def __repr__(self):
         return f'<Diner {self.fullname}>'
@@ -82,6 +86,13 @@ class Restaurant(db.Model):
     
      # Foreign Key para relacionar con Owner
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
+
+        # Relación con reservas
+    reservations = relationship(
+        "Reservation", 
+        back_populates="restaurant",
+        cascade="all, delete-orphan"  # Habilitar cascada para eliminar reservas asociadas
+    )
 
     # Relación con Owner
     owner = relationship("Owner", back_populates="restaurants")
@@ -144,3 +155,37 @@ class RestaurantCategories(db.Model):
             "restaurant_name": self.restaurant.name if self.restaurant else None,
             "category_name": self.category.name if self.category else None,
         }
+
+    
+
+# Enum para el estado de las reservas
+class ReservationState(enum.Enum):
+    PENDING = "Pending"
+    ACCEPTED = "Accepted"
+    REHUSED = "Refused"
+    CANCELED = "Canceled"
+
+    @classmethod
+    def list_values(cls):
+        return [state.value for state in cls]
+
+class Reservation(db.Model):  # Cambia de Reservations a Reservation
+    __tablename__ = 'reservations'  # Asegúrate de que el nombre de la tabla sea correcto
+    id = db.Column(db.Integer, primary_key=True)
+    id_fk_restaurant = db.Column(
+    db.Integer,
+    db.ForeignKey('restaurant.id', ondelete="CASCADE"),  # Añade ondelete="CASCADE"
+    nullable=False
+)
+
+    id_fk_diner = db.Column(db.Integer, db.ForeignKey('diner.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    hour = db.Column(db.Time, nullable=False)
+    state = db.Column(db.Enum(ReservationState), default=ReservationState.PENDING, nullable=False)
+    people = db.Column(db.Integer, nullable=False)
+
+    # Relación con restaurante
+    restaurant = relationship("Restaurant", back_populates="reservations")
+
+    # Relación con comensal
+    diner = relationship("Diner", back_populates="reservations")
