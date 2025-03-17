@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -6,10 +6,8 @@ const BACKEND_URL = process.env.BACKEND_URL || 'https://cuddly-palm-tree-r5wg7q9
 
 const AddRestaurant = () => {
     const navigate = useNavigate();
-  
-    // Obtiene dinámicamente el ID del propietario logueado (por ejemplo, desde localStorage)
-    const ownerId = localStorage.getItem("owner_id") || 1; // Reemplaza 1 con un valor adecuado
 
+    const [owners, setOwners] = useState([]); // Estado para almacenar propietarios
     const [formData, setFormData] = useState({
         name: "",
         location: "",
@@ -17,15 +15,25 @@ const AddRestaurant = () => {
         latitude: "0.0000",
         longitude: "0.0000",
         capacity: "",
-
-        
-
-        owner_id: ownerId // Usamos el ID dinámico
-
+        owner_id: "", // Inicialmente vacío para obligar la selección de un propietario
     });
 
     const [message, setMessage] = useState("");
-    const [isLoading, setIsLoading] = useState(false); // Indicador de carga
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Obtener lista de propietarios al montar el componente
+    useEffect(() => {
+        const fetchOwners = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/api/owners`);
+                setOwners(response.data.data); // Actualiza el estado con los propietarios
+                console.log("Propietarios cargados:", response.data.data);
+            } catch (error) {
+                console.error("Error al obtener propietarios:", error);
+            }
+        };
+        fetchOwners();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -33,41 +41,28 @@ const AddRestaurant = () => {
     };
 
     const handleSubmit = async (e) => {
-
-        e.preventDefault(); // Evita el refresh del navegador
-
-        const token = localStorage.getItem('access_token');
-
-        setIsLoading(true); // Muestra el indicador de carga
+        e.preventDefault();
+        setIsLoading(true);
         setMessage("");
 
         // Validaciones antes de enviar
-        if (!formData.name || !formData.location || !formData.telephone || !formData.latitude || !formData.longitude || !formData.capacity) {
-            setMessage("Todos los campos son obligatorios.");
+        if (!formData.name || !formData.location || !formData.telephone || !formData.latitude || !formData.longitude || !formData.capacity || !formData.owner_id) {
+            setMessage("Todos los campos son obligatorios, incluido el propietario.");
             setIsLoading(false);
             return;
         }
-        if (isNaN(formData.latitude) || isNaN(formData.longitude)) {
-            setMessage("Latitud y longitud deben ser números válidos.");
-            setIsLoading(false);
-            return;
-        }
-        if (formData.capacity <= 0) {
-            setMessage("La capacidad debe ser un número entero positivo.");
-            setIsLoading(false);
-            return;
-        }
+
+        const parsedFormData = {
+            ...formData,
+            capacity: parseInt(formData.capacity, 10),
+            latitude: parseFloat(formData.latitude),
+            longitude: parseFloat(formData.longitude),
+        };
+        console.log("Datos enviados al backend (formateados):", parsedFormData);
 
         try {
-            // Realiza la solicitud al backend
-            const response = await axios.post(`${BACKEND_URL}/api/restaurants`, formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const response = await axios.post(`${BACKEND_URL}/api/restaurants`, parsedFormData);
             setMessage(response.data.message || "Restaurante añadido exitosamente");
-            // Resetea el formulario excepto el owner_id
-
             setFormData({
                 name: "",
                 location: "",
@@ -75,32 +70,24 @@ const AddRestaurant = () => {
                 latitude: "0.0000",
                 longitude: "0.0000",
                 capacity: "",
-
-                owner_id: formData.owner_id
-
+                owner_id: "",
             });
-
-            // Redirigir a otra página después de añadir el restaurante si es necesario
-            // navigate("/my-restaurants"); // Descomenta esto si quieres redirigir
-
         } catch (error) {
-
             console.error("Error al enviar el restaurante:", error);
-            setMessage(error.response?.data?.error || "Hubo un error al añadir el restaurante");
-
             if (error.response) {
+                console.log("Error del backend (respuesta):", error.response.data);
                 setMessage(error.response.data.error || "Error del servidor.");
             } else if (error.request) {
+                console.log("Error de conexión (request):", error.request);
                 setMessage("No se pudo conectar al servidor. Por favor, intenta más tarde.");
             } else {
+                console.log("Error inesperado:", error.message);
                 setMessage("Ocurrió un error inesperado.");
             }
         } finally {
-            setIsLoading(false); // Oculta el indicador de carga
-
+            setIsLoading(false);
         }
     };
-    
 
     return (
         <div className="add-restaurant container mt-5">
@@ -172,6 +159,23 @@ const AddRestaurant = () => {
                         required
                     />
                 </div>
+                <div className="mb-3">
+                    <label className="form-label">Propietario:</label>
+                    <select
+                        name="owner_id"
+                        className="form-control"
+                        value={formData.owner_id}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Seleccione un propietario</option>
+                        {owners.map((owner) => (
+                            <option key={owner.id} value={owner.id}>
+                                {owner.name} ({owner.email})
+                            </option>
+                        ))}
+                    </select>
+                </div>
                 <button type="submit" className="btn btn-success">
                     {isLoading ? "Procesando..." : "Añadir Restaurante"}
                 </button>
@@ -182,4 +186,5 @@ const AddRestaurant = () => {
 };
 
 export default AddRestaurant;
+
 

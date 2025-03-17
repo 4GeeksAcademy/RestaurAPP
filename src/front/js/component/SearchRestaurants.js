@@ -13,36 +13,23 @@ const SearchRestaurants = () => {
   const [message, setMessage] = useState("");
 
   const handleSearch = async () => {
-    // Verifica si los valores de entrada son válidos
     if (capacity <= 0) {
       setMessage("Por favor, ingresa una capacidad mayor a 0.");
       return;
     }
-  
+
     try {
-      console.log(
-        city.trim()
-          ? `Buscando restaurantes en "${city}" con capacidad para ${capacity} personas.`
-          : `Buscando los primeros 10 restaurantes con capacidad para ${capacity} personas.`
-      );
-  
-      // Configura los parámetros de la solicitud
-      const params = city.trim()
-        ? { location: city, capacity }
-        : { capacity }; // Sin "location" si no se especifica una ciudad
-  
+      const params = city.trim() ? { location: city, capacity } : { capacity };
       const response = await axios.get(`${BACKEND_URL}/api/restaurants`, {
         params,
       });
-  
+
       console.log("Respuesta del backend:", response.data);
-  
-      // Filtrar y limitar resultados si no hay una ciudad especificada
       const restaurantList = response.data.data || [];
       const filteredRestaurants = !city.trim()
-        ? restaurantList.slice(0, 10) // Obtener los primeros 10
+        ? restaurantList.slice(0, 10)
         : restaurantList;
-  
+
       if (filteredRestaurants.length > 0) {
         setRestaurants(filteredRestaurants);
         setMessage("");
@@ -59,52 +46,61 @@ const SearchRestaurants = () => {
       setMessage("Error al buscar restaurantes. Por favor, inténtalo de nuevo.");
     }
   };
-  
-  
-
 
   const handleDelete = async (restaurant_id) => {
     try {
-      console.log("BACKEND_URL:", BACKEND_URL);
-
       await axios.delete(`${BACKEND_URL}/api/restaurants/${restaurant_id}`);
       setRestaurants(
         restaurants.filter((restaurant) => restaurant.id !== restaurant_id)
       );
       setMessage("Restaurante eliminado exitosamente");
     } catch (error) {
-      console.error(
-        "Error al eliminar restaurante:",
-        error.response?.data || error.message
-      );
+      console.error("Error al eliminar restaurante:", error.response?.data || error.message);
       setMessage("Error al eliminar el restaurante");
     }
   };
 
   const handleEdit = (restaurant) => {
-    setEditRestaurant({ ...restaurant }); // Abre el modal y carga los datos del restaurante
+    setEditRestaurant({ ...restaurant }); // Carga los datos del restaurante en el modal
   };
 
   const handleSaveEdit = async () => {
     try {
-      await axios.put(
+      if (!editRestaurant || !editRestaurant.id) {
+        alert("Faltan datos para modificar el restaurante.");
+        return;
+      }
+
+      const response = await axios.put(
         `${BACKEND_URL}/api/restaurants/${editRestaurant.id}`,
-        editRestaurant
+        {
+          name: editRestaurant.name,
+          location: editRestaurant.location,
+          telephone: editRestaurant.telephone,
+          latitude: editRestaurant.latitude,
+          longitude: editRestaurant.longitude,
+          capacity: editRestaurant.capacity,
+          owner_id: editRestaurant.owner_id,
+        }
       );
-      setMessage("Restaurante modificado exitosamente");
-      // Actualiza la lista localmente para reflejar los cambios
-      setRestaurants(
-        restaurants.map((r) =>
-          r.id === editRestaurant.id ? editRestaurant : r
+
+      console.log("Restaurante modificado exitosamente:", response.data);
+      alert("Restaurante modificado exitosamente.");
+      setEditRestaurant(null);
+
+      // Actualizar lista de restaurantes después de guardar cambios
+      setRestaurants((prev) =>
+        prev.map((restaurant) =>
+          restaurant.id === response.data.data.id ? response.data.data : restaurant
         )
       );
-      setEditRestaurant(null); // Cierra el modal
     } catch (error) {
-      console.error(
-        "Error al modificar restaurante:",
-        error.response?.data || error.message
-      );
-      setMessage("Error al modificar el restaurante");
+      console.error("Error al modificar el restaurante:", error);
+      if (error.response) {
+        alert(`Error: ${error.response.data.error || "No se pudo modificar el restaurante."}`);
+      } else {
+        alert("Error inesperado. Revisa la consola para más detalles.");
+      }
     }
   };
 
@@ -133,7 +129,7 @@ const SearchRestaurants = () => {
           className="form-control"
           min="1"
           value={capacity}
-          onChange={(e) => setCapacity(parseInt(e.target.value, 10) || 0)} // Conviertes el valor a un número
+          onChange={(e) => setCapacity(parseInt(e.target.value, 10) || 0)}
         />
       </div>
       <button className="btn btn-primary mb-4" onClick={handleSearch}>
@@ -182,13 +178,9 @@ const SearchRestaurants = () => {
           </tbody>
         </table>
       ) : (
-        <p>
-          No hay restaurantes disponibles en esta ciudad para la capacidad
-          especificada.
-        </p>
+        <p>No hay restaurantes disponibles en esta ciudad para la capacidad especificada.</p>
       )}
 
-      {/* Modal para editar restaurante */}
       {editRestaurant && (
         <div
           className="modal"

@@ -1,12 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate, useParams } from "react-router-dom";
- // Ya debería estar aquí
-
 
 export const DinerEdit = () => {
   const { diner_id } = useParams(); // Obtener el ID del diner desde la URL
-  console.log("el ID del diner es:", diner_id);
+  console.log("El ID del diner es:", diner_id); // Verificar que el ID se capture correctamente
   const { actions, store } = useContext(Context); // Acceder a las acciones y el estado global
   const navigate = useNavigate();
 
@@ -24,7 +22,11 @@ export const DinerEdit = () => {
         setFullname(diner.fullname || "");
         setEmail(diner.email || "");
         setTelephone(diner.telephone || "");
+      } else {
+        console.error(`Diner con ID ${diner_id} no encontrado en el estado global.`);
       }
+    } else {
+      console.error("El ID del diner es undefined.");
     }
   }, [diner_id, store.diners]);
 
@@ -42,7 +44,7 @@ export const DinerEdit = () => {
     try {
       await actions.handleEdit(diner_id, updatedData); // Llamar a la acción para editar
       alert("Diner actualizado exitosamente");
-      navigate("/diners"); // Redirigir a la lista de diners
+      navigate("/dinerlist"); // Redirigir a la lista de diners
     } catch (error) {
       console.error("Error al editar el diner:", error.message);
       alert("Error al realizar la operación: " + error.message);
@@ -64,7 +66,7 @@ export const DinerEdit = () => {
                 placeholder="Full Name"
                 value={fullname}
                 onChange={(e) => setFullname(e.target.value)}
-                autoComplete="name" // Para nombre completo
+                autoComplete="name"
                 required
               />
               <label htmlFor="floatingfullname">Full Name</label>
@@ -78,7 +80,7 @@ export const DinerEdit = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autoComplete="username" // Email como nombre de usuario
+                autoComplete="username"
                 required
               />
               <label htmlFor="floatingEmail">Email</label>
@@ -92,7 +94,7 @@ export const DinerEdit = () => {
                 placeholder="Telephone"
                 value={telephone}
                 onChange={(e) => setTelephone(e.target.value)}
-                autoComplete="tel" // Teléfono
+                autoComplete="tel"
                 required
               />
               <label htmlFor="floatingTelephone">Telephone</label>
@@ -106,7 +108,7 @@ export const DinerEdit = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password" // Añadido para cumplir con las recomendaciones
+                autoComplete="current-password"
               />
               <label htmlFor="floatingPassword">Password</label>
             </div>

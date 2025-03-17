@@ -1,4 +1,3 @@
-
 import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,22 +7,20 @@ export const Dinerlist = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    actions.getDinerList();
+    actions.getDinerList(); // Cargar la lista de diners desde el estado global
     console.log("Diners en el estado global:", store.diners);
   }, []);
-  
 
-  function handleDelete(id) {
-    actions.handleDelete(id);
-    console.log("se elimino");
-  }
-
-  function handleEdit(id, fullname, email, telephone, password) {
-    console.log("se edito");
-    navigate(`/dineredit/${id}`, {
-      state: { id, fullname, email, telephone, password },
-    });
-  }
+  // Función para manejar la eliminación de un diner
+  const handleDelete = async (diner_id) => {
+    try {
+      await actions.deleteDiner(diner_id); // Llamar la acción global para eliminar el diner
+      alert("Diner eliminado exitosamente.");
+    } catch (error) {
+      console.error("Error al eliminar el diner:", error.message);
+      alert("Error al eliminar el diner. Intenta nuevamente.");
+    }
+  };
 
   return (
     <>
@@ -38,9 +35,15 @@ export const Dinerlist = () => {
                 <p>{diner.telephone}</p>
                 <button
                   onClick={() => navigate(`/diners/${diner.id}/edit`)} // Redirige al formulario de edición
-                  className="btn btn-warning"
+                  className="btn btn-warning me-2"
                 >
                   Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(diner.id)} // Llama a la función para eliminar
+                  className="btn btn-danger"
+                >
+                  Delete
                 </button>
               </li>
             ))
@@ -56,3 +59,4 @@ export const Dinerlist = () => {
     </>
   );
 };
+

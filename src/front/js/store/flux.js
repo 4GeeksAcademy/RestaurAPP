@@ -71,6 +71,33 @@ const getState = ({ getStore, getActions, setStore }) => {
                   console.error("Error en getDinerList:", error.message);
                 }
             },
+
+            deleteDiner: async (diner_id) => {
+                const store = getStore(); // Accede al estado actual
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/diners/${diner_id}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+            
+                    if (!response.ok) {
+                        const error = await response.json();
+                        console.error("Error al eliminar el diner desde el backend:", error);
+                        throw new Error(error.error || "Error al eliminar el diner.");
+                    }
+            
+                    // Actualizar el estado global eliminando el diner localmente
+                    const updatedDiners = store.diners.filter((diner) => diner.id !== diner_id);
+                    setStore({ diners: updatedDiners });
+                    console.log("Diner eliminado del estado global:", updatedDiners);
+                } catch (error) {
+                    console.error("Error en deleteDiner:", error.message);
+                    throw new Error(error.message);
+                }
+            },
+                        
               
 
             getAvailableRestaurants: async (location, people) => {
@@ -154,22 +181,56 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("Error en addOwner:", error.message);
                 }
             },
+            updateOwner: async (ownerId, ownerData) => {
+                try {
+                  const response = await fetch(`${process.env.BACKEND_URL}/api/owners/${ownerId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(ownerData), // Datos a actualizar
+                  });
+              
+                  if (!response.ok) {
+                    throw new Error("Error al actualizar propietario.");
+                  }
+              
+                  const updatedOwner = await response.json();
+                  console.log("Propietario actualizado:", updatedOwner);
+              
+                  // Actualizar el estado global
+                  setStore({
+                    owners: getStore().owners.map((owner) =>
+                      owner.id === parseInt(ownerId) ? updatedOwner : owner
+                    ),
+                  });
+                } catch (error) {
+                  console.error("Error en updateOwner:", error.message);
+                  throw error; // Propaga el error para manejarlo en la UI si es necesario
+                }
+              },
+              
 
             // Eliminar un propietario
             deleteOwner: async (ownerId) => {
                 try {
-                    const response = await fetch(`${process.env.BACKEND_URL}/api/owners/${ownerId}`, {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                    });
-                    if (!response.ok) throw new Error("Error al eliminar propietario.");
-                    const updatedOwners = getStore().owners.filter((owner) => owner.id !== ownerId);
-                    setStore({ owners: updatedOwners });
+                  const response = await fetch(`${process.env.BACKEND_URL}/api/owners/${ownerId}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                  });
+              
+                  if (!response.ok) {
+                    throw new Error("Error al eliminar propietario.");
+                  }
+              
+                  // Actualiza el estado eliminando el propietario correspondiente
+                  const updatedOwners = getStore().owners.filter((owner) => owner.id !== ownerId);
+                  setStore({ owners: updatedOwners });
+              
+                  console.log(`Propietario con ID ${ownerId} eliminado con éxito.`);
                 } catch (error) {
-                    console.error("Error en deleteOwner:", error.message);
+                  console.error("Error en deleteOwner:", error.message);
                 }
-            },
-
+              },
+              
             // Obtener todos los restaurantes
             getAllRestaurants: async () => {
                 try {

@@ -111,8 +111,14 @@ def ownerLogin():
 
 @api.route('/owners', methods=['GET'])
 def get_all_owners():
-    all_owners = Owner.query.all()
-    return create_response(data=serialize_list(all_owners), status=200)
+    try:
+        owners = Owner.query.all()
+        if not owners:
+            return jsonify({"error": "No se encontraron propietarios"}), 404
+        return jsonify({"data": [owner.serialize() for owner in owners]})
+    except Exception as e:
+        print("Error al obtener propietarios:", e)
+        return jsonify({"error": "Error interno del servidor"}), 500
 
 @api.route('/owners/<int:owner_id>', methods=['GET'])
 def get_single_owner(owner_id):
@@ -194,25 +200,57 @@ def get_restaurants():
 
 @api.route('/restaurants', methods=['POST'])
 def add_restaurant():
-    data = request.json
-    required_fields = ['name', 'location', 'telephone', 'latitude', 'longitude', 'capacity', 'owner_id']
-    validation_error = validate_required_fields(data, required_fields)
-    if validation_error:
-        return jsonify(validation_error), 400
-
     try:
-        new_restaurant = Restaurant(
-            name=data['name'], location=data['location'], telephone=data['telephone'],
-            latitude=data['latitude'], longitude=data['longitude'], capacity=data['capacity'],
+        data = request.json
+        print("Datos recibidos en el backend:", data)  # Log de depuración inicial
+
+        # Validar campos obligatorios
+        if not data.get('name') or not data.get('location') or not data.get('capacity') or not data.get('telephone'):
+            print("Faltan campos obligatorios en los datos recibidos")
+            return jsonify({"error": "Faltan campos obligatorios: name, location, capacity, telephone"}), 400
+
+        # Validar `owner_id`
+        owner = Owner.query.get(data.get('owner_id'))
+        if not owner:
+            print("El propietario no existe para el owner_id proporcionado:", data.get('owner_id'))
+            return jsonify({"error": "El propietario no existe para el ID proporcionado"}), 400
+
+        # Validar latitude y longitude
+        if data.get('latitude') is None or data.get('longitude') is None:
+            print("Faltan los campos obligatorios: latitude o longitude")
+            return jsonify({"error": "Faltan los campos obligatorios: latitude, longitude"}), 400
+
+        # Validar y convertir latitude y longitude
+        try:
+            latitude = float(data['latitude'])
+            longitude = float(data['longitude'])
+        except (ValueError, TypeError) as e:
+            print("Error en la conversión de latitude/longitude:", e)
+            return jsonify({"error": "Latitude y longitude deben ser números válidos"}), 400
+
+        # Crear el restaurante
+        print("Creando restaurante con los datos:", data)
+        restaurant = Restaurant(
+            name=data['name'],
+            location=data['location'],
+            telephone=data['telephone'],
+            capacity=data['capacity'],
+            latitude=latitude,
+            longitude=longitude,
             owner_id=data['owner_id']
         )
-        db.session.add(new_restaurant)
+        db.session.add(restaurant)
         db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
-        return jsonify({"error": "Ya existe un restaurante con esos datos."}), 400
 
-    return create_response(data=new_restaurant.serialize(), message="Restaurante añadido exitosamente", status=201)
+        print("Restaurante creado exitosamente:", restaurant.serialize())
+        return jsonify({"message": "Restaurante añadido exitosamente"}), 201
+
+    except Exception as e:
+        # Capturar rastreo completo del error
+        import traceback
+        traceback.print_exc()
+        print("Error interno del servidor:", e)
+        return jsonify({"error": "Error interno del servidor"}), 500
 
 @api.route('/restaurants/<int:restaurant_id>', methods=['DELETE'])
 def delete_restaurant(restaurant_id):
@@ -224,6 +262,37 @@ def delete_restaurant(restaurant_id):
     db.session.commit()
     return create_response(message="Restaurante eliminado exitosamente", status=200)
 
+@api.route('/restaurants/<int:restaurant_id>', methods=['PUT'])
+def update_restaurant(restaurant_id):
+    try:
+        # Obtener restaurante por ID
+        restaurant = Restaurant.query.get(restaurant_id)
+        if not restaurant:
+            return jsonify({"error": "Restaurante no encontrado"}), 404
+
+        # Obtener datos del request
+        data = request.json
+        print("Datos recibidos para actualizar el restaurante:", data)
+
+        # Actualizar los campos del restaurante
+        restaurant.name = data.get('name', restaurant.name)
+        restaurant.location = data.get('location', restaurant.location)
+        restaurant.telephone = data.get('telephone', restaurant.telephone)
+        restaurant.latitude = float(data.get('latitude', restaurant.latitude))
+        restaurant.longitude = float(data.get('longitude', restaurant.longitude))
+        restaurant.capacity = int(data.get('capacity', restaurant.capacity))
+        restaurant.owner_id = data.get('owner_id', restaurant.owner_id)
+
+        # Guardar cambios en la base de datos
+        db.session.commit()
+        print("Restaurante actualizado exitosamente:", restaurant.serialize())
+
+        return jsonify({"message": "Restaurante actualizado exitosamente", "data": restaurant.serialize()}), 200
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print("Error al actualizar el restaurante:", e)
+        return jsonify({"error": "Error interno del servidor"}), 500
 
 
 """/////////////////////////////////// ORIGINS ////////////////////////////////////////"""

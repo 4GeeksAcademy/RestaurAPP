@@ -62,7 +62,8 @@ const Layout = () => {
 
                         <Route element={<Dinerform />} path="/dinerform" />
                         <Route element={<Dinerlist />} path="/dinerlist" />
-                        <Route element={<DinerEdit />} path="/dineredit/:id" />
+                        <Route element={<DinerEdit />} path="/diners/:diner_id/edit" />
+
                         <Route element={<DinerLogin />} path="/diner/login" />
                         <Route element={<DinerDashboard />} path="/diner/dashboard" />
                         <Route element={<RestaurantList />} path="/restaurants" />
@@ -76,7 +77,7 @@ const Layout = () => {
                         <Route element={<OwnerList />} path="/owners" />
                         <Route element={<OwnerRestaurants />} path="/owners/:owner_id/restaurants" />
                         <Route element={<OwnerForm />} path="/owners/new" />
-                        <Route element={<OwnerForm />} path="/owners/:ownerId" />
+                        <Route element={<OwnerForm />} path="/owners/:owner_id/edit" />
                         <Route element={<OwnerLogin/>} path="/owners/login" />
                         <Route element={<OwnerDashboard/>} path="/owners/dashboard" />
 
@@ -101,7 +102,7 @@ const Layout = () => {
 
                         {/*<Route element={<Signup />} path="/signup" />*/}  {/* Ruta de registro */}
                         {/*<Route element={<Login />} path="/login" />*/}  {/* Ruta de inicio de sesión */}
-                        <Route element={<h1>Not found!</h1>} />
+                        <Route element={<h1>Ruta no encontrada en LAYOUT !</h1>} path="*"/>
                     </Routes>
                     {/* <Footer /> */}
                 </ScrollToTop>
