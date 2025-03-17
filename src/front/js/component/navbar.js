@@ -50,7 +50,7 @@ export const Navbar = () => {
                             <button className="btn btn-light">Owner Login</button>
                         </Link>
                     )}
-                    {store.auth ? (
+                    {store.dinerauth ? (
                         <Link to="/diner/dashboard">
                             <button className="btn btn-light">Diner Dashboard</button>
                         </Link>

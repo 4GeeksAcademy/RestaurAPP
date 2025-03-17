@@ -24,7 +24,10 @@ const getState = ({ getStore, getActions, setStore }) => {
             restaurantCategories: [],
             specificRestaurantCategory: [],
             restaurants: [],
-            specificRestaurant: []
+            specificRestaurant: [],
+            reservations: [],
+            availableRestaurants: [],
+            ownerRestaurants: [], // Lista de restaurantes del propietario
         },
         actions: {
             // Use getActions to call a function within a function
@@ -140,20 +143,20 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
 
-            getSpecificOwner: () => {
+            getSpecificOwner : () => {
                 // Recupera il token e l'ownerId dal localStorage
                 const token = localStorage.getItem('token');
                 const ownerId = localStorage.getItem('ownerId');
-                
+
                 // Verifica se i dati sono disponibili
                 if (!token || !ownerId) {
                     console.error("Token o Owner ID non trovato nel localStorage");
                     return;
                 }
-            
+
                 console.log("Token:", token);
                 console.log("Owner ID:", ownerId);
-            
+
                 // Effettua la richiesta al back-end
                 fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, {
                     method: 'GET',
@@ -162,24 +165,24 @@ const getState = ({ getStore, getActions, setStore }) => {
                         'Content-Type': 'application/json',
                     }
                 })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    console.log("Datos recibidos from FRONT specific ownerr:", data);
-            
-                    // Salva l'owner nel store (o nella variabile di stato) del front-end
-                    setStore({ specificOwner: data });
-                })
-                .catch((error) => {
-                    console.error('Error fetching specific owner:', error);
-                });
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log("Datos recibidos from FRONT specific ownerr:", data);
+
+                        // Salva l'owner nel store (o nella variabile di stato) del front-end
+                        setStore({ specificOwner: data });
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching specific owner:', error);
+                    });
             },
-            
-            
+
+
 
             addOwner: (newOwner) => {
                 const requestOptions = {
@@ -203,7 +206,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
                 };
-            
+
                 fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, requestOptions)
                     .then((response) => response.json())
                     .then((data) => {
@@ -213,7 +216,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             alert("Owner successfully deleted");
                             const store = getStore();
                             setStore({ owners: store.owners.filter((owner) => owner.id !== ownerId) });
-            
+
                             getActions().getAllOwners();
                         }
                     }) // <--- Chiusura del secondo .then()
@@ -247,7 +250,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 console.log("Login from actions");
                 const backendUrl = process.env.BACKEND_URL + "/api/owners/login";
                 console.log("Backend URL:", backendUrl);
-            
+
                 const requestOption = {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -256,7 +259,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         password: password,
                     }),
                 };
-            
+
                 fetch(backendUrl, requestOption)
                     .then((response) => {
                         console.log("Response status:", response.status);
@@ -273,14 +276,14 @@ const getState = ({ getStore, getActions, setStore }) => {
                             localStorage.setItem("token", data.access_token);
                             localStorage.setItem("ownerName", data.owner_name);
                             localStorage.setItem("ownerId", data.owner_id); // Salva ID del owner
-            
+
                             // Aggiorna lo store globale con i dati dell'owner
                             setStore({
                                 auth: true,
                                 ownerName: data.owner_name,
                                 ownerId: data.owner_id,
                             });
-            
+
                             console.log("Token:", data.access_token);
                             console.log("Owner ID:", data.owner_id);
                         }
@@ -290,7 +293,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         setStore({ auth: false });
                     });
             },
-            
+
 
             ownerLogout: () => {
                 console.log("logout desde actions");
@@ -424,7 +427,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             modifyCategory: (categoryId, updatedCategory) => {
                 console.log("modifica da actions");
-                
+
                 const requestOptions = {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
@@ -453,7 +456,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         getActions().getAllRestaurants();
                     });
             },
-            
+
             getSpecificRestaurantCategory: (restaurantCategoryId) => {
                 fetch(process.env.BACKEND_URL + "/api/restaurant_categories/" + restaurantCategoryId)
                     .then((response) => response.json())
@@ -462,54 +465,54 @@ const getState = ({ getStore, getActions, setStore }) => {
                         setStore({ specificRestaurantCategory: data });
                     });
             },
-            
+
             addRestaurantCategory: (newRestaurantCategory) => {
                 const requestOptions = {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newRestaurantCategory),
                 };
-            
+
                 fetch(process.env.BACKEND_URL + "/api/restaurant_categories", requestOptions)
                     .then((response) => response.json())
                     .then((data) => {
 
                         const store = getStore();
                         setStore({ restaurantCategories: [...store.restaurantCategories, data] });
-            
+
                         getActions().getAllRestaurantCategories();
                     });
             },
-            
+
             deleteRestaurantCategory: (restaurantCategoryId) => {
                 const requestOptions = {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
                 };
-            
+
                 fetch(process.env.BACKEND_URL + "/api/restaurant_categories/" + restaurantCategoryId, requestOptions)
                     .then((response) => response.json())
                     .then(() => {
                         const store = getStore();
-                        setStore({ 
+                        setStore({
                             restaurantCategories: store.restaurantCategories.filter(
                                 (rc) => rc.id !== restaurantCategoryId
-                            ) 
+                            )
                         });
-            
+
                         getActions().getAllRestaurantCategories();
                     });
             },
-            
+
             modifyRestaurantCategory: (restaurantCategoryId, updatedRestaurantCategory) => {
                 console.log("Modifica da actions");
-            
+
                 const requestOptions = {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updatedRestaurantCategory),
                 };
-            
+
                 fetch(process.env.BACKEND_URL + "/api/restaurant_categories/" + restaurantCategoryId, requestOptions)
                     .then((response) => response.json())
                     .then((data) => {
@@ -518,7 +521,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             rc.id === restaurantCategoryId ? data : rc
                         );
                         setStore({ restaurantCategories: updatedRestaurantCategories });
-            
+
                         getActions().getAllRestaurantCategories();
                     });
             },
@@ -538,7 +541,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .then((data) => {
                         console.log("Datos del restaurante:", data);
                         setStore({ specificRestaurant: data });  // Aggiorna lo store con i dati del ristorante
-            
+
                         // Ottieni lo stato aggiornato dopo la chiamata setStore
                         const updatedStore = getStore();  // Usa getStore per ottenere lo stato corrente
                         console.log("Stato aggiornato:", updatedStore.specificRestaurant);
@@ -551,85 +554,85 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             getRestaurantsForLoggedInOwner: () => {
                 const token = localStorage.getItem("token");
-            
+
                 if (!token) {
                     console.error("No hay token disponible");
                     return;
                 }
-            
+
                 fetch(process.env.BACKEND_URL + "/api/owners/restaurants", {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al obtener restaurantes");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("Datos recibidos:", data);
-                    setStore({ restaurants: data });  // Guardar los rest en store
-                })
-                .catch(error => console.error("Error obteniendo restaurantes:", error));
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error al obtener restaurantes");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Datos recibidos:", data);
+                        setStore({ restaurants: data });  // Guardar los rest en store
+                    })
+                    .catch(error => console.error("Error obteniendo restaurantes:", error));
             },
-            
+
 
             createRestaurant: (newRestaurant, token) => {
-                return new Promise((resolve, reject) => { 
-                  const requestOptions = {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      "Authorization": `Bearer ${token}`, 
-                    },
-                    body: JSON.stringify(newRestaurant),
-                  };
-              
-                  fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
-                    .then((response) => {
-                      if (!response.ok) {
-                        reject('Error en la creación del restaurante');
-                      }
-                      return response.json();
-                    })
-                    .then((data) => {
-                      const store = getStore();
-                      setStore({ restaurants: [...store.restaurants, data] });
-                      setStore({ auth: true });
-                      localStorage.setItem("token", data.access_token);
-                      localStorage.setItem("ownerId", data.owner_id);
-                      localStorage.setItem("ownerName", data.owner_name);
-                      getActions().getRestaurantsForLoggedInOwner();
-                      resolve(); 
-                    })
-                    .catch((error) => {
-                      console.error("Error al crear restaurante:", error);
-                      reject(error);
-                    });
-                });
-              },
+                return new Promise((resolve, reject) => {
+                    const requestOptions = {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`,
+                        },
+                        body: JSON.stringify(newRestaurant),
+                    };
 
-              modifyRestaurant: (restaurantId, updatedRestaurant) => {
+                    fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
+                        .then((response) => {
+                            if (!response.ok) {
+                                reject('Error en la creación del restaurante');
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            const store = getStore();
+                            setStore({ restaurants: [...store.restaurants, data] });
+                            setStore({ auth: true });
+                            localStorage.setItem("token", data.access_token);
+                            localStorage.setItem("ownerId", data.owner_id);
+                            localStorage.setItem("ownerName", data.owner_name);
+                            getActions().getRestaurantsForLoggedInOwner();
+                            resolve();
+                        })
+                        .catch((error) => {
+                            console.error("Error al crear restaurante:", error);
+                            reject(error);
+                        });
+                });
+            },
+
+            modifyRestaurant: (restaurantId, updatedRestaurant) => {
                 const store = getStore();
                 const token = localStorage.getItem("token");
-            
+
                 if (!token) {
                     alert("You must be logged in to modify a restaurant.");
                     return;
                 }
-            
+
                 const requestOptions = {
                     method: "PUT",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`,
                     },
                     body: JSON.stringify(updatedRestaurant),
                 };
-            
+
                 fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId, requestOptions)
                     .then((response) => {
                         if (!response.ok) {
@@ -643,7 +646,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                             restaurant.id === restaurantId ? data : restaurant
                         );
                         setStore({ restaurants: updatedRestaurants });
-            
+
                         // Aggiorna la lista dei ristoranti
                         getActions().getRestaurantsForLoggedInOwner();
                     })
@@ -651,26 +654,26 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.error("Error updating restaurant:", error);
                     });
             },
-            
-            
-            
+
+
+
             deleteRestaurant: (restaurantId) => {
                 const store = getStore();
                 const token = localStorage.getItem("token");
-            
+
                 if (!token) {
                     alert("You must be logged in to delete a restaurant.");
                     return;
                 }
-            
+
                 const requestOptions = {
                     method: "DELETE",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`, // usa el token guardado en localStorage
                     },
                 };
-            
+
                 fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId, requestOptions)
                     .then((response) => response.json())
                     .then(() => {
@@ -684,17 +687,17 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.error("Error deleting restaurant:", error);
                     });
             },
-            
+
             // deleteRestaurant: (restaurantId) => {
             //     const store = getStore();
             //     const actions = getActions();
-            
+
             //     // Verifica se l'utente è autenticato e ha un token valido
             //     if (!store.auth) {
             //         alert("You must be logged in to delete a restaurant.");
             //         return;
             //     }
-            
+
             //     const requestOptions = {
             //         method: "DELETE",
             //         headers: { 
@@ -702,7 +705,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             //             "Authorization": `Bearer ${store.token}`,
             //         },
             //     };
-            
+
             //     fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}`, requestOptions)
             //         .then((response) => {
             //             if (!response.ok) {
@@ -716,7 +719,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             //                 (restaurant) => restaurant.id !== restaurantId
             //             );
             //             setStore({ restaurants: updatedRestaurants });
-            
+
             //             // Assicura di ricaricare i dati solo se necessario
             //             actions.getRestaurantsForLoggedInOwner();
             //         })
@@ -725,6 +728,150 @@ const getState = ({ getStore, getActions, setStore }) => {
             //             alert("Failed to delete the restaurant. Please try again.");
             //         });
             // },
+
+            // Crear una nueva reserva
+            createReservation: async (reservationData) => {
+                console.log("Ejecutando createReservation");
+                try {
+                    const response = await fetch(
+                        `${process.env.BACKEND_URL}/api/reservations/`,
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(reservationData),
+                        }
+                    );
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || "Error al crear la reserva.");
+                    }
+                    const data = await response.json();
+                    console.log("Reserva creada exitosamente:", data);
+                } catch (error) {
+                    console.error("Error en createReservation:", error.message);
+                }
+            },
+            // Obtener todas las reservas
+            getAllReservations: async () => {
+                console.log("Ejecutando getAllReservations");
+                try {
+                    const response = await fetch(
+                        `${process.env.BACKEND_URL}/api/reservations/`
+                    );
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    console.log("Reservas obtenidas:", data);
+                    setStore({ reservations: data.reservations });
+                } catch (error) {
+                    console.error("Error en getAllReservations:", error.message);
+                }
+            },
+
+            // Obtener reservas de un restaurante
+            getRestaurantReservations: async (restaurant_id) => {
+                console.log(
+                    `Ejecutando getRestaurantReservations para restaurant_id: ${restaurant_id}`
+                );
+                try {
+                    const response = await fetch(
+                        `${process.env.BACKEND_URL}/api/restaurants/${restaurant_id}/reservations`
+                    );
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
+                    const data = await response.json();
+                    console.log("Reservas del restaurante:", data);
+                    setStore({ reservations: data });
+                } catch (error) {
+                    console.error("Error en getRestaurantReservations:", error.message);
+                }
+            },
+            // Gestionar una reserva (aceptar, rechazar, modificar)
+            manageReservation: async (reservation_id, reservationData) => {
+                console.log(
+                    `Ejecutando manageReservation para reservation_id: ${reservation_id}`
+                );
+                try {
+                    const response = await fetch(
+                        `${process.env.BACKEND_URL}/api/reservations/manage/${reservation_id}`,
+                        {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(reservationData),
+                        }
+                    );
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
+                    const data = await response.json();
+                    console.log("Reserva gestionada exitosamente:", data);
+                    // Actualizar las reservas en el estado
+                    const updatedReservations = getStore().reservations.map(
+                        (reservation) =>
+                            reservation.id === reservation_id ? data.reservation : reservation
+                    );
+                    setStore({ reservations: updatedReservations });
+                } catch (error) {
+                    console.error("Error en manageReservation:", error.message);
+                }
+            },
+
+            // Eliminar una reserva
+            deleteReservation: async (reservation_id) => {
+                console.log(
+                    `Ejecutando deleteReservation para reservation_id: ${reservation_id}`
+                );
+                try {
+                    const response = await fetch(
+                        `${process.env.BACKEND_URL}/api/reservations/manage/${reservation_id}`,
+                        {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" },
+                        }
+                    );
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
+                    console.log("Reserva eliminada exitosamente.");
+                    // Actualizar las reservas en el estado
+                    const updatedReservations = getStore().reservations.filter(
+                        (reservation) => reservation.id !== reservation_id
+                    );
+                    setStore({ reservations: updatedReservations });
+                } catch (error) {
+                    console.error("Error en deleteReservation:", error.message);
+                }
+            },
+
+                 // Buscar restaurantes disponibles
+      getAvailableRestaurants: async (location, people) => {
+        console.log("Respuesta completa del servidor desde /api/restaurants/available:, {location, people}");
+        try {
+          const response = await fetch(
+            `${process.env.BACKEND_URL}/api/restaurants/available`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ location, people }),
+            }
+          );
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+          }
+          const data = await response.json();
+          console.log("Restaurantes disponibles respuesta del backend:", data);
+          setStore({ availableRestaurants: data.available_restaurants });
+        } catch (error) {
+          console.error("Error en getAvailableRestaurants:", error.message);
+        }
+      },
+      // Obtener todos los propietarios
 
             changeColor: (index, color) => {
                 const store = getStore();
