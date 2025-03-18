@@ -41,6 +41,7 @@ import ReservationList from "./component/ReservationList"; // Importar el compon
 import SearchAndReserve from "./component/SearchAndReserve"; // Importar el componente de búsqueda y reserva
 import ManageReservations from "./component/ManageReservations"; // Importar el componente de gestión de reservas
 import RequestReservation from "./component/RequestReservation";
+import OwnerReservations from "./component/ownerReservations";
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 import { Context } from "./store/appContext";
@@ -98,8 +99,8 @@ const Layout = () => {
                         <Route element={<SearchAndReserve />} path="/search-and-reserve" /> {/* Ruta de búsqueda y reserva */}
                         <Route element={<ManageReservations />} path="/manage-reservations" /> {/* Ruta de gestión de reservas */}
                         <Route element={<RequestReservation />} path="/request-reservation" />
-                        <Route element={<ReservationList />} path="/restaurants/:restaurantId/reservations" /> {/* Ruta para el listado de reservas */}
-  
+                        <Route element={<ReservationList />} path="/restaurants/:restaurant_id/reservations" /> {/* Ruta para el listado de reservas */}
+                        <Route element={<OwnerReservations />} path="/reservation_by_owner" /> 
 
                         {/* Ruta protegida para propietarios */}
                         <Route

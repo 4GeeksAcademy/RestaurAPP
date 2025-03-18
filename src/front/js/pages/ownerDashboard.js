@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate, Navigate } from "react-router-dom";
+import OwnerReservations from "../component/ownerReservations";
 
 const OwnerDashboard = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [ownerName, setOwnerName] = useState(localStorage.getItem("ownerName") || "Dueño");
-    const [activeTab, setActiveTab] = useState("restaurants");  // Impostato di default su "restaurants"
+    const [activeTab, setActiveTab] = useState("restaurants");  // default "restaurants"
 
     useEffect(() => {
         if (store.ownerName) {
@@ -14,7 +15,7 @@ const OwnerDashboard = () => {
             localStorage.setItem("ownerName", store.ownerName);
         }
         actions.getRestaurantsForLoggedInOwner();
-        actions.getSpecificOwner(store.ownerId); // Obtener detalles del propietario
+        actions.getSpecificOwner(store.ownerId); //detalles del owner
     }, [store.ownerName, store.ownerId]);
 
     const handleLogout = () => {
@@ -44,7 +45,7 @@ const OwnerDashboard = () => {
 
     // Eliminar perfil
     const handleDeleteProfile = () => {
-        const confirmDelete = window.confirm("⚠️ ¿Estás seguro de que deseas eliminar tu cuenta? ¡Esta acción es irreversible!");
+        const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar tu cuenta?");
         
         if (confirmDelete) {
             actions.deleteOwner(store.specificOwner.id);
@@ -99,7 +100,7 @@ const OwnerDashboard = () => {
                             </li>
                         </ul>
                         <div className="tab-content mt-4" id="myTabContent">
-                            {/* Tab content for Restaurants */}
+                            {/* Tab de Restaurants */}
                             <div
                                 className={`tab-pane fade ${activeTab === "restaurants" ? "show active" : ""}`}
                                 id="restaurants"
@@ -146,7 +147,7 @@ const OwnerDashboard = () => {
                                 </div>
                             </div>
 
-                            {/* Tab content for Reservations */}
+                            {/* Tab de Reservations */}
                             <div
                                 className={`tab-pane fade ${activeTab === "reservations" ? "show active" : ""}`}
                                 id="reservations"
@@ -154,9 +155,10 @@ const OwnerDashboard = () => {
                                 aria-labelledby="reservations-tab"
                             >
                                 <h2>Tus reservas</h2>
+                                <OwnerReservations/>
                             </div>
 
-                            {/* Tab content de Details */}
+                            {/* Tab de Details */}
                             <div
                                 className={`tab-pane fade ${activeTab === "details" ? "show active" : ""}`}
                                 id="details"
