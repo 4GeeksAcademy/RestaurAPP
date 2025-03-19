@@ -558,7 +558,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.log("Estado actualizado:", getStore().specificRestaurant);
                     })
                     .catch((error) => {
-                        console.error("Error al obtener el restaurante:", error);
+                        console.error("Error al obtener el restaurante por ID:", error);
                     });
             },
             
@@ -571,6 +571,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.error("No hay token disponible");
                     return;
                 }
+
+                console.log("Token presente:", token);
 
                 fetch(process.env.BACKEND_URL + "/api/owners/restaurants", {
                     method: "GET",
@@ -588,86 +590,166 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.log("Datos recibidos:", data);
                         setStore({ restaurants: data });  // Guardar los rest en store
                     })
-                    .catch(error => console.error("Error obteniendo restaurantes:", error));
+                    .catch(error => console.error("Error obteniendo restaurantes por logged in owner:", error));
             },
+
+
+            // createRestaurant: (newRestaurant, token) => {
+            //     return new Promise((resolve, reject) => {
+            //         const requestOptions = {
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json",
+            //                 "Authorization": `Bearer ${token}`,
+            //             },
+            //             body: JSON.stringify(newRestaurant),
+            //         };
+
+            //         fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
+            //             .then((response) => {
+            //                 if (!response.ok) {
+            //                     reject('Error en la creación del restaurante');
+            //                 }
+            //                 return response.json();
+            //             })
+            //             .then((data) => {
+            //                 console.log("Dati complet dalla risposta del back:", data);
+            //                 console.log("Token ricevuto nella risposta:", data.access_token);
+            //                 const store = getStore();
+            //                 setStore({ restaurants: [...store.restaurants, data] });
+            //                 setStore({ auth: true });
+            //                 localStorage.setItem("token", data.access_token);
+            //                 localStorage.setItem("ownerId", data.owner_id);
+            //                 localStorage.setItem("ownerName", data.owner_name);
+            //                 console.log("Token aggiornato nel localStorage:", localStorage.getItem("token")); // Verifica se il token viene aggiornato
+
+                            
+            //                 getActions().getRestaurantsForLoggedInOwner();
+            //                 resolve();
+            //             })
+            //             .catch((error) => {
+            //                 console.error("Error al crear restaurante:", error);
+            //                 reject(error);
+            //             });
+            //     });
+            // },
 
 
             createRestaurant: (newRestaurant, token) => {
                 return new Promise((resolve, reject) => {
-                    const requestOptions = {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`,
-                        },
-                        body: JSON.stringify(newRestaurant),
-                    };
-
-                    fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
-                        .then((response) => {
-                            if (!response.ok) {
-                                reject('Error en la creación del restaurante');
-                            }
-                            return response.json();
-                        })
-                        .then((data) => {
-                            const store = getStore();
-                            setStore({ restaurants: [...store.restaurants, data] });
-                            setStore({ auth: true });
-                            localStorage.setItem("token", data.access_token);
-                            localStorage.setItem("ownerId", data.owner_id);
-                            localStorage.setItem("ownerName", data.owner_name);
-                            getActions().getRestaurantsForLoggedInOwner();
-                            resolve();
-                        })
-                        .catch((error) => {
-                            console.error("Error al crear restaurante:", error);
-                            reject(error);
-                        });
-                });
-            },
-
-            modifyRestaurant: (restaurantId, updatedRestaurant) => {
-                const store = getStore();
-                const token = localStorage.getItem("token");
-
-                if (!token) {
-                    alert("You must be logged in to modify a restaurant.");
-                    return;
-                }
-
-                const requestOptions = {
-                    method: "PUT",
+                  const requestOptions = {
+                    method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${token}`, // Asegura que el token se pase en la cabecera
                     },
-                    body: JSON.stringify(updatedRestaurant),
-                };
-
-                fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId, requestOptions)
+                    body: JSON.stringify(newRestaurant),
+                  };
+              
+                  // Realiza la petición para crear el restaurante
+                  fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
                     .then((response) => {
-                        if (!response.ok) {
-                            throw new Error("Error updating restaurant");
-                        }
-                        return response.json();
+                      if (!response.ok) {
+                        reject('Error en la creación del restaurante');
+                      }
+                      return response.json();
                     })
                     .then((data) => {
-                        // Aggiorna i ristoranti nel store
-                        const updatedRestaurants = store.restaurants.map((restaurant) =>
-                            restaurant.id === restaurantId ? data : restaurant
-                        );
-                        setStore({ restaurants: updatedRestaurants });
-
-                        // Aggiorna la lista dei ristoranti
-                        getActions().getRestaurantsForLoggedInOwner();
+                      // Almacena el nuevo restaurante en el store
+                      const store = getStore();
+                      setStore({ restaurants: [...store.restaurants, data] });
+              
+                      // Actualiza el token en el localStorage (si se obtiene un nuevo token)
+                      if (data.access_token) {
+                        localStorage.setItem("token", data.access_token);
+                        localStorage.setItem("ownerId", data.owner_id);
+                        localStorage.setItem("ownerName", data.owner_name);
+                      }
+              
+                      // Verifica si el token se actualizó correctamente
+                      console.log("Token actualizado en localStorage:", localStorage.getItem("token"));
+              
+                      // Llama a la acción para obtener los restaurantes del dueño
+                      getActions().getRestaurantsForLoggedInOwner();
+                      resolve();
                     })
                     .catch((error) => {
-                        console.error("Error updating restaurant:", error);
+                      console.error("Error al crear restaurante:", error);
+                      reject(error);
                     });
-            },
+                });
+              },
+              
+
+            // modifyRestaurant: (restaurantId, updatedRestaurant) => {
+            //     const store = getStore();
+            //     const token = localStorage.getItem("token");
+
+            //     if (!token) {
+            //         alert("You must be logged in to modify a restaurant.");
+            //         return;
+            //     }
+
+            //     const requestOptions = {
+            //         method: "PUT",
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //             "Authorization": `Bearer ${token}`,
+            //         },
+            //         body: JSON.stringify(updatedRestaurant),
+            //     };
+
+            //     fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId, requestOptions)
+            //         .then((response) => {
+            //             if (!response.ok) {
+            //                 throw new Error("Error updating restaurant");
+            //             }
+            //             return response.json();
+            //         })
+            //         .then((data) => {
+            //             // Aggiorna i ristoranti nel store
+            //             const updatedRestaurants = store.restaurants.map((restaurant) =>
+            //                 restaurant.id === restaurantId ? data : restaurant
+            //             );
+            //             setStore({ restaurants: updatedRestaurants });
+
+            //             // Aggiorna la lista dei ristoranti
+            //             getActions().getRestaurantsForLoggedInOwner();
+            //         })
+            //         .catch((error) => {
+            //             console.error("Error updating restaurant:", error);
+            //         });
+            // },
 
 
+            modifyRestaurant: (restaurantId, updatedRestaurant, token) => {
+                const requestOptions = {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                  },
+                  body: JSON.stringify(updatedRestaurant),
+                };
+              
+                return fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}`, requestOptions)
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.error) {
+                      throw new Error(data.error);
+                    }
+                    // Modifica il ristorante nella lista del contesto
+                    const updatedRestaurants = getStore().restaurants.map(restaurant =>
+                      restaurant.id === restaurantId ? data : restaurant
+                    );
+                    setStore({ restaurants: updatedRestaurants });
+                  })
+                  .catch(err => {
+                    console.error("Error al modificar el restaurante:", err);
+                    throw err;
+                  });
+              },
+              
 
             deleteRestaurant: (restaurantId) => {
                 const store = getStore();
@@ -754,7 +836,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 
                 const token = localStorage.getItem('token');
 
-                fetch(`/api/restaurant/reservations/${restaurantId}`, {
+                fetch(process.env.BACKEND_URL + "/api/restaurant/reservations/" + restaurantId, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`

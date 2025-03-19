@@ -84,7 +84,7 @@ class Restaurant(db.Model):
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     capacity = db.Column(db.Integer, nullable=False)
-    # image_url = db.Column(db.String(255), nullable=True)
+    image_url = db.Column(db.String(255), nullable=True)
 
      
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
@@ -108,7 +108,7 @@ class Restaurant(db.Model):
             "longitude": self.longitude,
             "capacity": self.capacity,
             "owner_id": self.owner_id,
-            # "image_url": self.image_url
+            "image_url": self.image_url
         }
     
 class Origin(db.Model):

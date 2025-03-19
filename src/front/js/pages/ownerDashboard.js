@@ -119,7 +119,7 @@ const OwnerDashboard = () => {
                                             <div key={restaurant.id} className="col-md-4 mb-4">
                                                 <div className="card shadow-lg rounded-4" style={{ overflow: 'hidden', transition: 'transform 0.3s ease' }}>
                                                     <img
-                                                        src={restaurant.image || "https://media.istockphoto.com/id/1428412216/es/foto/un-chef-masculino-vertiendo-salsa-en-la-comida.jpg?s=612x612&w=0&k=20&c=Wze2YwgkFMQOTWoxdiRYsUpa1azCIOm8yRaUEEYOgOU="}
+                                                        src={restaurant.image_url || "https://media.istockphoto.com/id/1428412216/es/foto/un-chef-masculino-vertiendo-salsa-en-la-comida.jpg?s=612x612&w=0&k=20&c=Wze2YwgkFMQOTWoxdiRYsUpa1azCIOm8yRaUEEYOgOU="}
                                                         className="card-img-top"
                                                         alt={restaurant.name}
                                                         style={{
