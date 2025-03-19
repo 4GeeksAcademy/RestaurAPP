@@ -24,12 +24,12 @@ const OwnerDashboard = () => {
         navigate("/");
     };
 
-    // Eliminar restaurante
+    // Elimina restaurante
     const handleDeleteRestaurant = (restaurantId) => {
         actions.deleteRestaurant(restaurantId);
     };
 
-    // Modificar restaurante
+    // Modifica restaurante
     const handleModifyRestaurant = (restaurantId) => {
         navigate(`/create_restaurant/${restaurantId}`);
     };
@@ -38,29 +38,28 @@ const OwnerDashboard = () => {
         navigate(`/restaurants/${restaurantId}`);
     };
 
-    // Editar perfil
+    // Edita perfil
     const handleEditProfile = () => {
         navigate(`/owners/${store.ownerId}`);
     };
 
-    // Eliminar perfil
+    // Elimina perfil
     const handleDeleteProfile = () => {
         const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar tu cuenta?");
-        
+
         if (confirmDelete) {
             actions.deleteOwner(store.specificOwner.id);
-            actions.ownerLogout(); // Effettua il logout
-            navigate("/"); // Reindirizza alla home page
+            actions.ownerLogout();
+            navigate("/"); 
         }
     };
-
 
     return (
         <>
             {store.auth ? (
                 <>
                     <div className="container mt-4">
-                        {/* Bootstrap Tabs */}
+                        {/* Tabs */}
                         <ul className="nav nav-tabs" id="myTab" role="tablist">
                             <li className="nav-item" role="presentation">
                                 <a
@@ -100,37 +99,71 @@ const OwnerDashboard = () => {
                             </li>
                         </ul>
                         <div className="tab-content mt-4" id="myTabContent">
-                            {/* Tab de Restaurants */}
+                            {/* Tab Restaurants */}
                             <div
                                 className={`tab-pane fade ${activeTab === "restaurants" ? "show active" : ""}`}
                                 id="restaurants"
                                 role="tabpanel"
                                 aria-labelledby="restaurants-tab"
                             >
-                                <h2 className="mb-5">Tus Restaurantes</h2>
+                                <div className="d-flex justify-content-between align-items-center mb-5">
+                                    <h2>Tus Restaurantes</h2>
+                                    <button type="button" className="btn btn-light border-0" onClick={() => navigate("/create_restaurant")}>
+                                        Crear nuevo restaurante
+                                    </button>
+                                </div>
+
                                 {store.restaurants && store.restaurants.length > 0 ? (
                                     <div className="row">
                                         {store.restaurants.map((restaurant) => (
                                             <div key={restaurant.id} className="col-md-4 mb-4">
-                                                <div className="card shadow-sm">
+                                                <div className="card shadow-lg rounded-4" style={{ overflow: 'hidden', transition: 'transform 0.3s ease' }}>
                                                     <img
                                                         src={restaurant.image || "https://media.istockphoto.com/id/1428412216/es/foto/un-chef-masculino-vertiendo-salsa-en-la-comida.jpg?s=612x612&w=0&k=20&c=Wze2YwgkFMQOTWoxdiRYsUpa1azCIOm8yRaUEEYOgOU="}
                                                         className="card-img-top"
                                                         alt={restaurant.name}
-                                                        style={{ height: "200px", objectFit: "cover" }}
+                                                        style={{
+                                                            height: "200px", 
+                                                            objectFit: "cover", 
+                                                            transition: 'transform 0.3s ease'
+                                                        }}
                                                     />
-                                                    <div className="card-body">
-                                                        <h5 className="card-title">{restaurant.name}</h5>
-                                                        <p className="card-text"><strong>Ubicación:</strong> {restaurant.location}</p>
-                                                        <p className="card-text"><strong>Capacidad:</strong> {restaurant.capacity}</p>
-                                                        <p className="card-text"><strong>Teléfono:</strong> {restaurant.telephone}</p>
+                                                    <div className="card-body" style={{ padding: '20px' }}>
+                                                        <h5 className="card-title" style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>{restaurant.name}</h5>
+                                                        <p className="card-text" style={{ fontSize: '0.9rem', color: '#6c757d' }}>
+                                                            <strong>Ubicación:</strong> {restaurant.location}
+                                                        </p>
+                                                        <p className="card-text" style={{ fontSize: '0.9rem', color: '#6c757d' }}>
+                                                            <strong>Capacidad:</strong> {restaurant.capacity}
+                                                        </p>
+                                                        <p className="card-text" style={{ fontSize: '0.9rem', color: '#6c757d' }}>
+                                                            <strong>Teléfono:</strong> {restaurant.telephone}
+                                                        </p>
 
                                                         <div className="d-flex justify-content-between">
                                                             <div className="d-flex">
-                                                                <button className="btn border rounded-3 p-2 mx-1 bg-light" onClick={() => handleModifyRestaurant(restaurant.id)}>✏️</button>
-                                                                <button className="btn border rounded-3 p-2 mx-1 bg-light" onClick={() => handleDeleteRestaurant(restaurant.id)}>🗑️</button>
+                                                                <button
+                                                                    className="btn btn-outline-primary rounded-3 p-2 mx-1"
+                                                                    onClick={() => handleModifyRestaurant(restaurant.id)}
+                                                                    style={{ transition: 'background-color 0.3s ease' }}
+                                                                >
+                                                                    ✏️
+                                                                </button>
+                                                                <button
+                                                                    className="btn btn-outline-danger rounded-3 p-2 mx-1"
+                                                                    onClick={() => handleDeleteRestaurant(restaurant.id)}
+                                                                    style={{ transition: 'background-color 0.3s ease' }}
+                                                                >
+                                                                    🗑️
+                                                                </button>
                                                             </div>
-                                                            <button className="btn border rounded-3 p-2 mx-1 bg-light" onClick={() => handleViewMore(restaurant.id)}>🔎</button>
+                                                            <button
+                                                                className="btn btn-outline-info rounded-3 p-2 mx-1"
+                                                                onClick={() => handleViewMore(restaurant.id)}
+                                                                style={{ transition: 'background-color 0.3s ease' }}
+                                                            >
+                                                                🔎
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -140,14 +173,9 @@ const OwnerDashboard = () => {
                                 ) : (
                                     <p>No tienes restaurantes disponibles.</p>
                                 )}
-                                <div className="container mt-3">
-                                    <button type="button" className="btn btn-primary" onClick={() => navigate("/create_restaurant")}>
-                                        Crear nuevo restaurante
-                                    </button>
-                                </div>
                             </div>
 
-                            {/* Tab de Reservations */}
+                            {/* Tab Reservations */}
                             <div
                                 className={`tab-pane fade ${activeTab === "reservations" ? "show active" : ""}`}
                                 id="reservations"
@@ -155,10 +183,10 @@ const OwnerDashboard = () => {
                                 aria-labelledby="reservations-tab"
                             >
                                 <h2>Tus reservas</h2>
-                                <OwnerReservations/>
+                                <OwnerReservations />
                             </div>
 
-                            {/* Tab de Details */}
+                            {/* Tab Details */}
                             <div
                                 className={`tab-pane fade ${activeTab === "details" ? "show active" : ""}`}
                                 id="details"
@@ -171,6 +199,7 @@ const OwnerDashboard = () => {
                                         <p><strong>Nombre:</strong> {store.specificOwner.name}</p>
                                         <p><strong>Email:</strong> {store.specificOwner.email}</p>
                                         <p><strong>Teléfono:</strong> {store.specificOwner.telephone}</p>
+                                        <p><strong>Ubicación:</strong> {store.specificOwner.location}</p>
 
                                         <div className="d-flex justify-content-end">
                                             <button className="btn border bg-light me-2" onClick={handleEditProfile}>✏️</button>

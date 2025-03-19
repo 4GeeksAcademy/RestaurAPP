@@ -3,7 +3,7 @@ import { Context } from "../store/appContext";
 
 const OwnerReservations = () => {
     const { store, actions } = useContext(Context);
-    const [selectedReservation, setSelectedReservation] = useState(null); // Stato per la prenotazione selezionata
+    const [selectedReservation, setSelectedReservation] = useState(null); // Estado para la reserve seleccionada
 
     useEffect(() => {
         actions.getAllReservationsByOwner();
@@ -70,6 +70,7 @@ const OwnerReservations = () => {
                         <p><strong>Hora:</strong> {selectedReservation.hour}</p>
                         <p><strong>Cliente:</strong> {selectedReservation.diner_name}</p>
                         <p><strong>Personas:</strong> {selectedReservation.people}</p>
+                        <p><strong>Estado:</strong> {selectedReservation.state}</p>
                         <button className="btn btn-secondary" onClick={() => setSelectedReservation(null)}>Cerrar</button>
                     </div>
                 </div>

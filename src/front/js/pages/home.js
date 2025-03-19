@@ -15,10 +15,10 @@ export const Home = () => {
                 <h3 className="mb-3">Soy Propietario</h3>
                 <div className="d-flex justify-content-center gap-3">
                     <Link to="/owners/new">
-                        <button type="button" className="btn btn-primary">Owner Signup</button>
+                        <button type="button" className="btn btn-light">Owner Signup</button>
                     </Link>
                     <Link to="/owners/login">
-                        <button type="button" className="btn btn-secondary">Owner Login</button>
+                        <button type="button" className="btn btn-light">Owner Login</button>
                     </Link>
                 </div>
             </div>
@@ -29,15 +29,12 @@ export const Home = () => {
                         <button className="btn btn-light">Diner Login</button>
                     </Link>
                     <Link to="/dinerform">
-                        <button className="btn btn-success">Diner Sign up</button>
+                        <button className="btn btn-light">Diner Sign up</button>
                     </Link>
                 </div>
             </div>
             <div className="img-container mb-4">
                 <img src={Restaurapp} alt="Restaurapp Logo" className="img-fluid" />
-            </div>
-            <div className="alert alert-info mt-4">
-                {store.message || "Loading message from the backend (make sure your python backend is running)..."}
             </div>
         </div>
     );

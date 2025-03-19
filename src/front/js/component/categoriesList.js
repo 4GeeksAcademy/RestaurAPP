@@ -6,7 +6,7 @@ const CategoriesList = () => {
   const { store, actions } = useContext(Context);
 
   useEffect(() => {
-    actions.getAllCategories(); // Llama a la acción para obtener la lista de categorias
+    actions.getAllCategories();
   }, []);
 
   const navigate = useNavigate();
