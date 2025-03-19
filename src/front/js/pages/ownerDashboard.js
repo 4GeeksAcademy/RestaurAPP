@@ -56,7 +56,7 @@ const OwnerDashboard = () => {
 
     return (
         <>
-            {store.auth ? (
+            {store.auth === true || localStorage.getItem("token") ? (
                 <>
                     <div className="container mt-4">
                         {/* Tabs */}

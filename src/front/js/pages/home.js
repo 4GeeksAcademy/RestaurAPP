@@ -1,42 +1,48 @@
-import React, { useContext } from "react";
-import { Context } from "../store/appContext";
-import "../../styles/home.css";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
-import Restaurapp from './../../img/Restaurapp.jpg';
+import "../../styles/home.css";
 
 export const Home = () => {
-    const { store, actions } = useContext(Context);
+    const [showOwnerOptions, setShowOwnerOptions] = useState(false);
+    const [showDinerOptions, setShowDinerOptions] = useState(false);
 
     return (
-        <div className="home-container text-center mt-5">
+        <div className="home-container text-center">
             <h1 className="mb-4">Bienvenido a RestaurAPP</h1>
-            <div className="button-container mb-4">
-                <h3 className="mb-3">Soy Propietario</h3>
-                <div className="d-flex justify-content-center gap-3">
+
+            <div className="toggle-container">
+                <button 
+                    className="toggle-btn" 
+                    onClick={() => setShowOwnerOptions(!showOwnerOptions)}
+                >
+                    Soy Propietario
+                </button>
+                <div className={`dropdown-container ${showOwnerOptions ? "show" : ""}`}>
                     <Link to="/owners/new">
-                        <button type="button" className="btn btn-light">Owner Signup</button>
+                        <button className="btn-option">Registrarse</button>
                     </Link>
                     <Link to="/owners/login">
-                        <button type="button" className="btn btn-light">Owner Login</button>
+                        <button className="btn-option">Iniciar Sesión</button>
                     </Link>
                 </div>
             </div>
-            <div className="button-container mb-4">
-                <h3 className="mb-3">Soy Comensal</h3>
-                <div className="d-flex justify-content-center gap-3">
+
+            <div className="toggle-container">
+                <button 
+                    className="toggle-btn" 
+                    onClick={() => setShowDinerOptions(!showDinerOptions)}
+                >
+                    Soy Comensal
+                </button>
+                <div className={`dropdown-container ${showDinerOptions ? "show" : ""}`}>
                     <Link to="/diner/login">
-                        <button className="btn btn-light">Diner Login</button>
+                        <button className="btn-option">Iniciar Sesión</button>
                     </Link>
                     <Link to="/dinerform">
-                        <button className="btn btn-light">Diner Sign up</button>
+                        <button className="btn-option">Registrarse</button>
                     </Link>
                 </div>
-            </div>
-            <div className="img-container mb-4">
-                <img src={Restaurapp} alt="Restaurapp Logo" className="img-fluid" />
             </div>
         </div>
     );
 };
-

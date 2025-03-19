@@ -43,6 +43,8 @@ import ManageReservations from "./component/ManageReservations"; // Importar el 
 import RequestReservation from "./component/RequestReservation";
 import OwnerReservations from "./component/ownerReservations";
 
+import AboutUs from "./component/aboutUs";
+
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 import { Context } from "./store/appContext";
 
@@ -100,7 +102,9 @@ const Layout = () => {
                         <Route element={<ManageReservations />} path="/manage-reservations" /> {/* Ruta de gestión de reservas */}
                         <Route element={<RequestReservation />} path="/request-reservation" />
                         <Route element={<ReservationList />} path="/restaurants/:restaurant_id/reservations" /> {/* Ruta para el listado de reservas */}
-                        <Route element={<OwnerReservations />} path="/reservation_by_owner" /> 
+                        <Route element={<OwnerReservations />} path="/reservation_by_owner" />
+
+                        <Route element={<AboutUs />} path="/about-us" /> 
 
                         {/* Ruta protegida para propietarios */}
                         <Route
