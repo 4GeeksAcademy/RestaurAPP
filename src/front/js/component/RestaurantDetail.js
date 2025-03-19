@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Context } from '../store/appContext';
+import ReservationsByRestaurant from './reservationByRestaurant';
 
 const RestaurantDetail = () => {
     const { id } = useParams(); 
@@ -54,15 +55,14 @@ const RestaurantDetail = () => {
                         </div>
                         
                         <div className="col-md-8">
-                            <p><strong>Location:</strong> {restaurant.location}</p>
-                            <p><strong>Telephone:</strong> {restaurant.telephone}</p>
-                            <p><strong>Capacity:</strong> {restaurant.capacity}</p>
-                            <p><strong>Latitude:</strong> {restaurant.latitude}</p>
-                            <p><strong>Longitude:</strong> {restaurant.longitude}</p>
+                            <p><strong>Ubicación:</strong> {restaurant.location}</p>
+                            <p><strong>Telefono:</strong> {restaurant.telephone}</p>
+                            <p><strong>Capacidad:</strong> {restaurant.capacity}</p>
+                            <p><strong>Latitutud:</strong> {restaurant.latitude}</p>
+                            <p><strong>Longitud:</strong> {restaurant.longitude}</p>
                         </div>
                     </div>
 
-                    {/* Bottoni per modificare, eliminare e vedere le prenotazioni */}
                     <div className="d-flex justify-content-end mt-3">
                         <button className="btn border border-secondary me-2 bg-light" onClick={handleEdit}>
                             ✏️
@@ -70,12 +70,8 @@ const RestaurantDetail = () => {
                         <button className="btn border border-secondary me-2 bg-light" onClick={handleDelete}>
                             🗑️
                         </button>
-                        <button className="btn border border-secondary bg-light" onClick={handleViewReservations}>
-                            📅 Ver mis reservas
-                        </button>
                     </div>
 
-                    {/* Bottone per tornare alla dashboard */}
                     <div className="d-flex justify-content-end mt-3">
                         <button className="btn btn-primary" onClick={handleBackToDashboard}>
                             Volver al dashboard
@@ -85,6 +81,7 @@ const RestaurantDetail = () => {
             ) : (
                 <p>No hay detalles disponibles.</p>
             )}
+            <ReservationsByRestaurant restaurantId={id} />
         </div>
     );
 };
