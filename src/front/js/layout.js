@@ -20,6 +20,7 @@ import { Dinerlist } from "./component/dinerlist";
 import { DinerEdit } from "./component/dineredit";
 import { DinerLogin } from "./component/dinerLogin";
 import { DinerDashboard } from "./component/dinerDashboard";
+import { PerfilRestaurant } from "./component/perfilRestaurant";
 
 import OwnerList from "./component/ownerList";
 import OwnerForm from "./component/ownerForm";
@@ -37,6 +38,7 @@ import RestaurantCategoriesForm from "./component/RestaurantCategoriesForm";
 import CreateRestaurant from "./component/createRestaurant";
 import RestaurantDetail from "./component/RestaurantDetail";
 
+
 import ReservationList from "./component/ReservationList"; // Importar el componente del listado de reservas
 import SearchAndReserve from "./component/SearchAndReserve"; // Importar el componente de búsqueda y reserva
 import ManageReservations from "./component/ManageReservations"; // Importar el componente de gestión de reservas
@@ -44,6 +46,7 @@ import RequestReservation from "./component/RequestReservation";
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 import { Context } from "./store/appContext";
+
 
 
 //create your first component
@@ -78,6 +81,8 @@ const Layout = () => {
                         <Route element={<RestaurantCategoriesList />} path="/restaurant_categories" />
                         <Route element={<RestaurantCategoriesForm />} path="/restaurant_categories/new" />
                         <Route element={<RestaurantCategoriesForm />} path="/restaurant_categories/:restaurantCategoryId" />
+                        <Route element={<PerfilRestaurant />} path="/perfil_restaurant/:restaurant_id"  />
+
 
                         <Route element={<OwnerList />} path="/owners" />
                         <Route element={<OwnerRestaurants />} path="/owners/:owner_id/restaurants" />

@@ -17,6 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             diners: [],
             auth: false,
             dinerauth: false,
+            dinerReservations: [],
             owners: [],
             specificOwner: null,
             origins: [],
@@ -31,9 +32,88 @@ const getState = ({ getStore, getActions, setStore }) => {
             ownerRestaurants: [], // Lista de restaurantes del propietario
         },
         actions: {
-            // Use getActions to call a function within a function
             exampleFunction: () => {
                 getActions().changeColor(0, "green");
+            },
+         
+            createReservation: (reservationData) => {
+                const { restaurant_id, date, hour, people, name, email, phone } = reservationData;
+
+                if (!restaurant_id || !date || !hour || !people || !name || !email || !phone) {
+                    console.log("restaurant_id ", restaurant_id)
+                    console.log("date", date)
+                    console.log("hour ", hour)
+                    console.log("people ", people)
+                    console.log("name", name)
+                    console.log("email", email)
+                    console.log("phone", phone)
+                    console.log("Por favor, completa todos los campos.");
+                    // return;
+                }
+                const formattedDate = new Date(date).toISOString().split('T')[0];
+                const formattedHour = hour;
+
+                const token = localStorage.getItem("tokenDiner");
+
+                const requestOptions = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        id_fk_restaurant: restaurant_id,
+                        date: formattedDate,
+                        hour: formattedHour,
+                        people: people,
+                    }),
+                };
+                console.log(requestOptions)
+                fetch(`${process.env.BACKEND_URL}/api/create_reservation`, requestOptions)
+                    .then((response) => {
+                        console.log(response)
+                        if (!response.ok) {
+                            return response.json().then((data) => {
+                                throw new Error(data.error || 'Error en la solicitud');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log(data)
+                        if (data.error) {
+                            console.error("Error al crear la reserva:", data.error);
+                        } else {
+                            console.log("Reserva creada exitosamente:", data);
+
+                            const newReservation = data;
+
+                            if (!newReservation || !newReservation.id) {
+                                console.log("No se pudo obtener la reserva creada.");
+                                return;
+                            }
+
+                            if (getStore().dinerauth) {
+                                const dinerId = getStore().diners[0]?.id;
+
+                                if (newReservation.id_fk_diner === dinerId) {
+                                    const updatedReservations = [...getStore().dinerReservations, newReservation];
+
+                                    setStore({ dinerReservations: updatedReservations });
+
+                                    console.log("Reserva creada exitosamente.");
+                                } else {
+                                    console.log("El comensal no coincide con el que realizó la reserva.");
+                                }
+                            } else {
+                                console.log("No hay un comensal logueado.");
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error de red:", error);
+                        console.log("Error de red al intentar crear la reserva.");
+                    });
             },
 
             getDinerList: () => {
@@ -46,6 +126,47 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .then((response) => response.json())
                     .then((result) => {
                         setStore({ diners: result });
+                    });
+            },
+
+            getDinerReserves: () => {
+                const token = localStorage.getItem('tokenDiner');
+                const dinerId = localStorage.getItem('diner.id');
+
+                const requestOptions = {
+                    method: "GET",
+                    headers: {
+                        "content-type": "application/json",
+                        'Authorization': `Bearer ${token}`
+                    },
+                };
+
+                fetch(process.env.BACKEND_URL + "/api/reservation_by_diner", requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                        setStore({ dinerReservations: result });
+                    });
+            },
+
+            DinerDeleteReservation: (reservation_id) => {
+                const token = localStorage.getItem("tokenDiner");
+                const requestOptions = {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                };
+                fetch(`${process.env.BACKEND_URL}/api/delete_reservation_by_diner/${reservation_id}`, requestOptions)
+                    .then((response) => response.json())
+                    .then(() => {
+                        const updatedReservations = getStore().dinerReservations.filter(
+                            (reservation) => reservation.id !== reservation_id
+                        );
+                        setStore({ dinerReservations: updatedReservations });
+                    })
+                    .catch((error) => {
+                        console.error('Error al eliminar la reserva:', error);
                     });
             },
 
@@ -79,6 +200,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             DinerForm: (fullname, email, telephone, password) => {
+                console.log("funcion add")
                 const requestOptions = {
                     method: "POST",
                     headers: { "content-type": "application/json" },
@@ -86,54 +208,66 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 fetch(process.env.BACKEND_URL + "/api/diner", requestOptions)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error("Error al crear el usuario. Verifica los datos o intenta más tarde.");
-                        }
-                        return response.json();
-                    })
-                    .then((result) => {
-                        setStore({ dinerauth: true });
-                        localStorage.setItem("token", result.access_token);
+                    .then((response) => {response.json()
+                        console.log(response)})
+                    
+                    .then((data) => {
+                        console.log(data)
+                        const store = getStore();
+                        setStore({ diners: [...store.diners, data] });
+
+                        getActions().getDinerList();
                     });
             },
 
             dinerLogin: (email, password) => {
+                return new Promise((resolve, reject) => {
+                    const backendUrl = process.env.BACKEND_URL + "/api/diner/login";
+                    console.log("Backend URL:", backendUrl);
 
-                const backendUrl = process.env.BACKEND_URL + "/api/diner/login";
-                console.log("Backend URL:", backendUrl);
+                    const requestOption = {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password,
+                        }),
+                    };
 
-                const requestOption = {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                    }),
-                };
-                fetch(process.env.BACKEND_URL + "/api/diner/login", requestOption)
-                    .then((response) => {
-                        if (response.status == 200) {
-                            setStore({ dinerauth: true });
-                        } else {
-                            setStore({ dinerauth: false });
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        if (data.msg) {
-                            alert(data.msg);
-                        } else {
-                            localStorage.setItem("dinerFullName", data.diner_fullname);
-                            localStorage.setItem("dinerId", data.diner_id);
-                            localStorage.setItem("token", data.access_token);
-                            setStore({ dinerauth: true, dinerFullName: data.diner_fullname });
-                        }
-                    });
+                    fetch(backendUrl, requestOption)
+                        .then((response) => {
+                            if (response.status === 200) {
+                                return response.json();
+                            } else {
+                                reject("Error de autenticación");
+                                return null;
+                            }
+                        })
+                        .then((data) => {
+                            if (data) {
+                                if (data.msg) {
+                                    alert(data.msg);
+                                    reject(data.msg);
+                                } else {
+                                    localStorage.setItem("dinerFullName", data.diner_fullname);
+                                    localStorage.setItem("dinerId", data.diner_id);
+                                    setStore({ dinerauth: true, dinerFullName: data.diner_fullname });
+                                    localStorage.setItem("tokenDiner", data.access_token);
+
+                                    resolve(data);
+                                }
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error en el login:", error);
+                            reject("Error de red o servidor");
+                        });
+                });
             },
+
             dinerLogout: () => {
                 setStore({ dinerauth: false });
-                localStorage.removeItem("token");
+                localStorage.removeItem("tokenDiner");
             },
 
             getAllOwners: () => {
@@ -145,8 +279,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-
-            getSpecificOwner : () => {
+            getSpecificOwner: () => {
                 // Recupera il token e l'ownerId dal localStorage
                 const token = localStorage.getItem('token');
                 const ownerId = localStorage.getItem('ownerId');
@@ -184,8 +317,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.error('Error fetching specific owner:', error);
                     });
             },
-
-
 
             addOwner: (newOwner) => {
                 const requestOptions = {
@@ -554,7 +685,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-
             getRestaurantsForLoggedInOwner: () => {
                 const token = localStorage.getItem("token");
 
@@ -581,7 +711,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                     })
                     .catch(error => console.error("Error obteniendo restaurantes:", error));
             },
-
 
             createRestaurant: (newRestaurant, token) => {
                 return new Promise((resolve, reject) => {
@@ -658,8 +787,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-
-
             deleteRestaurant: (restaurantId) => {
                 const store = getStore();
                 const token = localStorage.getItem("token");
@@ -733,45 +860,6 @@ const getState = ({ getStore, getActions, setStore }) => {
             // },
 
             // Crear una nueva reserva
-            createReservation: async (reservationData) => {
-                console.log("Ejecutando createReservation");
-                try {
-                    const response = await fetch(
-                        `${process.env.BACKEND_URL}/api/reservations/`,
-                        {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(reservationData),
-                        }
-                    );
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.error || "Error al crear la reserva.");
-                    }
-                    const data = await response.json();
-                    console.log("Reserva creada exitosamente:", data);
-                } catch (error) {
-                    console.error("Error en createReservation:", error.message);
-                }
-            },
-            // Obtener todas las reservas
-            getAllReservations: async () => {
-                console.log("Ejecutando getAllReservations");
-                try {
-                    const response = await fetch(
-                        `${process.env.BACKEND_URL}/api/reservations/`
-                    );
-                    if (!response.ok) {
-                        throw new Error(`Error HTTP: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    console.log("Reservas obtenidas:", data);
-                    setStore({ reservations: data.reservations });
-                } catch (error) {
-                    console.error("Error en getAllReservations:", error.message);
-                }
-            },
-
             // Obtener reservas de un restaurante
             getRestaurantReservations: async (restaurant_id) => {
                 console.log(
@@ -851,30 +939,30 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-                 // Buscar restaurantes disponibles
-      getAvailableRestaurants: async (location, people) => {
-        console.log("Respuesta completa del servidor desde /api/restaurants/available:, {location, people}");
-        try {
-          const response = await fetch(
-            `${process.env.BACKEND_URL}/api/restaurants/available`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ location, people }),
-            }
-          );
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
-          }
-          const data = await response.json();
-          console.log("Restaurantes disponibles respuesta del backend:", data);
-          setStore({ availableRestaurants: data.available_restaurants });
-        } catch (error) {
-          console.error("Error en getAvailableRestaurants:", error.message);
-        }
-      },
-      // Obtener todos los propietarios
+            // Buscar restaurantes disponibles
+            getAvailableRestaurants: async (location, people) => {
+                console.log("Respuesta completa del servidor desde /api/restaurants/available:, {location, people}");
+                try {
+                    const response = await fetch(
+                        `${process.env.BACKEND_URL}/api/restaurants/available`,
+                        {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ location, people }),
+                        }
+                    );
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+                    }
+                    const data = await response.json();
+                    console.log("Restaurantes disponibles respuesta del backend:", data);
+                    setStore({ availableRestaurants: data.available_restaurants });
+                } catch (error) {
+                    console.error("Error en getAvailableRestaurants:", error.message);
+                }
+            },
+            // Obtener todos los propietarios
 
             changeColor: (index, color) => {
                 const store = getStore();
@@ -885,6 +973,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 setStore({ demo });
 
             },
+
         },
     };
 };

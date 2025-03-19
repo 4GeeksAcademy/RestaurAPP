@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
+from datetime import datetime
 
 api = Blueprint('api', __name__)
 
@@ -43,7 +44,6 @@ def get_singlediner(id):
     
     response_body = diner.to_dict()
     return jsonify(response_body), 200
-
 
 @api.route('/diner', methods=['POST'])
 def create_diners():
@@ -126,6 +126,78 @@ def dinerLogin():
         "diner_fullname": diner.fullname,
         "diner_id": diner.id  
     }), 200
+
+@api.route('/create_reservation', methods=['POST'])
+@jwt_required()
+def create_reservation():
+    email = get_jwt_identity()
+    diner = Diner.query.filter_by(email=email).first()
+    
+    if not diner:
+        return jsonify({"message": "Diner not found"}), 404
+
+    data = request.get_json()
+    
+    if not all(key in data for key in ['id_fk_restaurant', 'date', 'hour', 'people']):
+        return jsonify({"message": "Missing required fields"}), 400
+    
+    try:
+        reservation_date = datetime.strptime(data['date'], "%Y-%m-%d").date()
+        reservation_hour = datetime.strptime(data['hour'], "%H:%M").time()
+    except ValueError:
+        return jsonify({"message": "Invalid date or hour format"}), 400
+    
+    new_reservation = Reservation(
+        id_fk_restaurant=data['id_fk_restaurant'],
+        id_fk_diner=diner.id,
+        date=reservation_date,
+        hour=reservation_hour,
+        state="Pending",  
+        people=data['people']
+    )
+    
+    db.session.add(new_reservation)
+    db.session.commit()
+    
+    return jsonify(new_reservation.serialize()), 201
+
+@api.route('/reservation_by_diner', methods=['GET'])
+@jwt_required()
+def get_all_reservation_by_diner():
+    email = get_jwt_identity()
+    diner = Diner.query.filter_by(email=email).first()
+    all_reservations =Reservation.query.filter_by(id_fk_diner=diner.id).all()
+    
+    print(all_reservations)
+    print(email)
+    if not all_reservations:
+        return jsonify({"message": "No reservation found"}), 404
+    results = list(map(lambda reservation: reservation.serialize(), all_reservations))
+    return jsonify(results), 200
+
+@api.route('/delete_reservation_by_diner/<int:reservation_id>', methods=['DELETE'])
+@jwt_required()
+def delete_reservation_by_diner(reservation_id):
+    email = get_jwt_identity()
+    
+    diner = Diner.query.filter_by(email=email).first()
+    
+    if not diner:
+        return jsonify({"message": "Diner not found"}), 404
+
+    reservation = Reservation.query.filter_by(id=reservation_id, id_fk_diner=diner.id).first()
+    
+    if not reservation:
+        return jsonify({"message": "Reservation not found"}), 404
+    
+    try:
+        db.session.delete(reservation)
+        db.session.commit()
+        return jsonify({"message": "Reservation successfully deleted"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Error deleting reservation", "error": str(e)}), 500
+
 
 """/////////////////////////////////// OWNERS ////////////////////////////////////////"""
 

@@ -177,15 +177,23 @@ class Reservation(db.Model):  # Cambia de Reservations a Reservation
     db.ForeignKey('restaurant.id', ondelete="CASCADE"),  # Añade ondelete="CASCADE"
     nullable=False
 )
-
     id_fk_diner = db.Column(db.Integer, db.ForeignKey('diner.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
     hour = db.Column(db.Time, nullable=False)
-    state = db.Column(db.Enum(ReservationState), default=ReservationState.PENDING, nullable=False)
+    state = db.Column(db.String(120), default="Pending", nullable=False)
     people = db.Column(db.Integer, nullable=False)
-
     # Relación con restaurante
     restaurant = relationship("Restaurant", back_populates="reservations")
-
     # Relación con comensal
     diner = relationship("Diner", back_populates="reservations")
+    def serialize(self):
+        return {
+            "id": self.id,
+            "id_restaurant": self.id_fk_restaurant,
+            "id_fk_diner": self.id_fk_diner,
+            "date": self.date.isoformat() if self.date else None,
+            "hour": self.hour.isoformat() if self.hour else None,
+            "state": self.state if self.state else None,
+            "people": self.people,
+            "restaurant": self.restaurant.serialize() if self.restaurant else None
+        }
