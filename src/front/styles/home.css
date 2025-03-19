@@ -5,3 +5,67 @@
     one more css for each page that will contain the selected used 
     on that page only (the ones not reused in other pages).
 */
+
+.home-container {
+    background-image: url('https://tse1.mm.bing.net/th?id=OIG3.gpA6SWak9tyYBZqtV1e2&pid=ImgGn');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 1px 1px 4px black;
+}
+
+.toggle-container {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    width: 300px;
+}
+
+.toggle-btn {
+    background-color: gold;
+    color: black;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.toggle-btn:hover {
+    background-color: #d4af37;
+}
+
+.dropdown-container {
+    display: none;
+    margin-top: 10px;
+}
+
+.show {
+    display: block;
+}
+
+.btn-option {
+    background: black;
+    color: gold;
+    border: 1px solid gold;
+    padding: 10px;
+    margin: 5px;
+    width: 100%;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-option:hover {
+    background: gold;
+    color: black;
+}

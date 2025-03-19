@@ -22,7 +22,7 @@ const OwnerLogin = () => {
     return (
         <div className="container">
             <h1 className="my-4">RestaurApp</h1>
-            <h2 className="mb-3">Owner Login</h2>
+            <h2 className="mb-3">Inicio de sesión de propietario</h2>
             <form className="container" onSubmit={sendData}>
                 <div className="mb-3">
                     <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
@@ -48,7 +48,7 @@ const OwnerLogin = () => {
                 </div>
                 <button type="submit" className="btn btn-primary">Log in</button>
             </form>
-            <p className="mt-4">Don't have an account? <Link to="/owners/new" className="text-primary fw-bold">Sign up here</Link></p>
+            <p className="mt-4">No tienes una cuenta? <Link to="/owners/new" className="text-primary fw-bold">Regístrate aquí</Link></p>
         </div>
     );
 }

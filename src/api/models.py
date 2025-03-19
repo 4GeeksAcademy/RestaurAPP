@@ -47,6 +47,7 @@ class Owner(db.Model):
             "name" : self.name,
             "telephone" : self.telephone,
             "email": self.email,
+            "location": self.location
             # do not serialize the password, its a security breach
 
         }  
@@ -83,18 +84,17 @@ class Restaurant(db.Model):
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     capacity = db.Column(db.Integer, nullable=False)
-    
-     # Foreign Key para relacionar con Owner
+    image_url = db.Column(db.String(255), nullable=True)
+
+     
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
 
-        # Relación con reservas
     reservations = relationship(
         "Reservation", 
         back_populates="restaurant",
         cascade="all, delete-orphan"  # Habilitar cascada para eliminar reservas asociadas
     )
 
-    # Relación con Owner
     owner = relationship("Owner", back_populates="restaurants")
     categories = relationship("RestaurantCategories", back_populates="restaurant", cascade="all, delete-orphan")
     
@@ -107,7 +107,8 @@ class Restaurant(db.Model):
             "latitude": self.latitude,
             "longitude": self.longitude,
             "capacity": self.capacity,
-            "owner_id": self.owner_id  # Incluye el ID del propietario en la serialización
+            "owner_id": self.owner_id,
+            "image_url": self.image_url
         }
     
 class Origin(db.Model):
@@ -169,8 +170,8 @@ class ReservationState(enum.Enum):
     def list_values(cls):
         return [state.value for state in cls]
 
-class Reservation(db.Model):  # Cambia de Reservations a Reservation
-    __tablename__ = 'reservations'  # Asegúrate de que el nombre de la tabla sea correcto
+class Reservation(db.Model): 
+    __tablename__ = 'reservations'  
     id = db.Column(db.Integer, primary_key=True)
     id_fk_restaurant = db.Column(
     db.Integer,
@@ -186,14 +187,19 @@ class Reservation(db.Model):  # Cambia de Reservations a Reservation
     restaurant = relationship("Restaurant", back_populates="reservations")
     # Relación con comensal
     diner = relationship("Diner", back_populates="reservations")
+
     def serialize(self):
         return {
             "id": self.id,
             "id_restaurant": self.id_fk_restaurant,
+
             "id_fk_diner": self.id_fk_diner,
             "date": self.date.isoformat() if self.date else None,
             "hour": self.hour.isoformat() if self.hour else None,
             "state": self.state if self.state else None,
             "people": self.people,
             "restaurant": self.restaurant.serialize() if self.restaurant else None
+            "restaurant_name": self.restaurant.name if self.restaurant else None
+              
+
         }

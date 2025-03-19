@@ -55,11 +55,11 @@ const OwnerForm = () => {
     <>
       <div className="container">
         <h1 className="my-4">RestaurApp</h1>
-        <h2 className="container mt-3">Owner Sign up</h2>
+        <h2 className="container mt-3">{ownerId ? "Cambia tus datos" : "Registro de propietario"}</h2>
         <form className="container mt-4" onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="exampleInputname" className="form-label">
-              Full name
+              Nombre completo
             </label>
             <input
               type="text"
@@ -72,7 +72,7 @@ const OwnerForm = () => {
           </div>
           <div className="mb-3">
             <label htmlFor="exampleInputtext1" className="form-label">
-              Location
+              Ubicación
             </label>
             <input
               type="text"
@@ -85,7 +85,7 @@ const OwnerForm = () => {
           </div>
           <div className="mb-3">
             <label htmlFor="exampleInputtelephone" className="form-label">
-              Telephone
+              Teléfono
             </label>
             <input
               type="text"
@@ -98,7 +98,7 @@ const OwnerForm = () => {
           </div>
           <div className="mb-3">
             <label htmlFor="exampleInputEmail1" className="form-label">
-              Email address
+              Correo electrónico
             </label>
             <input
               type="email"
@@ -111,7 +111,7 @@ const OwnerForm = () => {
           </div>
           <div className="mb-3">
             <label htmlFor="exampleInputPassword1" className="form-label">
-              Password
+              Contraseña
             </label>
             <input
               type="password"
@@ -122,9 +122,14 @@ const OwnerForm = () => {
             />
           </div>
           <button type="submit" className="btn btn-primary">
-            {ownerId ? "Save changes" : "Sign up"}
+            {ownerId ? "Guardar cambios" : "Registrarse"}
           </button>
-          <p className="mt-4">Already have an account?<Link to="/owners/login" className="text-primary fw-bold">Log in here</Link></p>
+          <p className="mt-4">
+            ¿Ya tienes una cuenta?{" "}
+            <Link to="/owners/login" className="text-primary fw-bold">
+              Inicia sesión aquí
+            </Link>
+          </p>
         </form>
       </div>
     </>

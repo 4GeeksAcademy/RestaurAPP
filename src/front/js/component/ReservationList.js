@@ -6,12 +6,15 @@ const ReservationList = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const { restaurant_id } = useParams(); // Tomar el id del restaurante desde la URL
+    console.log("id de useParams",restaurant_id);
     const [selectedReservations, setSelectedReservations] = useState([]); // Selección múltiple
     const [error, setError] = useState(""); // Manejo de errores locales
     const [loading, setLoading] = useState(true); // Estado para la carga
 
     useEffect(() => {
         const fetchReservations = async () => {
+            console.log(restaurant_id);
+            
             try {
                 setLoading(true);
                 setError("");
