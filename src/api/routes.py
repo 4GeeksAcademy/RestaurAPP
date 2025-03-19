@@ -785,37 +785,38 @@ def get_reservations_by_restaurant(restaurant_id):
         "date": res.date.isoformat(),
         "hour": res.hour.strftime("%H:%M"),
         "diner_name": res.diner.fullname if res.diner else "No presente",
-        "people": res.people
+        "people": res.people,
+        "state": res.state
     } for res in reservations]
     
     print(f"Resultados para el restaur from back {restaurant_id}: {results}")
     return jsonify(results), 200
 
 
-@api.route('/restaurant/<int:restaurant_id>/user/reservations', methods=['GET'])
-@jwt_required()
-def get_user_reservations_by_restaurant(restaurant_id):
-    current_user_id = get_jwt_identity()
-    restaurant = Restaurant.query.get(restaurant_id)
-    if not restaurant:
-        return jsonify({"message": "Restaurante no encontrado"}), 404
+# @api.route('/restaurant/<int:restaurant_id>/user/reservations', methods=['GET'])
+# @jwt_required()
+# def get_user_reservations_by_restaurant(restaurant_id):
+#     current_user_id = get_jwt_identity()
+#     restaurant = Restaurant.query.get(restaurant_id)
+#     if not restaurant:
+#         return jsonify({"message": "Restaurante no encontrado"}), 404
         
   
-    reservations = Reservation.query.filter_by(
-        id_fk_restaurant=restaurant_id,
-        id_fk_user=current_user_id
-    ).all()
+#     reservations = Reservation.query.filter_by(
+#         id_fk_restaurant=restaurant_id,
+#         id_fk_user=current_user_id
+#     ).all()
     
-    results = [{
-        "id": res.id,
-        "restaurant_name": restaurant.name,
-        "date": res.date.isoformat(),
-        "hour": res.hour.strftime("%H:%M"),
-        "diner_name": res.diner.fullname if res.diner else "No presente",
-        "people": res.people
-    } for res in reservations]
+#     results = [{
+#         "id": res.id,
+#         "restaurant_name": restaurant.name,
+#         "date": res.date.isoformat(),
+#         "hour": res.hour.strftime("%H:%M"),
+#         "diner_name": res.diner.fullname if res.diner else "No presente",
+#         "people": res.people
+#     } for res in reservations]
     
-    return jsonify(results), 200
+#     return jsonify(results), 200
 
 
 @api.route('/reservations/<int:reservation_id>/status', methods=['PUT'])

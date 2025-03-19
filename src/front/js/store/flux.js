@@ -851,7 +851,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 })
                 .then((data) => {
                     console.log("********* dati ricevuti per il rist dal back:", data); 
-                    setStore({ ownerReservations: data });
+                    setStore({ restaurantReservations: data });
                 })
                 .catch((error) => {
                     setStore({ error: error.message });
@@ -876,7 +876,12 @@ const getState = ({ getStore, getActions, setStore }) => {
             //         });
             // },
             
-
+            // updateLocalReservationState: (reservationId, newState) => {
+            //     const updatedReservations = getStore().restaurantReservations.map(res =>
+            //         res.id === reservationId ? { ...res, state: newState } : res
+            //     );
+            //     setStore({ restaurantReservations: updatedReservations });
+            // },
 
             updateReservationStatus: (reservationId, newStatus) => {
                 return fetch(`${process.env.BACKEND_URL}/api/reservations/${reservationId}/status`, {
@@ -897,7 +902,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.log('Estado actualizado:', data);
                     // Aggiorna lo stato nel frontend
                     setStore({
-                        ownerReservations: getStore().ownerReservations.map(res =>
+                        restaurantReservations: getStore().restaurantReservations.map(res =>
                             res.id === reservationId ? { ...res, state: newStatus } : res
                         )
                     });

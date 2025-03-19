@@ -11,9 +11,13 @@ const ReservationsByRestaurant = ({ restaurantId }) => {
         }
     }, [restaurantId]);
 
-    console.log("OWNER RESERVAT: ", store.ownerReservations);
+    useEffect(() => {
+        console.log("restaurantReservations:", store.restaurantReservations);
+    }, [store.restaurantReservations]);
 
-    if (store.ownerReservations.length === 0) {
+    console.log("OWNER RESERVAT: ", store.restaurantReservations);
+
+    if (store.restaurantReservations.length === 0) {
         return <p>No tienes reservas registradas para este restaurante.</p>;
     }
 
@@ -33,7 +37,7 @@ const ReservationsByRestaurant = ({ restaurantId }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {store.ownerReservations.map((res, index) => (
+                    {store.restaurantReservations.map((res, index) => (
                         <tr key={res.id}>
                             <td>{index + 1}</td>
                             <td>{res.diner_name}</td>
