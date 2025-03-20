@@ -939,19 +939,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 
-            // Crear una nueva reserva
-            // Obtener reservas de un restaurante
-            getRestaurantReservations: async (restaurant_id) => {
-                console.log(
-                    `Ejecutando getRestaurantReservations para restaurant_id: ${restaurant_id}`
-                );
-                try {
-                    const response = await fetch(
-                        `${process.env.BACKEND_URL}/api/restaurants/${restaurant_id}/reservations`
-                    );
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+            // // Crear una nueva reserva
+            // // Obtener reservas de un restaurante
+            // getRestaurantReservations: async (restaurant_id) => {
+            //     console.log(
+            //         `Ejecutando getRestaurantReservations para restaurant_id: ${restaurant_id}`
+            //     );
+            //     try {
+            //         const response = await fetch(
+            //             `${process.env.BACKEND_URL}/api/restaurants/${restaurant_id}/reservations`
+            //         );
+            //         if (!response.ok) {
+            //             const errorText = await response.text();
+            //             throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
 
             deleteReservation: function (reservationId) {
                 fetch(process.env.BACKEND_URL + "/api/reservations/" + reservationId, {
