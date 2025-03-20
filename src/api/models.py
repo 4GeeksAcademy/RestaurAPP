@@ -198,7 +198,7 @@ class Reservation(db.Model):
             "hour": self.hour.isoformat() if self.hour else None,
             "state": self.state if self.state else None,
             "people": self.people,
-            "restaurant": self.restaurant.serialize() if self.restaurant else None
+            "restaurant": self.restaurant.serialize() if self.restaurant else None,
             "restaurant_name": self.restaurant.name if self.restaurant else None
               
 
