@@ -20,7 +20,7 @@ export const Navbar = () => {
                 </Link>
                 <div className="ml-auto">
                     {/* Botones siempre visibles: "Buscar Restaurantes", "Owner Signup", "Owner Login", "Diner Login", "Diner Sign up" */}
-                    <Link to="/search-restaurants">
+                    <Link to="/restaurants-search">
                         <button type="button" className="btn btn-light">Buscar Restaurantes</button>
                     </Link>
                     <Link to="/owners/new">

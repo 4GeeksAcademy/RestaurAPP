@@ -930,6 +930,8 @@ const getState = ({ getStore, getActions, setStore }) => {
                         return response.json();
                     })
                     .then(data => {
+                        console.log("DATI PRENOTAZIONE data", data);
+                        
                         setStore({ ownerReservations: data });
                     })
                     .catch(err => {
@@ -1060,30 +1062,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 
-            // Buscar restaurantes disponibles
-            getAvailableRestaurants: async (location, people) => {
-                console.log("Respuesta completa del servidor desde /api/restaurants/available:, {location, people}");
-                try {
-                    const response = await fetch(
-                        `${process.env.BACKEND_URL}/api/restaurants/available`,
-                        {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ location, people }),
-                        }
-                    );
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
-                    }
-                    const data = await response.json();
-                    console.log("Restaurantes disponibles respuesta del backend:", data);
-                    setStore({ availableRestaurants: data.available_restaurants });
-                } catch (error) {
-                    console.error("Error en getAvailableRestaurants:", error.message);
-                }
-            },
-            // Obtener todos los propietarios
+            // // Buscar restaurantes disponibles
+            // getAvailableRestaurants: async (location, people) => {
+            //     console.log("Respuesta completa del servidor desde /api/restaurants/available:, {location, people}");
+            //     try {
+            //         const response = await fetch(
+            //             `${process.env.BACKEND_URL}/api/restaurants/available`,
+            //             {
+            //                 method: "POST",
+            //                 headers: { "Content-Type": "application/json" },
+            //                 body: JSON.stringify({ location, people }),
+            //             }
+            //         );
+            //         if (!response.ok) {
+            //             const errorText = await response.text();
+            //             throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
+            //         }
+            //         const data = await response.json();
+            //         console.log("Restaurantes disponibles respuesta del backend:", data);
+            //         setStore({ availableRestaurants: data.available_restaurants });
+            //     } catch (error) {
+            //         console.error("Error en getAvailableRestaurants:", error.message);
+            //     }
+            // },
+            // // Obtener todos los propietarios
 
 
             changeColor: (index, color) => {

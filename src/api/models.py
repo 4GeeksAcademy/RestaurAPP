@@ -192,7 +192,7 @@ class Reservation(db.Model):
         return {
             "id": self.id,
             "id_restaurant": self.id_fk_restaurant,
-
+            "diner_name": self.diner.fullname if self.diner else "No presente",
             "id_fk_diner": self.id_fk_diner,
             "date": self.date.isoformat() if self.date else None,
             "hour": self.hour.isoformat() if self.hour else None,

@@ -7,10 +7,12 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
-import SearchRestaurants from "./component/SearchRestaurants";  // Importar el componente de búsqueda de restaurantes
+
+// import SearchRestaurants from "./component/SearchRestaurants"; 
 import AddRestaurant from "./component/AddRestaurant";  // Importar el componente de añadir restaurante
 import MyRestaurants from "./component/MyRestaurants";
 import injectContext from "./store/appContext";
+import RestaurantSearch from "./component/RestaurantSearch";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -38,11 +40,6 @@ import RestaurantCategoriesForm from "./component/RestaurantCategoriesForm";
 import CreateRestaurant from "./component/createRestaurant";
 import RestaurantDetail from "./component/RestaurantDetail";
 
-
-import ReservationList from "./component/ReservationList"; // Importar el componente del listado de reservas
-import SearchAndReserve from "./component/SearchAndReserve"; // Importar el componente de búsqueda y reserva
-import ManageReservations from "./component/ManageReservations"; // Importar el componente de gestión de reservas
-import RequestReservation from "./component/RequestReservation";
 import OwnerReservations from "./component/ownerReservations";
 
 import AboutUs from "./component/aboutUs";
@@ -85,6 +82,7 @@ const Layout = () => {
                         <Route element={<RestaurantCategoriesForm />} path="/restaurant_categories/new" />
                         <Route element={<RestaurantCategoriesForm />} path="/restaurant_categories/:restaurantCategoryId" />
                         <Route element={<PerfilRestaurant />} path="/perfil_restaurant/:restaurant_id"  />
+                       
 
 
                         <Route element={<OwnerList />} path="/owners" />
@@ -96,17 +94,18 @@ const Layout = () => {
 
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
-                        <Route element={<SearchRestaurants />} path="/search-restaurants" />  
                         <Route element={<AddRestaurant />} path="/add-restaurant" />  
                         <Route element={<CreateRestaurant />} path="/create_restaurant" />  {/* añade rest a un owner */}
                         <Route element={<CreateRestaurant />} path="/create_restaurant/:id" />
                         <Route element={<CreateRestaurant />} path="/create_restaurant/:ownerId" />
                         <Route element={<RestaurantDetail />} path="/restaurants/:id" />
+                        <Route element={<RestaurantSearch />} path="/restaurants-search" />
 
-                        <Route element={<SearchAndReserve />} path="/search-and-reserve" /> {/* Ruta de búsqueda y reserva */}
-                        <Route element={<ManageReservations />} path="/manage-reservations" /> {/* Ruta de gestión de reservas */}
-                        <Route element={<RequestReservation />} path="/request-reservation" />
-                        <Route element={<ReservationList />} path="/restaurants/:restaurant_id/reservations" /> {/* Ruta para el listado de reservas */}
+
+                        {/* <Route element={<SearchAndReserve />} path="/search-and-reserve" /> 
+                        <Route element={<ManageReservations />} path="/manage-reservations" /> 
+                        <Route element={<RequestReservation />} path="/request-reservation" /> */}
+                        {/* <Route element={<ReservationList />} path="/restaurants/:restaurant_id/reservations" /> */}
                         <Route element={<OwnerReservations />} path="/reservation_by_owner" />
 
                         <Route element={<AboutUs />} path="/about-us" /> 

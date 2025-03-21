@@ -23,12 +23,13 @@ const OwnerReservations = () => {
             <table className="table">
                 <thead>
                     <tr>
-                        <th>Numero de reserv</th>
+                        <th>Numero de reserva</th>
                         <th>Restaurante</th>
                         <th>Fecha</th>
                         <th>Hora</th>
                         <th>Cliente</th>
                         <th>Personas</th>
+                        <th>Estado</th>
                         <th>Acciones</th> {/* Colonna per i bottoni */}
                     </tr>
                 </thead>
@@ -41,6 +42,7 @@ const OwnerReservations = () => {
                             <td>{res.hour}</td>
                             <td>{res.diner_name}</td>
                             <td>{res.people}</td>
+                            <td>{res.state}</td>
                             <td>
                                 <button 
                                     className="btn btn-primary btn-sm me-2"
@@ -70,7 +72,6 @@ const OwnerReservations = () => {
                         <p><strong>Hora:</strong> {selectedReservation.hour}</p>
                         <p><strong>Cliente:</strong> {selectedReservation.diner_name}</p>
                         <p><strong>Personas:</strong> {selectedReservation.people}</p>
-                        <p><strong>Estado:</strong> {selectedReservation.state}</p>
                         <button className="btn btn-secondary" onClick={() => setSelectedReservation(null)}>Cerrar</button>
                     </div>
                 </div>
