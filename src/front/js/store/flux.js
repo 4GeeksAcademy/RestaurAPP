@@ -1032,14 +1032,17 @@ const getState = ({ getStore, getActions, setStore }) => {
             //     setStore({ restaurantReservations: updatedReservations });
             // },
 
-            updateReservationStatus: (reservationId, newStatus) => {
+            updateReservationStatus: (reservationId, newStatus, cancelComment = "") => {        //"" en caso no haya comentario
                 return fetch(`${process.env.BACKEND_URL}/api/reservations/${reservationId}/status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
-                    body: JSON.stringify({ status: newStatus })
+                    body: JSON.stringify({ 
+                        status: newStatus,
+                        cancelComment: cancelComment
+                    })
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -1052,12 +1055,13 @@ const getState = ({ getStore, getActions, setStore }) => {
                     // Aggiorna lo stato nel frontend
                     setStore({
                         restaurantReservations: getStore().restaurantReservations.map(res =>
-                            res.id === reservationId ? { ...res, state: newStatus } : res
+                            res.id === reservationId ? { ...res, state: newStatus, cancelComment: cancelComment } : res
                         )
                     });
                 })
                 .catch(error => console.error('Error al actualizar el estado:', error));
             },
+            
             
 
 

@@ -29,6 +29,8 @@ import OwnerForm from "./component/ownerForm";
 import OwnerRestaurants from "./component/OwnerRestaurants";
 import OwnerLogin from "./component/ownerLogin";
 import OwnerDashboard from "./pages/ownerDashboard";
+import OwnerProfile from "./component/ownerProfile";
+import OwnerLogout from "./component/OwnerLogOut";
 
 import { OriginList } from "./component/originList";
 
@@ -43,6 +45,7 @@ import RestaurantDetail from "./component/RestaurantDetail";
 import OwnerReservations from "./component/ownerReservations";
 
 import AboutUs from "./component/aboutUs";
+import ContactUs from "./component/contactUs";
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 import { Context } from "./store/appContext";
@@ -91,6 +94,10 @@ const Layout = () => {
                         <Route element={<OwnerForm />} path="/owners/:ownerId" />
                         <Route element={<OwnerLogin/>} path="/owners/login" />
                         <Route element={<OwnerDashboard/>} path="/owners/dashboard" />
+                        <Route element={<OwnerReservations/>} path="/owners/myReservations" />
+                        <Route element={<OwnerProfile/>} path="/owners/profile" />
+                        <Route element={<OwnerLogout/>} path="/owners/logout" />
+
 
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
@@ -108,7 +115,8 @@ const Layout = () => {
                         {/* <Route element={<ReservationList />} path="/restaurants/:restaurant_id/reservations" /> */}
                         <Route element={<OwnerReservations />} path="/reservation_by_owner" />
 
-                        <Route element={<AboutUs />} path="/about-us" /> 
+                        <Route element={<AboutUs />} path="/about-us" />
+                        <Route element={<ContactUs />} path="/contact-us" /> 
 
                         {/* Ruta protegida para propietarios */}
                         <Route

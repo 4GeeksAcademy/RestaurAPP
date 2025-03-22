@@ -183,6 +183,8 @@ class Reservation(db.Model):
     hour = db.Column(db.Time, nullable=False)
     state = db.Column(db.String(120), default="Pending", nullable=False)
     people = db.Column(db.Integer, nullable=False)
+    cancelComment = db.Column(db.String(255), nullable=True)
+
     # Relación con restaurante
     restaurant = relationship("Restaurant", back_populates="reservations")
     # Relación con comensal
@@ -193,13 +195,14 @@ class Reservation(db.Model):
             "id": self.id,
             "id_restaurant": self.id_fk_restaurant,
             "diner_name": self.diner.fullname if self.diner else "No presente",
+            "diner_phone": self.diner.telephone if self.diner else None,
+            "diner_email": self.diner.email if self.diner else None,
             "id_fk_diner": self.id_fk_diner,
             "date": self.date.isoformat() if self.date else None,
             "hour": self.hour.isoformat() if self.hour else None,
             "state": self.state if self.state else None,
             "people": self.people,
             "restaurant": self.restaurant.serialize() if self.restaurant else None,
-            "restaurant_name": self.restaurant.name if self.restaurant else None
-              
-
+            "restaurant_name": self.restaurant.name if self.restaurant else None,
+            "cancelComment": self.cancelComment
         }
