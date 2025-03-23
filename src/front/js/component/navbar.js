@@ -264,6 +264,7 @@ import React, { useContext, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Context } from "../store/appContext";
 import LogoRestaurAPP from "../../img/LogoRestaurAPP.png";
+import logo2 from "../../img/logo2.jpeg";
 import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
@@ -287,10 +288,10 @@ export const Navbar = () => {
             <div className="container">
                 <Link to="/">
                     <img
-                        src={LogoRestaurAPP}
+                        src={logo2}
                         alt="Logo"
                         className="navbar-brand mb-0 h1"
-                        style={{ cursor: 'pointer', width: '90px', height: 'auto', borderRadius: '8px' }}
+                        style={{ cursor: 'pointer', width: '60px', height: 'auto', borderRadius: '8px' }}
                     />
                 </Link>
                 <div className="ml-auto d-flex align-items-center">

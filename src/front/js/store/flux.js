@@ -663,14 +663,33 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
+            // getAllRestaurants: () => {
+            //     fetch(process.env.BACKEND_URL + "/api/restaurants")
+            //         .then((response) => response.json())
+            //         .then((data) => {
+            //             console.log("Restaurantes recibidos:", data);
+            //             setStore({ restaurants: data });
+            //         });
+            // },
+
             getAllRestaurants: () => {
                 fetch(process.env.BACKEND_URL + "/api/restaurants")
-                    .then((response) => response.json())
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
                     .then((data) => {
                         console.log("Restaurantes recibidos:", data);
                         setStore({ restaurants: data });
+                    })
+                    .catch((error) => {
+                        console.error("Error al obtener los restaurantes:", error);
+                        alert("No se pudieron cargar los restaurantes. Inténtalo nuevamente.");
                     });
             },
+            
 
             getRestaurantById: (restaurantId) => {
                 fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId)
