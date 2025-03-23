@@ -75,7 +75,7 @@ const CreateRestaurant = () => {
           .createRestaurant(restaurantData, token)
           .then(() => {
             setSuccessMessage("Restaurante creado exitosamente!");
-            navigate("/owners/dashboard");
+            // navigate("/owners/dashboard");
           })
           .catch(() => {
             setErrorMessage("Error en la creacción del restaurante.");

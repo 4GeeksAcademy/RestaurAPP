@@ -1,0 +1,17 @@
+.btn-primary-soft {
+    color: #fff; /* White text color */
+    background-color: #ffcc00; /* Solid yellow background */
+    border-color: #ffcc00; /* Yellow border */
+}
+
+.btn-primary-soft:hover {
+    background-color: #e6b800; /* Darker yellow on hover */
+    border-color: #e6b800; /* Darker border on hover */
+}
+
+.btn-primary-soft:focus, .btn-primary-soft:active {
+    background-color: #e6b800;
+    border-color: #e6b800;
+    box-shadow: none;
+}
+

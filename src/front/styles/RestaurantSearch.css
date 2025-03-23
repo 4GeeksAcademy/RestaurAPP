@@ -1,0 +1,79 @@
+.search-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.search-fields {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: #f5f5f5; /* Sfondo grigio */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px; /* Aggiunto margine per separare dalla mappa */
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 500px; /* Aumentato la larghezza degli input */
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #3c6e47; /* Colore verde scuro al focus */
+}
+
+.icon {
+    font-size: 18px;
+    color: #3c6e47; /* Verde scuro per l'icona */
+}
+
+.suggestions {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    width: 300px; /* Aumentato per adattarsi alla larghezza dell'input */
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.suggestions div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestions div:hover {
+    background-color: #f0f0f0;
+}
+
+.search-btn {
+    padding: 12px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    background-color: #f1c40f;  /* Giallo dorato */
+    color: #fff;  /* Testo bianco per contrasto */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 250px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animazione per hover */
+}
+
+.search-btn:hover {
+    background-color: #e1b500;  /* Giallo scuro per hover */
+    transform: translateY(-3px); /* Effetto di spinta verso l'alto */
+}
+

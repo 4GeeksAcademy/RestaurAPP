@@ -1,11 +1,13 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
 
 const OwnerReservations = () => {
     const { store, actions } = useContext(Context);
     const [selectedReservation, setSelectedReservation] = useState(null);
     const [cancelingReservationId, setCancelingReservationId] = useState(null);
     const [cancelComment, setCancelComment] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         actions.getAllReservationsByOwner();
@@ -50,7 +52,7 @@ const OwnerReservations = () => {
 
     return (
         <div className="container mt-4">
-            <h2>Mis Reservas</h2>
+            <h2>Todas mis Reservas</h2>
             <table className="table">
                 <thead>
                     <tr>
@@ -76,28 +78,28 @@ const OwnerReservations = () => {
                             <td>{res.state}</td>
                             <td className="d-flex justify-content-start w-100">
                                 <div className="d-flex justify-content-start w-100">
-                                    <button 
+                                    <button
                                         className="btn btn-primary btn-sm me-3"
                                         onClick={() => handleShowModal(res)}
                                     >
                                         Ver detalles
                                     </button>
                                     {res.state === "Accepted" ? (
-                                        <button 
+                                        <button
                                             className="btn btn-warning btn-sm me-3"
                                             onClick={() => handleCancelClick(res.id)}
                                         >
                                             Cancelar la reserva
                                         </button>
                                     ) : (
-                                        <button 
+                                        <button
                                             className="btn btn-warning btn-sm me-3"
                                             disabled
                                         >
                                             {res.state === "Canceled" ? "Reserva cancelada" : "Reserva rechazada"}
                                         </button>
                                     )}
-                                    <button 
+                                    <button
                                         className="btn btn-danger btn-sm me-3"
                                         onClick={() => handleDeleteClick(res.id)}
                                     >
@@ -150,6 +152,16 @@ const OwnerReservations = () => {
                             )}
                         </div>
                         <div className="modal-footer">
+                            <button
+                                className="btn btn-secondary"
+                                onClick={() => {
+                                    navigate(`/restaurants/${selectedReservation?.id_restaurant}`);
+                                    window.location.reload();  // Forza un refresh della pagina
+                                }}
+                            >
+                                Quieres gestionar tu reserva?
+                            </button>
+
                             <button className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCloseModal}>
                                 Cerrar
                             </button>

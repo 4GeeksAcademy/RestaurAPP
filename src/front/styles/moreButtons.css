@@ -1,0 +1,88 @@
+/* .button-52 {
+  font-size: 16px;
+  font-weight: 200;
+  letter-spacing: 1px;
+  padding: 13px 20px 13px;
+  outline: 0;
+  border: 1px solid black;
+  cursor: pointer;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-52:after {
+  content: "";
+  background-color: #ffe54c;
+  width: 100%;
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  top: 7px;
+  left: 7px;
+  transition: 0.2s;
+}
+
+.button-52:hover:after {
+  top: 0px;
+  left: 0px;
+}
+
+@media (min-width: 768px) {
+  .button-52 {
+    padding: 13px 50px 13px;
+  }
+} */
+
+/* Importing Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
+.button-52 {
+  font-family: 'Poppins', sans-serif; /* Poppins font */
+  font-size: 18px; /* Larger font size */
+  font-weight: 600; /* Bolder text */
+  letter-spacing: 1px;
+  padding: 14px 30px; /* Adjusted padding */
+  outline: 0;
+  border: 2px solid #ffd000; /* Thicker border with yellow color */
+  border-radius: 15px; /* Slightly less rounded corners */
+  cursor: pointer;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0); /* Transparent background */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  color: #2f4f4f; /* Dark green text */
+  transition: 0.3s; /* Smooth transition */
+}
+
+.button-52:after {
+  content: "";
+  background-color: #fad946; /* Yellow background */
+  width: 100%;
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  top: 7px;
+  left: 7px;
+  border-radius: 15px; /* Rounded corners for the yellow background */
+  transition: 0.2s;
+}
+
+.button-52:hover {
+  border-color: #ffcc00; /* Yellow border on hover */
+}
+
+.button-52:hover:after {
+  top: 0px;
+  left: 0px;
+}
+
+@media (min-width: 768px) {
+  .button-52 {
+    padding: 14px 50px; /* Adjust padding for larger screens */
+  }
+}
+

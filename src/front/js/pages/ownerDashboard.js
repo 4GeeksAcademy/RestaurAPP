@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate, Navigate } from "react-router-dom";
+import "../../styles/moreButtons.css";
+
 
 const OwnerDashboard = () => {
     const { store, actions } = useContext(Context);
@@ -40,7 +42,7 @@ const OwnerDashboard = () => {
                     {/* Sezione per i ristoranti */}
                     <div className="d-flex justify-content-between align-items-center mb-5">
                         <h2>Tus Restaurantes</h2>
-                        <button type="button" className="btn btn-light border-0" onClick={() => navigate("/create_restaurant")}>
+                        <button type="button" className="button-52" onClick={() => navigate("/create_restaurant")}>
                             Crear nuevo restaurante
                         </button>
                     </div>

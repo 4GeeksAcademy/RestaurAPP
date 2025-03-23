@@ -8,17 +8,16 @@ const MyMapComponent = ({ restaurantes }) => {
   };
 
   const center = {
-    lat: 40.712776, // Latitudine predefinita (es. New York)
-    lng: -74.005974 // Longitudine predefinita (es. New York)
+    lat: 40.712776, //( fijo : New York)
+    lng: -74.005974 //( fijo : New York)
   };
 
-  // Funzione per verificare se una coordinata è valida
+ 
   const isValidLatLng = (lat, lng) => {
     return !isNaN(lat) && !isNaN(lng) && lat !== null && lng !== null;
   };
 
   useEffect(() => {
-    // Log per vedere quali coordinate stai ricevendo
     restaurantes.forEach((restaurant, index) => {
       console.log(`Ristorante ${index}:`, restaurant);
     });
@@ -32,24 +31,23 @@ const MyMapComponent = ({ restaurantes }) => {
         zoom={12}
       >
         {restaurantes.map((restaurant, index) => {
-          const lat = restaurant.latitude;  // Assicurati di usare `latitude`
-          const lng = restaurant.longitude; // Assicurati di usare `longitude`
+          const lat = restaurant.latitude;  
+          const lng = restaurant.longitude;
 
           // Log delle coordinate prima di passare a setPosition
           console.log(`Coordinate ristorante ${index}: lat = ${lat}, lng = ${lng}`);
 
-          // Verifica che latitudine e longitudine siano validi
+          // Verifica se latitudine e longitudine siano validi
           if (isValidLatLng(lat, lng)) {
             return (
               <Marker
                 key={index}
-                position={{ lat, lng }}  // Passa le coordinate corrette
+                position={{ lat, lng }}
               />
             );
           } else {
-            // Log per errori di coordinate non valide
             console.error(`Coordinate non valide per il ristorante ${restaurant.name}: lat: ${lat}, lng: ${lng}`);
-            return null; // Non aggiunge il marker se le coordinate non sono valide
+            return null;
           }
         })}
       </GoogleMap>
