@@ -29,7 +29,7 @@ export const DinerEdit = () => {
     const handleEdit = (e) => {
         e.preventDefault();
         actions.handleEdit(id, fullname, email, telephone, password);
-        navigate('/dinerlist');
+        navigate('/dineraccount');
     };
 
     return (
@@ -37,7 +37,7 @@ export const DinerEdit = () => {
             <div className="d-flex align-items-center mt-3 bg-body-tertiary">
                 <div className="form-signin w-100 m-auto">
                     <form onSubmit={handleEdit}>
-                        <h1 className="h3 mb-3 fw-normal"><strong>Edit Diner</strong></h1>
+                        <h1 className="h3 mb-3 fw-normal"><strong>Mi Cuenta</strong></h1>
 
                         <div className="form-floating mb-2">
                             <input
@@ -86,7 +86,7 @@ export const DinerEdit = () => {
                             />
                             <label htmlFor="floatingPassword">Password</label>
                         </div>
-                        <button className="btn btn-primary w-100 py-2" type="submit">Save Changes</button>
+                        <button className="btn btn-primary w-100 py-2" type="submit">Guardar Cambios</button>
                     </form>
                 </div>
             </div>

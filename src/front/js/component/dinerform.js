@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
 
 export const Dinerform = () => {
     const { store, actions } = useContext(Context);
@@ -7,11 +8,13 @@ export const Dinerform = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [telephone, setTelephone] = useState('');
+    const navigate = useNavigate();
 
     
     const handleSignup = (e) => {
         console.log('has creado tu usuario')
-        actions.DinerForm(fullname, email, telephone, password )          
+        actions.DinerForm(fullname, email, telephone, password ) 
+        navigate("/diner/login");
     };
 
     return (

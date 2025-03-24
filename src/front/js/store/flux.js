@@ -15,6 +15,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 },
             ],
             diners: [],
+            especificDiner: [],
             auth: false,
             dinerauth: false,
             dinerReservations: [],
@@ -131,9 +132,46 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
+            getSpecifidiner: () => {
+                // Recupera il token e l'ownerId dal localStorage
+                const tokenDiner = localStorage.getItem('tokenDiner');
+                const dinerId = localStorage.getItem('dinerId');
+
+                // Verifica se i dati sono disponibili
+                if (!tokenDiner || !dinerId) {
+                    console.error("Token o diner ID not found in localStorage");
+                    return;
+                }
+
+                console.log("tokenDiner:", tokenDiner);
+                console.log("dinerId:", dinerId);
+
+                // Effettua la richiesta al back-end
+                fetch(process.env.BACKEND_URL + "/api/diner/" + dinerId, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${tokenDiner}`,
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log("Datos recibidos from FRONT specific diner:", data);
+                        setStore({ especificDiner: data });
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching specific diner:', error);
+                    });
+            },
+
             getDinerReserves: () => {
                 const token = localStorage.getItem('tokenDiner');
-                const dinerId = localStorage.getItem('diner.id');
+                const dinerId = localStorage.getItem('dinerId');
 
                 const requestOptions = {
                     method: "GET",

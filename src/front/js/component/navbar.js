@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { Context } from "../store/appContext";
 import logo2 from "../../img/logo2.jpeg";
 import LogoEnteroRestaurApp from "../../img/LogoEnteroRestaurApp.png";
@@ -7,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export const Navbar = () => {
     const { store, actions } = useContext(Context);
+    const navigate = useNavigate();
     const location = useLocation(); // Obtener la ruta actual
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
@@ -24,7 +26,17 @@ export const Navbar = () => {
     // Verifica se siamo nella home (modifica in base al tuo path della home)
     const isHome = location.pathname === "/";
 
+    const handleLogout = () => {
+        actions.dinerLogout();
+        actions.ownerLogout();  
+        localStorage.removeItem("dinerFullName");
+        localStorage.removeItem("tokenDiner");
+        localStorage.removeItem("token");  
+        navigate("/diner/login");
+    };
+
     return (
+
         <nav className="navbar">
             <div className="container d-flex align-items-center justify-content-between">
                 {/* Logo e Bottoni nello stesso div */}
@@ -95,19 +107,37 @@ export const Navbar = () => {
                         ) : null}
 
                         {/* Se il diner è autenticato */}
-                        {store.dinerauth && !isHome ? (
-                            <>
-                                <Link to="/restaurants-search" className="d-inline-block ms-2">
-                                    <button type="button" className="btn btn-light" style={{ border: 'none', background: 'transparent', color: '#000' }}>Buscar Restaurantes</button>
-                                </Link>
-
-                                <Link to="/contact-us" className="d-inline-block ms-2">
-                                    <button type="button" className="btn btn-light" style={{ border: 'none', background: 'transparent', color: '#000' }}>Contact Us</button>
-                                </Link>
-                                <Link to="/about-us" className="d-inline-block ms-2">
-                                    <button type="button" className="btn btn-light" style={{ border: 'none', background: 'transparent', color: '#000' }}>About Us</button>
-                                </Link>
-                            </>
+                                  {localStorage.getItem("tokenDiner") && (
+                        <div className="dropdown ms-2">
+                            <button
+                                className="btn btn-light dropdown-toggle"
+                                type="button"
+                                id="dropdownMenuButton"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                Mi Perfil
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <Link to="/diner/reservations" className="dropdown-item">Mis Reservas</Link>
+                                </li>
+                                <li>
+                                    <Link to="/dineraccount" className="dropdown-item">Mi Cuenta</Link>
+                                </li>
+                                <li><hr className="dropdown-divider" /></li>
+                                <li>
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger dropdown-item"
+                                        onClick={() => handleLogout()}
+                                    >
+                                        Log Out
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
                         ) : null}
 
                         {/* Se nessuno è autenticato e non siamo sulla home */}
@@ -137,7 +167,7 @@ export const Navbar = () => {
                                 </Link>
                             </>
                         ) : null}
-                    </div>
+
                 </div>
             </div>
         </nav>

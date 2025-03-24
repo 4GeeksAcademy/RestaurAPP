@@ -81,6 +81,7 @@
 		"react-dom": "^16.8.4",
 		"react-places-autocomplete": "^7.3.0",
 		"react-polyfills": "0.0.1",
-		"react-router-dom": "^6.3.0"
+		"react-router-dom": "^6.3.0",
+		"react-star-rating-component": "^1.4.1"
 	}
 }

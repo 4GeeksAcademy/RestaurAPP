@@ -38,6 +38,8 @@ export const PerfilRestaurant = () => {
     setReservationDate("");
     setReservationHour("");
     setPeopleCount(1);
+    navigate("/diner/dashboard")
+    actions.getDinerReserves();
     
   };
 
@@ -51,7 +53,7 @@ export const PerfilRestaurant = () => {
         <div className="col-md-6">
           <div className="card" style={{ width: "100%" }}>
             <img
-              src={restaurappImageUrl}
+              src={restaurant.image_url || restaurappImageUrl}
               className="card-img-top"
               alt={`Imagen de ${restaurant.name}`}
             />
@@ -60,14 +62,14 @@ export const PerfilRestaurant = () => {
               <p className="card-text">{restaurant.location}</p>
             </div>
             <ul className="list-group list-group-flush">
-              <li className="list-group-item">Capacidad: {restaurant.capacity}</li>
+              <li className="list-group-item">Capacidad: {restaurant.capacity} Personas</li>
               <li className="list-group-item">Ubicación: {restaurant.location}</li>
             </ul>
           </div>
         </div>
 
         <div className="col-md-6">
-          <h1>Hacer una Reserva en {restaurant.name}</h1>
+          <h1>Reserva en {restaurant.name}</h1>
           <form onSubmit={handleReserve}>
             <div className="mb-3">
               <label htmlFor="date" className="form-label">Fecha</label>
