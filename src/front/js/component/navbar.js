@@ -1,112 +1,130 @@
-import React, { useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import LogoRestaurAPP from "../../img/LogoRestaurAPP.png";
 
 export const Navbar = () => {
-    const { store } = useContext(Context);
+    const { store, actions } = useContext(Context);
+    const navigate = useNavigate();
     const location = useLocation(); // Obtener la ruta actual
 
+    const handleLogout = () => {
+        actions.dinerLogout();
+        actions.ownerLogout();  
+        localStorage.removeItem("dinerFullName");
+        localStorage.removeItem("tokenDiner");
+        localStorage.removeItem("token");  
+        navigate("/diner/login");
+    };
+
     return (
-        <nav className="navbar navbar-light bg-light">
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container">
-                <Link to="/">
+                <Link to="/" className="navbar-brand">
                     <img
                         src={LogoRestaurAPP}
                         alt="Logo"
-                        className="navbar-brand mb-0 h1"
                         style={{ cursor: 'pointer', width: '90px', height: 'auto', borderRadius: '8px' }}
                     />
                 </Link>
-                <div className="ml-auto">
-                    {/* Botones siempre visibles: "Buscar Restaurantes", "Owner Signup", "Owner Login", "Diner Login", "Diner Sign up" */}
+                <div className="d-flex align-items-center">
                     <Link to="/search-restaurants">
-                        <button type="button" className="btn btn-light">Buscar Restaurantes</button>
-                    </Link>
-                    <Link to="/owners/new">
-                        <button type="button" className="btn btn-light">Owner Signup</button>
-                    </Link>
-                    <Link to="/owners/login">
-                        <button type="button" className="btn btn-light">Owner Login</button>
-                    </Link>
-                    <Link to="/diner/login">
-                        <button type="button" className="btn btn-light">Diner Login</button>
-                    </Link>
-                    <Link to="/dinerform">
-                        <button type="button" className="btn btn-light mx-1">Diner Sign up</button>
+                        <button type="button" className="btn btn-light ms-2">Buscar Restaurantes</button>
                     </Link>
 
-                    {/* Si el usuario está autenticado como owner, mostrar estos botones sin "Buscar Restaurantes" */}
-                    {store.auth && store.user && store.user.role === "owner" && (
+                    {/* si es owner se veran estos botones */}
+                    {store.auth && (
                         <>
                             <Link to="/add-restaurant">
-                                <button className="btn btn-secondary">Añadir Restaurante</button>
+                                <button className="btn btn-secondary ms-2">Añadir Restaurante</button>
                             </Link>
                             <Link to="/restaurant_categories">
-                                <button className="btn btn-light">Restaurant-categories List</button>
+                                <button className="btn btn-light ms-2">Restaurant-categories List</button>
                             </Link>
                             <Link to="/restaurant_categories/new">
-                                <button className="btn btn-light">Add Restaurant-categories</button>
+                                <button className="btn btn-light ms-2">Add Restaurant-categories</button>
                             </Link>
-
                             <Link to="/owners">
-                                <button className="btn btn-light">Owners List</button>
+                                <button className="btn btn-light ms-2">Owners List</button>
                             </Link>
                             <Link to="/owners/dashboard">
-                                <button className="btn btn-light">Owner Dashboard</button>
+                                <button className="btn btn-light ms-2">Owner Dashboard</button>
                             </Link>
                             <Link to="/categories">
-                                <button className="btn btn-light">Categories List</button>
+                                <button className="btn btn-light ms-2">Categories List</button>
                             </Link>
                             <Link to="/categories/new">
-                                <button className="btn btn-light">Add Categories</button>
+                                <button className="btn btn-light ms-2">Add Categories</button>
                             </Link>
                             <Link to="/my-restaurants">
-                                <button className="btn btn-success">Mis Restaurantes</button>
+                                <button className="btn btn-success ms-2">Mis Restaurantes</button>
                             </Link>
                         </>
                     )}
 
-                    {/* Si el usuario está autenticado como diner, mostrar el botón de "Diner list" */}
-                    {store.dinerauth ? (
-                        <>
-                            <Link to="/dinerlist">
-                                <button className="btn btn-primary">Diner list</button>
-                            </Link>
-                        </>
-                    ) : null}
+                    {localStorage.getItem("tokenDiner") && (
+                        <div className="dropdown ms-2">
+                            <button
+                                className="btn btn-light dropdown-toggle"
+                                type="button"
+                                id="dropdownMenuButton"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                Mi Perfil
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <Link to="/diner/reservations" className="dropdown-item">Mis Reservas</Link>
+                                </li>
+                                <li>
+                                    <Link to="/dineraccount" className="dropdown-item">Mi Cuenta</Link>
+                                </li>
+                                <li><hr className="dropdown-divider" /></li>
+                                <li>
+                                    <button
+                                        type="button"
+                                        className="btn btn-danger dropdown-item"
+                                        onClick={() => handleLogout()}
+                                    >
+                                        Log Out
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
 
-                    {/* Botón "About Us" siempre visible */}
+                    {/* este siempre sera visible */}
                     <Link to="/about-us">
-                        <button type="button" className="btn btn-light">About Us</button>
+                        <button type="button" className="btn btn-light ms-2">About Us</button>
                     </Link>
 
-                    {/* Los botones de administración y categorías solo se muestran en la página "/categories" */}
+                    {/* solo en categories */}
                     {location.pathname === "/categories" && (
                         <>
                             <Link to="/add-restaurant">
-                                <button className="btn btn-secondary">Añadir Restaurante</button>
+                                <button className="btn btn-secondary ms-2">Añadir Restaurante</button>
                             </Link>
                             <Link to="/restaurant_categories">
-                                <button className="btn btn-light">Restaurant-categories List</button>
+                                <button className="btn btn-light ms-2">Restaurant-categories List</button>
                             </Link>
                             <Link to="/restaurant_categories/new">
-                                <button className="btn btn-light">Add Restaurant-categories</button>
+                                <button className="btn btn-light ms-2">Add Restaurant-categories</button>
                             </Link>
                             <Link to="/owners">
-                                <button className="btn btn-light">Owners List</button>
+                                <button className="btn btn-light ms-2">Owners List</button>
                             </Link>
                             <Link to="/owners/dashboard">
-                                <button className="btn btn-light">Owner Dashboard</button>
+                                <button className="btn btn-light ms-2">Owner Dashboard</button>
                             </Link>
                             <Link to="/categories">
-                                <button className="btn btn-light">Categories List</button>
+                                <button className="btn btn-light ms-2">Categories List</button>
                             </Link>
                             <Link to="/categories/new">
-                                <button className="btn btn-light">Add Categories</button>
+                                <button className="btn btn-light ms-2">Add Categories</button>
                             </Link>
                             <Link to="/my-restaurants">
-                                <button className="btn btn-success">Mis Restaurantes</button>
+                                <button className="btn btn-success ms-2">Mis Restaurantes</button>
                             </Link>
                         </>
                     )}

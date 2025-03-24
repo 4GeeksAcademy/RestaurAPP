@@ -54,9 +54,9 @@ class Owner(db.Model):
 
 class Diner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    fullname = db.Column(db.String(120), unique=True, nullable=False)
+    fullname = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    telephone = db.Column(db.String(120), unique=True, nullable=False)
+    telephone = db.Column(db.String(120), unique=False, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
 
         # Relación con reservas
@@ -70,7 +70,8 @@ class Diner(db.Model):
             'id': self.id,
             'fullname': self.fullname,
             'email': self.email,  
-            'telephone': self.telephone,    
+            'telephone': self.telephone,
+            'password': self.password, 
         }
 
         
