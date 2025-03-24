@@ -911,11 +911,15 @@ def update_reservation_status(reservation_id):
 
     data = request.get_json()
     new_status = data.get('status')
+    cancel_comment = data.get('cancelComment', "")
 
     if new_status not in ['Pending', 'Accepted', 'Refused', 'Canceled']:
         return jsonify({'error': 'Invalid status'}), 400
 
     reservation.state = new_status
+    if new_status == "Canceled":
+        reservation.cancelComment = cancel_comment
+
     db.session.commit()
 
-    return jsonify({'message': 'Reservation status updated', 'status': reservation.state}), 200
+    return jsonify({'message': 'Reservation status updated', 'status': reservation.state, 'cancelComment': reservation.cancelComment}), 200

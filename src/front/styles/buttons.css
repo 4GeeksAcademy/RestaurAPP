@@ -1,0 +1,17 @@
+.btn-primary-soft {
+    color: #fff;
+    background-color: #ffcc00; 
+    border-color: #ffcc00; 
+}
+
+.btn-primary-soft:hover {
+    background-color: #e6b800;
+    border-color: #e6b800;
+}
+
+.btn-primary-soft:focus, .btn-primary-soft:active {
+    background-color: #e6b800;
+    border-color: #e6b800;
+    box-shadow: none;
+}
+
