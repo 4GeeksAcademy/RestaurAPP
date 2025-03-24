@@ -37,7 +37,7 @@ const MyMapComponent = ({ restaurantes }) => {
           // Log delle coordinate prima di passare a setPosition
           console.log(`Coordinate ristorante ${index}: lat = ${lat}, lng = ${lng}`);
 
-          // Verifica se latitudine e longitudine siano validi
+          // Verifica se lat e long siano validi
           if (isValidLatLng(lat, lng)) {
             return (
               <Marker

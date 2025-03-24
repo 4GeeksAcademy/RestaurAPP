@@ -23,7 +23,7 @@ const CreateRestaurant = () => {
   const { id } = useParams();
   const token = localStorage.getItem("token");
 
-  // Carica Google Maps API
+  // Carga API Google Maps
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.MAP_KEY,
     libraries: libraries,
@@ -100,7 +100,7 @@ const CreateRestaurant = () => {
           {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
-          {/* Upload immagine */}
+          {/* Upload imagen */}
           <div className="mb-3">
             <label htmlFor="image" className="form-label">Imagen del restaurante</label>
             <CloudinaryUploader setImageUrl={setImageUrl} setErrorMessage={setErrorMessage} />
@@ -111,7 +111,7 @@ const CreateRestaurant = () => {
             )}
           </div>
 
-          {/* Nome del ristorante */}
+          {/* Nombre del rest */}
           <div className="mb-3">
             <label htmlFor="restaurantName" className="form-label">Nombre del restaurante</label>
             <input
@@ -124,7 +124,7 @@ const CreateRestaurant = () => {
             />
           </div>
 
-          {/* Ubicazione con Autocomplete */}
+          {/* Ubicación con Autocomplete */}
           {isLoaded && (
             <div className="mb-3">
               <label htmlFor="location" className="form-label">Ubicación</label>
@@ -153,7 +153,7 @@ const CreateRestaurant = () => {
             </div>
           )}
 
-          {/* Telefono */}
+          {/* Telefóno */}
           <div className="mb-3">
             <label htmlFor="telephone" className="form-label">Telefóno</label>
             <input
@@ -166,7 +166,7 @@ const CreateRestaurant = () => {
             />
           </div>
 
-          {/* Capacità */}
+          {/* Capacidad */}
           <div className="mb-3">
             <label htmlFor="capacity" className="form-label">Capacidad</label>
             <input
@@ -179,11 +179,11 @@ const CreateRestaurant = () => {
             />
           </div>
 
-          {/* Latitudine e Longitudine (nascoste) */}
+          {/* Lat y Long (escondidas) */}
           <input type="hidden" value={latitude} readOnly />
           <input type="hidden" value={longitude} readOnly />
 
-          {/* Bottone di invio */}
+          {/* send button */}
           <button type="submit" className="btn btn-primary">
             {id ? "Salva Modifiche" : "Crea Ristorante"}
           </button>
