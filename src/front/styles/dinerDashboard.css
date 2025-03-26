@@ -1,0 +1,97 @@
+.card-img {
+    width: 100%;
+    /* Aseguramos que la imagen cubra todo el contenedor */
+    height: 200px;
+    /* Ajustamos la altura a un valor fijo, para que las imágenes sean del mismo tamaño */
+    object-fit: cover;
+    /* La imagen se ajusta para cubrir todo el contenedor sin deformarse */
+    border-radius: 15px;
+    /* Bordes redondeados */
+}
+
+
+.card {
+    border: none;
+    box-shadow: none;
+}
+
+.btn-primary {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-primary:hover {
+    background-color: #e0a800;
+    font-weight: 800;
+    border-color: #e0a800;
+}
+
+.card-title a {
+    text-decoration: none;
+    color: inherit;
+    font-family: "Poppins", sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    transition: color 0.3s ease, font-weight 0.3s ease;
+}
+
+.card-title a:hover {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.nav-link.active {
+    color: #ffc107 !important;
+    font-weight: bold !important;
+}
+
+.bienvenido {
+    text-decoration: none;
+    color: inherit;
+    font-family: "Poppins", sans-serif;
+    font-weight: 1000;
+    font-size: 1.5rem;
+    transition: color 0.3s ease, font-weight 0.3s ease;
+}
+
+.destacados {
+    text-decoration: none;
+    color: inherit;
+    font-family: "Poppins", sans-serif;
+    font-weight: 1000;
+    font-size: 2.5rem;
+    transition: color 0.3s ease, font-weight 0.3s ease;
+}
+
+.btn-volver {
+    position: fixed;
+    bottom: 20px; 
+    left: 20px; 
+    z-index: 999; 
+    padding: 10px 20px; 
+    font-size: 1rem; 
+    background-color: #007bff; 
+    color: white;
+    border: none; 
+    border-radius: 5px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.3s ease; 
+  }
+  
+.btn-volver:hover {
+    background-color: #0056b3; 
+}
+
+.card:hover .card-img {
+    transform: scale(1.05);
+    opacity: 0.8;
+}
+
+.card {
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Añade sombra cuando pasas el ratón sobre la tarjeta */
+}
+

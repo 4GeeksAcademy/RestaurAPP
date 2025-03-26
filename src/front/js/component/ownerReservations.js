@@ -79,7 +79,7 @@ const OwnerReservations = () => {
                             <td className="d-flex justify-content-start w-100">
                                 <div className="d-flex justify-content-start w-100">
                                     <button
-                                        className="btn btn-primary btn-sm me-3"
+                                        className="button-37 btn-sm me-3"
                                         onClick={() => handleShowModal(res)}
                                     >
                                         Ver detalles

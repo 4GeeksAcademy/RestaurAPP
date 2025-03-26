@@ -51,6 +51,8 @@ import ContactUs from "./component/contactUs";
 
 import PrivateRoute from "./component/PrivateRoute"; // Importar componente para proteger rutas
 import { Context } from "./store/appContext";
+import InfoPage from "./component/AvisosLegales";
+import Giftcard from "./component/GiftCard";
 
 
 
@@ -123,6 +125,10 @@ const Layout = () => {
 
                         <Route element={<AboutUs />} path="/about-us" />
                         <Route element={<ContactUs />} path="/contact-us" /> 
+                        <Route element={<InfoPage />} path="/avisos-legales" />
+                        <Route element={<Giftcard />} path="/giftcard" />
+
+
 
                         {/* Ruta protegida para propietarios
                         <Route
@@ -132,13 +138,13 @@ const Layout = () => {
                                     {/* <MyRestaurants />
                                 </PrivateRoute> */}
                             {/* } */}
-                        {/* /> */} */}
+                        {/* /> */} 
 
                         {/*<Route element={<Signup />} path="/signup" />*/}  {/* Ruta de registro */}
                         {/*<Route element={<Login />} path="/login" />*/}  {/* Ruta de inicio de sesión */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    {/* <Footer /> */}
+                 <Footer /> 
                 </ScrollToTop>
             </BrowserRouter>
         </div>

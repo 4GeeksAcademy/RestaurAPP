@@ -91,6 +91,7 @@ def edit_diner(id):
     response_body = diner.to_dict()
     return jsonify(response_body), 200
 
+
 @api.route('/diner/<int:id>', methods=['DELETE'])
 def delete_diner(id):
     diner = Diner.query.get(id)
@@ -197,6 +198,41 @@ def delete_reservation_by_diner(reservation_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": "Error deleting reservation", "error": str(e)}), 500
+    
+@api.route('/update_reservation_by_diner/<int:reservation_id>', methods=['PUT'])
+@jwt_required()
+def update_reservation_status_for_diner(reservation_id):
+    
+    email = get_jwt_identity()
+    diner = Diner.query.filter_by(email=email).first()
+
+    if not diner:
+        return jsonify({'error': 'Diner not found'}), 404
+
+    reservation = Reservation.query.get(reservation_id)
+    if not reservation:
+        return jsonify({'error': 'Reservation not found'}), 404
+
+    if reservation.diner_id != diner.id:
+        return jsonify({'error': 'Unauthorized action. You can only modify your own reservation.'}), 403
+
+    if reservation.state != 'Pending':
+        return jsonify({'error': 'Only pending reservations can be canceled'}), 400
+
+    data = request.get_json()
+    new_status = data.get('status')
+    cancel_comment = data.get('cancelComment', "")
+
+    if new_status != 'Canceled':
+        return jsonify({'error': 'Invalid status. Only "Canceled" is allowed.'}), 400
+
+    reservation.state = new_status
+    reservation.cancelComment = cancel_comment
+
+    db.session.commit()
+
+    return jsonify({'message': 'Reservation status updated to canceled', 'status': reservation.state, 'cancelComment': reservation.cancelComment}), 200
+
 
 
 """/////////////////////////////////// OWNERS ////////////////////////////////////////"""
@@ -923,3 +959,4 @@ def update_reservation_status(reservation_id):
     db.session.commit()
 
     return jsonify({'message': 'Reservation status updated', 'status': reservation.state, 'cancelComment': reservation.cancelComment}), 200
+

@@ -110,6 +110,7 @@ class Restaurant(db.Model):
             "capacity": self.capacity,
             "owner_id": self.owner_id,
             "image_url": self.image_url
+        
         }
     
 class Origin(db.Model):

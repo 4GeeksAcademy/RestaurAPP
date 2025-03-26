@@ -1,12 +1,12 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Context } from '../store/appContext';
 import "../../styles/buttons.css";
-import "../../styles/home.css";
+import "../../styles/stateButtons.css";
 
 const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
     const { store, actions } = useContext(Context);
     const [cancelComment, setCancelComments] = useState({});
-    const [isCanceling, setIsCanceling] = useState({}); // Stato separato per ogni prenotazione
+    const [isCanceling, setIsCanceling] = useState({}); 
 
     useEffect(() => {
         if (restaurantId) {
@@ -69,11 +69,11 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
                             <td>
                                 {res.state === "Pending" && (
                                     <>
-                                        <button className="btn-primary-invertido btn-sm"
+                                        <button className="button-37-invertido btn-sm"
                                             onClick={() => actions.updateReservationStatus(res.id, "Accepted", null, restaurantId)}>
                                             Aceptar
                                         </button>
-                                        <button className="btn-primary-invertido btn-sm mx-2"
+                                        <button className="btn-primary-invertido mx-2"
                                             onClick={() => actions.updateReservationStatus(res.id, "Refused", null, restaurantId)}>
                                             Rechazar
                                         </button>
@@ -94,7 +94,7 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
                                         )}
 
                                         <button
-                                            className="btn-primary-invertido btn-sm mt-2"
+                                            className="button-82 btn-sm mt-2"
                                             onClick={() => handleCancelMessage(res)}>
                                             {isCanceling[res.id] ? 'Confirmar cancelación' : 'Cancelar reserva'}
                                         </button>

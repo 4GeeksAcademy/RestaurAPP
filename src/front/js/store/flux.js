@@ -210,6 +210,46 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
+            changeReservationStatusByDiner: (reservationId, newStatus, cancelComment = "") => {
+                return fetch(`${process.env.BACKEND_URL}/api/update_reservations_by_diner/${reservationId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('tokenDiner')}`
+                    },
+                    body: JSON.stringify({
+                        status: newStatus,
+                        cancelComment: cancelComment
+                    })
+                })
+                .then(response => {
+                    console.log(response)
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Error al actualizar el estado de la reserva');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Estado actualizado:', data);
+                    
+                    setStore({
+                        dinerReservations: getStore().dinerReservations.map(res =>
+                            res.id === reservationId
+                                ? { ...res, state: newStatus, cancelComment: cancelComment }
+                                : res
+                        )
+                    });
+            
+                    
+                })
+                .catch(error => {
+                    console.error('Error al actualizar el estado:', error);
+                });
+            },
+            
+
             handleDelete: (id) => {
                 const requestOptions = {
                     method: "DELETE",
