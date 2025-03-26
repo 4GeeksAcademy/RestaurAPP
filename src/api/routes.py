@@ -1040,7 +1040,7 @@ def update_reservation_status(reservation_id):
 
 import openai
 
-# Set your OpenAI API key
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @api.route('/recommendation', methods=['POST'])
@@ -1060,7 +1060,6 @@ def restaurant_recommendation():
     if not occasion or not date or not time:
         return jsonify({"error": "Missing required fields"}), 400
 
-    # Prompt for OpenAI
     prompt = f"""
         Eres un experto en restaurantes, tipos de cocina y planes personalizados. Según los datos recibidos, responde de manera amigable, cálida y fluida. Comienza siempre con un saludo amigable y ofrece una recomendación personalizada. La respuesta debe ser detallada, mencionando tanto el restaurante como la experiencia que se vivirá en él.
 

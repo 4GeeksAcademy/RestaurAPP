@@ -1,34 +1,31 @@
-
-
-
-/* Contenitore del form */
+/* Contenedor del formulario */
 .recommendation-form {
     background: white;
-    padding: 30px; /* Aumentato il padding per renderlo più grande */
+    padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Effetto ombra più evidente */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     width: 100%;
-    max-width: 500px; /* Larghezza maggiore */
+    max-width: 500px;
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Maggior spazio tra gli elementi */
+    gap: 15px;
     margin-top: 50px;
 }
 
-/* Titolo */
+/* Título */
 h2 {
     text-align: center;
     color: #333;
 }
 
-/* Etichette */
+/* Etiquetas */
 label {
     font-weight: bold;
     margin-bottom: 5px;
     color: #444;
 }
 
-/* Input e Select */
+/* Inputs, select y textarea */
 input, select, textarea {
     width: 100%;
     padding: 12px;
@@ -37,13 +34,13 @@ input, select, textarea {
     font-size: 16px;
 }
 
-/* Area di testo */
+/* Ajustar altura del textarea */
 textarea {
-    height: 100px; /* Altezza maggiore */
+    height: 100px;
     resize: none;
 }
 
-/* Pulsante di invio */
+/* Botón de envío */
 button {
     background: #ffd000ea;
     color: rgb(37, 20, 20);
@@ -54,24 +51,39 @@ button {
     cursor: pointer;
     transition: background 0.3s, transform 0.2s;
     font-weight: bold;
-    margin-top: 10px; /* Aggiunto spazio sopra il bottone */
+    margin-top: 10px;
 }
 
 button:hover {
     background: #ecc516;
-    transform: scale(1.05); /* Effetto leggero di ingrandimento al passaggio del mouse */
+    transform: scale(1.05);
 }
 
-/* Box della risposta */
-div h3 {
-    margin-top: 20px;
-    color: #333;
+/* Contenedor de la respuesta */
+.response-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px;
+    margin-top: 50px;
 }
 
+/* Texto de la respuesta */
 .OpenAiResponse {
-    background: #eaf7ea;
+    background: #f7e91d38;
     padding: 12px;
     border-radius: 6px;
     font-size: 14px;
-    color: #2d6a2d;
+    color: #060e06;
+}
+
+/* Diseño para mostrar el formulario y la respuesta en paralelo */
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    flex-wrap: wrap;
 }

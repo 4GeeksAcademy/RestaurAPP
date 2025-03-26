@@ -48,54 +48,59 @@ const RestaurantRecommendationForm = () => {
     };
 
     return (
-        <div className="form-container">
-            <h2>Quieres una recomendación sobre un restaurante y el plan del día?</h2>
-            <form onSubmit={handleSubmit} className="recommendation-form">
-                <label>Ocasión:</label>
-                <select value={ocasion} onChange={(e) => setOcasion(e.target.value)} required>
-                    <option value="">Selecciona una ocasión</option>
-                    <option value="aniversario">Aniversario</option>
-                    <option value="cumpleaños">Cumpleaños</option>
-                    <option value="cena_romantica">Cena romántica</option>
-                    <option value="reunion_trabajo">Reunión de trabajo</option>
-                    <option value="despedida_soltero">Despedida de soltero/a</option>
-                    <option value="reunion_familiar">Reunión familiar</option>
-                    <option value="cita_ciegas">Cita a ciegas</option>
-                    <option value="celebracion_logro">Celebración de logro</option>
-                    <option value="almuerzo_informal">Almuerzo informal</option>
-                    <option value="comida_amigos">Comida con amigos</option>
-                </select>
+        <div className="container">
+            <h2>¿Quieres una recomendación sobre un restaurante y el plan del día?</h2>
 
-                <label>Fecha:</label>
-                <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
+            <div className="form-response-container">
+                {/* Form Card */}
+                <form onSubmit={handleSubmit} className="recommendation-form">
+                    <label>Ocasión:</label>
+                    <select value={ocasion} onChange={(e) => setOcasion(e.target.value)} required>
+                        <option value="">Selecciona una ocasión</option>
+                        <option value="aniversario">Aniversario</option>
+                        <option value="cumpleaños">Cumpleaños</option>
+                        <option value="cena_romantica">Cena romántica</option>
+                        <option value="reunion_trabajo">Reunión de trabajo</option>
+                        <option value="despedida_soltero">Despedida de soltero/a</option>
+                        <option value="reunion_familiar">Reunión familiar</option>
+                        <option value="cita_ciegas">Cita a ciegas</option>
+                        <option value="celebracion_logro">Celebración de logro</option>
+                        <option value="almuerzo_informal">Almuerzo informal</option>
+                        <option value="comida_amigos">Comida con amigos</option>
+                    </select>
 
-                <label>Hora:</label>
-                <input type="time" value={hora} onChange={(e) => setHora(e.target.value)} required />
+                    <label>Fecha:</label>
+                    <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
 
-                <label>Nivel de formalidad:</label>
-                <select value={formalidad} onChange={(e) => setFormalidad(e.target.value)} required>
-                    <option value="">Selecciona un nivel</option>
-                    <option value="formal">Formal</option>
-                    <option value="informal">Informal</option>
-                    <option value="casual">Casual</option>
-                </select>
+                    <label>Hora:</label>
+                    <input type="time" value={hora} onChange={(e) => setHora(e.target.value)} required />
 
-                <label>Indicanos la zona y si tienes alguna peticón especifica:</label>
-                <textarea 
-                    value={peticionPersonalizada} 
-                    onChange={(e) => setPeticionPersonalizada(e.target.value)} 
-                    placeholder="Ej. En Madrid, prefiero comida vegetariana o una mesa con vista al mar."
-                />
+                    <label>Nivel de formalidad:</label>
+                    <select value={formalidad} onChange={(e) => setFormalidad(e.target.value)} required>
+                        <option value="">Selecciona un nivel</option>
+                        <option value="formal">Formal</option>
+                        <option value="informal">Informal</option>
+                        <option value="casual">Casual</option>
+                    </select>
 
-                <button type="submit" className="submit-btn">Enviar solicitud</button>
-            </form>
+                    <label>Indicanos la zona y si tienes alguna peticón especifica:</label>
+                    <textarea 
+                        value={peticionPersonalizada} 
+                        onChange={(e) => setPeticionPersonalizada(e.target.value)} 
+                        placeholder="Ej. En Valencia, prefiero comida vegetariana o una mesa con vista al mar."
+                    />
 
-            {respuesta && (
-                <div className="response-container">
-                    <h3>Recomendación para ti:</h3>
-                    <p className="OpenAiResponse">{respuesta}</p>
-                </div>
-            )}
+                    <button type="submit" className="submit-btn">Enviar solicitud</button>
+                </form>
+
+                {/* Response Card */}
+                {respuesta && (
+                    <div className="response-card">
+                        <h3>Recomendación para ti:</h3>
+                        <p className="OpenAiResponse">{respuesta}</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
