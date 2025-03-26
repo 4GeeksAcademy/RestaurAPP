@@ -1,10 +1,16 @@
-
-
 from flask import Flask, request, jsonify, url_for, Blueprint
+
+import openai
+import os
+# from openAi import openai
+# app.register_blueprint(openai_api, url_prefix='/api')
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
 
 from api.models import db, User, Diner, Origin, Restaurant, Owner, Categories, RestaurantCategories, Reservation
 from api.utils import generate_sitemap, APIException
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
@@ -923,3 +929,132 @@ def update_reservation_status(reservation_id):
     db.session.commit()
 
     return jsonify({'message': 'Reservation status updated', 'status': reservation.state, 'cancelComment': reservation.cancelComment}), 200
+
+
+
+
+# @api.route('/api/recommendation', methods=['POST'])
+# def restaurant_recommendation():
+#     print("Petición recibida en /api/recommendation")
+#     data = request.get_json()
+    
+#     # Estrai i dati inviati nel corpo della richiesta
+#     occasion = data.get("occasion", "")
+#     date = data.get("date", "")
+#     time = data.get("time", "")
+#     formality = data.get("formality", "")
+#     special_requests = data.get("special_requests", "")
+
+#     if not occasion or not date or not time:
+#         return jsonify({"error": "Missing required fields"}), 400
+
+#     # Prompt per OpenAI
+#     prompt = f"""
+#     Eres un experto en restaurantes, tipos de cocina y planes personalizados. Según los datos recibidos, responde de manera amigable, cálida y fluida. Comienza siempre con un saludo amigable y ofrece una recomendación personalizada. La respuesta debe ser detallada, mencionando tanto el restaurante como la experiencia que se vivirá en él.
+    
+#     A continuación te doy los datos que el usuario ha ingresado:
+#     - Ocasión: {occasion}
+#     - Fecha: {date}
+#     - Hora: {time}
+#     - Nivel de formalidad: {formality}
+#     - Solicitudes especiales: {special_requests}
+    
+#     Tu respuesta debe contener:
+#     1. Un saludo amigable y cálido al principio.
+#     2. El nombre del restaurante que recomendarías, con un breve comentario sobre su ambiente, especialidades y tipo de cocina.
+#     3. Una sugerencia para completar el día (por ejemplo, qué hacer antes de la cena, qué bebidas pedir, etc.).
+#     4. Un tono amigable y cercano, dando la sensación de que realmente conoces y te importa la experiencia del usuario.
+    
+#     La respuesta debe ser en formato JSON con los siguientes campos:
+#     ```json
+#     {
+#         "greeting": "Saludo amigable",
+#         "restaurant_recommendation": "Te recomiendo el restaurante [nombre], que ofrece [tipo de cocina]. Es un lugar perfecto para [situación].",
+#         "plan_of_the_day": "Aquí te dejo algunas sugerencias para tu día: [actividades y planes adicionales]."
+#     }
+#     ```
+#     """
+    
+#     try:
+#         # Chiamata a OpenAI per ottenere la risposta
+#         response = client.chat.completions.create(
+#             model="gpt-3.5-turbo",
+#             messages=[{"role": "system", "content": "Eres un experto en restaurantes y planes personalizados."},
+#                       {"role": "user", "content": prompt}]
+#         )
+        
+#         # Estrai la risposta
+#         reply = response.choices[0].message["content"]
+        
+#         # Restituisci la risposta in formato JSON
+#         return jsonify({"reply": reply.strip()}), 200
+    
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+# if __name__ == '__main__':
+#     api.run(debug=True)
+
+import openai
+
+# Set your OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+@api.route('/recommendation', methods=['POST'])
+@cross_origin()
+def restaurant_recommendation():
+    print("Petición recibida en /api/recommendation")
+    data = request.get_json()
+    print(data)
+
+    # Extract the data sent in the request body
+    occasion = data.get("occasion", "")
+    date = data.get("date", "")
+    time = data.get("time", "")
+    formality = data.get("formality", "")
+    special_requests = data.get("special_requests", "")
+
+    if not occasion or not date or not time:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    # Prompt for OpenAI
+    prompt = f"""
+        Eres un experto en restaurantes, tipos de cocina y planes personalizados. Según los datos recibidos, responde de manera amigable, cálida y fluida. Comienza siempre con un saludo amigable y ofrece una recomendación personalizada. La respuesta debe ser detallada, mencionando tanto el restaurante como la experiencia que se vivirá en él.
+
+        A continuación te doy los datos que el usuario ha ingresado:
+        - Ocasión: {occasion}
+        - Fecha: {date}
+        - Hora: {time}
+        - Nivel de formalidad: {formality}
+        - Solicitudes especiales: {special_requests}
+
+        Tu respuesta debe contener:
+        1. Un saludo amigable y cálido al principio.
+        2. El nombre del restaurante que recomendarías, con un breve comentario sobre su ambiente, especialidades y tipo de cocina.
+        3. Una sugerencia para completar el día (por ejemplo, qué hacer antes de la cena, qué bebidas pedir, etc.).
+        4. Un tono amigable y cercano, dando la sensación de que realmente conoces y te importa la experiencia del usuario.
+
+
+    """
+
+    try:
+        # Call OpenAI to get the response
+        # response = openai.ChatCompletion.create(
+        #     model="gpt-3.5-turbo",
+        #     messages=[{"role": "system", "content": "Eres un experto en restaurantes y planes personalizados."},
+        #               {"role": "user", }]
+        # )
+        response = openai.responses.create(
+            model="gpt-4o",
+            instructions=prompt,
+            input=" ",
+)
+
+        # Extract the response
+        reply = response.output_text
+
+        # Return the response in JSON format
+        return jsonify({"reply": reply.strip()}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

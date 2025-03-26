@@ -10,7 +10,7 @@ import { Single } from "./pages/single";
 
 // import SearchRestaurants from "./component/SearchRestaurants"; 
 import AddRestaurant from "./component/AddRestaurant";  // Importar el componente de añadir restaurante
-import MyRestaurants from "./component/MyRestaurants";
+
 import injectContext from "./store/appContext";
 import RestaurantSearch from "./component/RestaurantSearch";
 
@@ -25,6 +25,7 @@ import { DinerDashboard } from "./component/dinerDashboard";
 import { PerfilRestaurant } from "./component/perfilRestaurant";
 import { DinerReservations } from "./component/dinerReservations";
 import { DinerAccount } from "./component/mydinerAccount";
+import RestaurantRecommendationForm from "./component/restaurantRecommendationForm";
 
 import OwnerList from "./component/ownerList";
 import OwnerForm from "./component/ownerForm";
@@ -54,7 +55,6 @@ import { Context } from "./store/appContext";
 
 
 
-
 //create your first component
 const Layout = () => {
     // the basename is used when your project is published in a subdirectory and not in the root of the domain
@@ -79,6 +79,7 @@ const Layout = () => {
                         <Route element={<DinerDashboard />} path="/diner/dashboard" />
                         <Route element={<DinerReservations />} path="/diner/reservations" />
                         <Route element={<DinerAccount />} path="/dineraccount" />
+                        <Route element={<RestaurantRecommendationForm />} path="/recommendation" />
 
 
                         <Route element={<OriginList />} path="/origins" />
@@ -128,9 +129,7 @@ const Layout = () => {
                         <Route
                             path="/my-restaurants"
                             element={
-                                <PrivateRoute requiredRole="owner"> {/* Verifica que el usuario sea propietario */}
-                                    {/* <MyRestaurants />
-                                </PrivateRoute> */}
+
                             {/* } */}
                         {/* /> */} */}
 

@@ -96,7 +96,7 @@ const OwnerDashboard = () => {
                                                     onClick={() => handleViewMore(restaurant.id)}
                                                     style={{ transition: 'background-color 0.3s ease' }}
                                                 >
-                                                    🔎
+                                                    👁️
                                                 </button>
                                             </div>
                                         </div>

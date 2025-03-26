@@ -1,42 +1,4 @@
-/* .button-52 {
-  font-size: 16px;
-  font-weight: 200;
-  letter-spacing: 1px;
-  padding: 13px 20px 13px;
-  outline: 0;
-  border: 1px solid black;
-  cursor: pointer;
-  position: relative;
-  background-color: rgba(0, 0, 0, 0);
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.button-52:after {
-  content: "";
-  background-color: #ffe54c;
-  width: 100%;
-  z-index: -1;
-  position: absolute;
-  height: 100%;
-  top: 7px;
-  left: 7px;
-  transition: 0.2s;
-}
-
-.button-52:hover:after {
-  top: 0px;
-  left: 0px;
-}
-
-@media (min-width: 768px) {
-  .button-52 {
-    padding: 13px 50px 13px;
-  }
-} */
-
-/* Importing Poppins font */
+/* Botones amarillos primarios*/
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 
 .button-52 {
@@ -85,4 +47,253 @@
     padding: 14px 50px; /* Adjust padding for larger screens */
   }
 }
+
+
+
+
+/* Botones grices secundarios*/
+
+.button-53 {
+  background-color: #646768;
+  border: 0 solid #E5E7EB;
+  box-sizing: border-box;
+  color: #ffffff;
+  display: flex;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 0.875rem;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.5rem;
+  padding: 0.5rem 1rem;
+  position: relative;
+  text-align: center;
+  text-decoration: none solid #000000;
+  text-decoration-thickness: auto;
+  width: auto;
+  max-width: 200px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  border-radius: 4px;
+}
+
+.button-53:focus {
+  outline: 0;
+}
+
+.button-53:after {
+  content: '';
+  position: absolute;
+  border: 1px solid #000000;
+  bottom: 3px;
+  left: 3px;
+  width: calc(100% - 1px);
+  height: calc(100% - 1px);
+  border-radius: 4px;
+}
+
+.button-53:hover:after {
+  bottom: 1px;
+  left: 1px;
+}
+
+@media (min-width: 768px) {
+  .button-53 {
+    padding: 0.2rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+
+
+
+/* Botones rojos para eliminar*/
+
+
+
+/* CSS */
+
+/* CSS */
+.button-55 {
+  align-self: center;
+  background-color: #f00d0d;
+  background-image: none;
+  background-position: 0 90%;
+  background-repeat: repeat no-repeat;
+  background-size: 4px 3px;
+  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+  box-sizing: border-box;
+  color: #f3f2f0;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Neucha, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 23px;
+  outline: none;
+  padding: .75rem;
+  text-decoration: none;
+  transition: all 235ms ease-in-out;
+  border-bottom-left-radius: 15px 255px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-left-radius: 255px 15px;
+  border-top-right-radius: 15px 225px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-55:hover {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+  transform: translate3d(0, 2px, 0);
+}
+
+.button-55:focus {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
+}
+
+
+/*gris*/
+
+/* Bottone con background grigio e testo bianco */
+.button-gray {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 14px 30px;
+  outline: 0;
+  border: 2px solid #646768; /* Grigio border */
+  border-radius: 15px;
+  cursor: pointer;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0); /* Transparent background */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  color: #646768; /* Grigio text */
+  transition: 0.3s;
+}
+
+.button-gray:after {
+  content: "";
+  background-color: #646768; /* Grigio background */
+  width: 100%;
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  top: 7px;
+  left: 7px;
+  border-radius: 15px;
+  transition: 0.2s;
+}
+
+.button-gray:hover {
+  border-color: #a9a9a9; /* Grigio più chiaro per hover */
+}
+
+.button-gray:hover:after {
+  top: 0px;
+  left: 0px;
+  background-color: #a9a9a9; /* Hover grigio più chiaro */
+  color: white; /* Testo bianco al passaggio del mouse */
+}
+
+
+/*rojo */
+
+/* Bottone con background rosso e testo bianco */
+.button-red {
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 14px 30px;
+  outline: 0;
+  border: 2px solid #dc3545; /* Red border */
+  border-radius: 15px;
+  cursor: pointer;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0); /* Transparent background */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  color: #dc3545; /* Red text */
+  transition: 0.3s;
+}
+
+.button-red:after {
+  content: "";
+  background-color: #dc3545; /* Red background */
+  width: 100%;
+  z-index: -1;
+  position: absolute;
+  height: 100%;
+  top: 7px;
+  left: 7px;
+  border-radius: 15px;
+  transition: 0.2s;
+}
+
+.button-red:hover {
+  border-color: #ff6666; /* Light red border on hover */
+}
+
+.button-red:hover:after {
+  top: 0px;
+  left: 0px;
+  background-color: #ff6666; /* Lighter red background on hover */
+  color: white; /* White text on hover */
+}
+
+
+
+/* CSS */
+.button-27 {
+  appearance: none;
+  background-color: #f11919;
+  border: 2px solid #807878;
+  border-radius: 15px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  min-height: 60px;
+  min-width: 0;
+  outline: none;
+  padding: 16px 24px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 200px;
+  will-change: transform;
+}
+
+.button-27:disabled {
+  pointer-events: none;
+}
+
+.button-27:hover {
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+
+.button-27:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+
 
