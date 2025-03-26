@@ -6,13 +6,16 @@ import restaurappImageUrl from "../../img/imagenRestaurapp.jpg";
 
 export const PerfilRestaurant = () => {
   const { store, actions } = useContext(Context);
-  const { restaurant_id } = useParams();  
+  const { restaurant_id } = useParams();
   const navigate = useNavigate();
 
   const [restaurant, setRestaurant] = useState(null);
   const [reservationDate, setReservationDate] = useState("");
   const [reservationHour, setReservationHour] = useState("");
   const [peopleCount, setPeopleCount] = useState(1);
+
+  // Estado para controlar la visibilidad del mensaje de éxito
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   useEffect(() => {
     if (restaurant_id) {
@@ -27,24 +30,26 @@ export const PerfilRestaurant = () => {
       return;
     }
 
-    actions.createReservation(
-      {
+    actions.createReservation({
       restaurant_id: restaurant.id,
       date: reservationDate,
       hour: reservationHour,
       people: peopleCount,
     });
 
+    setShowSuccessMessage(true);
     setReservationDate("");
     setReservationHour("");
     setPeopleCount(1);
-    navigate("/diner/dashboard")
     actions.getDinerReserves();
-    
+
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 4000);
   };
 
   if (!restaurant) {
-    return <div>Cargando restaurante...</div>; 
+    return <div>Cargando restaurante...</div>;
   }
 
   return (
@@ -53,17 +58,18 @@ export const PerfilRestaurant = () => {
         <div className="col-md-6">
           <div className="card" style={{ width: "100%" }}>
             <img
-              src={restaurant.image_url || restaurappImageUrl}
-              className="card-img-top"
-              alt={`Imagen de ${restaurant.name}`}
+               src={restaurant.image_url || "https://media.istockphoto.com/id/1428412216/es/foto/un-chef-masculino-vertiendo-salsa-en-la-comida.jpg?s=612x612&w=0&k=20&c=Wze2YwgkFMQOTWoxdiRYsUpa1azCIOm8yRaUEEYOgOU="}
+               className="card-img hover-effect" 
+               alt={restaurant.name}
+               style={{ objectFit: 'cover', height: '200px', width: '100%' }}
             />
             <div className="card-body">
               <h5 className="card-title">{restaurant.name}</h5>
-              <p className="card-text">{restaurant.location}</p>
+              <p className="card-text">Telefono {restaurant.telephone}</p>
             </div>
             <ul className="list-group list-group-flush">
               <li className="list-group-item">Capacidad: {restaurant.capacity} Personas</li>
-              <li className="list-group-item">Ubicación: {restaurant.location}</li>
+              <li className="list-group-item"> <i className="fas fa-map-marker-alt me-2"></i>Ubicación: {restaurant.location}</li>
             </ul>
           </div>
         </div>
@@ -109,6 +115,13 @@ export const PerfilRestaurant = () => {
           </form>
         </div>
       </div>
+
+      {/* Mostrar el alert de éxito si la reserva fue exitosa */}
+      {showSuccessMessage && (
+        <div className="alert alert-success mt-3" role="alert">
+          ¡Reserva realizada con éxito!
+        </div>
+      )}
     </div>
   );
 };

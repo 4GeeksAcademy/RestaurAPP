@@ -1,0 +1,118 @@
+/* Contenedor principal con imagen de fondo */
+.about-us-container {
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Espaciado y estructura de las secciones */
+.section {
+    margin-bottom: 30px;
+}
+
+/* Títulos principales */
+h1, h2 {
+    font-size: 4rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+}
+
+/* Títulos secundarios */
+h2 {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: #555;
+}
+
+/* Efecto hover en los títulos */
+h1:hover, h2:hover {
+    color: #FFC107; /* Color amarillo */
+}
+
+/* Descripción del contenido */
+p {
+    font-size: 1.1rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* Estilo para las imágenes del perfil */
+.profile-img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+    border: 5px solid #FFC107; /* Borde amarillo */
+    box-shadow: 0 0 10px #FFC107; /* Sombra amarilla */
+}
+
+
+.profile-img:hover {
+    transform: scale(1.1);
+}
+
+/* Nombres */
+.name-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Descripción de cada miembro */
+.description-text {
+    font-size: 1rem;
+    color: #777;
+}
+
+/* Enlace a GitHub */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+    .profile-img {
+        width: 150px;
+        height: 150px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+}
+
+.fab:hover {
+    background-color: #FFC107;  /* Cambia el fondo a amarillo */
+    transform: scale(1.1);  /* Aumenta el tamaño del botón */
+    transition: all 0.3s ease;  /* Suaviza el cambio */
+}
+
+.fab-sm:hover {
+    background-color: #FFC107;  /* Cambia el fondo a amarillo para botones pequeños */
+    transform: scale(1.1);  /* Aumenta el tamaño del botón */
+    transition: all 0.3s ease;  /* Suaviza el cambio */
+}
+
+.hover-zoom:hover {
+    background-color: yellow;  /* Cambia el fondo a amarillo */
+    transform: scale(1.1);  /* Aumenta el tamaño del botón */
+    transition: all 0.3s ease;  /* Suaviza el cambio */
+}

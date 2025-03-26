@@ -1,0 +1,15 @@
+/* Clase para efectos de hover en el botón de volver y texto */
+.btn-hover, .hover-text {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-hover:hover, .hover-text:hover {
+    background-color: #abdf1c;  /* El color rojo que se muestra en el hover del botón */
+    color: white;  /* Cambiar color del texto al pasar el puntero */
+}
+
+.hover-text {
+    cursor: pointer;
+    text-decoration: underline;
+}
+

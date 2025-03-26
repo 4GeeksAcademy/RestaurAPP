@@ -185,7 +185,9 @@ const CreateRestaurant = () => {
 
           {/* send button */}
           <button type="submit" className="btn btn-primary">
-            {id ? "Guardar Cambios" : "Crea Restaurante"}
+
+            {id ? "Guardar Cambios" : "Crear Restaurante"}
+
           </button>
         </form>
       ) : (

@@ -3,6 +3,7 @@ import { GoogleMap, Marker, LoadScript } from "@react-google-maps/api";
 import PlacesAutocomplete from "react-places-autocomplete";
 import { Context } from "../store/appContext";
 import "../../styles/RestaurantSearch.css";
+import { Link } from "react-router-dom";
 
 const libraries = ["places"];
 
@@ -15,9 +16,9 @@ const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distanza in km
 };
@@ -58,7 +59,7 @@ const RestaurantSearch = ({ onSelect }) => {
         restaurant.latitude,
         restaurant.longitude
       );
-      return distance <= 10; // Filtra los rest entre de 10 km
+      return distance <= 10;
     });
 
     setFilteredRestaurants(filtered);
@@ -69,7 +70,6 @@ const RestaurantSearch = ({ onSelect }) => {
       <div className="container">
         <h2>Buscar un Restaurante</h2>
 
-        {/* Sezione di ricerca */}
         <div className="search-fields">
           <div className="input-group">
             <PlacesAutocomplete value={address} onChange={setAddress} onSelect={handleSelect}>
@@ -96,30 +96,60 @@ const RestaurantSearch = ({ onSelect }) => {
           <button className="search-btn" onClick={handleSearch}>Buscar</button>
         </div>
 
-        {/* Mappa Google */}
-        <GoogleMap mapContainerStyle={{ width: "100%", height: "400px" }} center={position} zoom={13}>
-          <Marker position={position} />
+        <div className="row">
+          <div className="col-md-6">
+            <div className="restaurant-list">
+              <h3 className="mt-3">Restaurantes en la zona</h3>
+              {filteredRestaurants.length === 0 ? (
+                <p>No hay restaurante para la zona seleccionada.</p>
+              ) : (
+                <div className="row">
+                  {filteredRestaurants.map((restaurant) => (
+                    <div className="col-md-4 mb-4" key={restaurant.id}>
+                      <div className="card card-img-scale overflow-hidden bg-transparent rounded-3 shadow-sm">
+                        <div className="card-img-wrapper rounded-3">
+                          <img
+                            src={restaurant.image_url || "default_image_url_here"}
+                            className="card-img"
+                            alt="restaurant image"
+                            style={{ height: "200px", objectFit: "cover" }}
+                          />
+                        </div>
+                        <div className="card-body px-2">
+                          <h5 className="card-title">
+                            <Link to={`/perfil_restaurant/${restaurant.id}`} className="stretched-link">
+                              {restaurant.name}
+                            </Link>
+                          </h5>
 
-          {filteredRestaurants.map((restaurant) => (
-            <Marker key={restaurant.id} position={{ lat: restaurant.latitude, lng: restaurant.longitude }} label={restaurant.name} />
-          ))}
-        </GoogleMap>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <h6 className="text-success mb-0">
+                              <small className="fw-light">Capacidad {restaurant.capacity} Personas</small>
+                            </h6>
 
-        {/* Lista rest encontrados */}
-        <div className="restaurant-list">
-          <h3 className="mt-3">Restaurantes en la zona</h3>
-          {filteredRestaurants.length === 0 ? (
-            <p>No hay restaurante para la zona seleccionada.</p>
-          ) : (
-            <ul>
+                            <h6 className="mb-0 d-flex align-items-center ms-auto">
+                              <i className="fas fa-map-marker-alt me-2"></i>
+                              {restaurant.location}
+                            </h6>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <GoogleMap mapContainerStyle={{ width: "100%", height: "400px" }} center={position} zoom={13}>
+              <Marker position={position} />
+
               {filteredRestaurants.map((restaurant) => (
-                <li key={restaurant.id}>
-                  <strong>{restaurant.name}</strong> - {restaurant.location} <br />
-                  <small>Tel: {restaurant.telephone} | Capacidad: {restaurant.capacity}</small>
-                </li>
+                <Marker key={restaurant.id} position={{ lat: restaurant.latitude, lng: restaurant.longitude }} label={restaurant.name} />
               ))}
-            </ul>
-          )}
+            </GoogleMap>
+          </div>
         </div>
       </div>
     </LoadScript>
@@ -127,3 +157,4 @@ const RestaurantSearch = ({ onSelect }) => {
 };
 
 export default RestaurantSearch;
+

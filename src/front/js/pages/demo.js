@@ -1,44 +1,58 @@
-
-
-///////////////////////////////////////////
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-
+import restaurante2 from "../../img/restaurante2.jpg"; // Imagen del restaurante
 import { Context } from "../store/appContext";
+import modelodashboard from "../../img/modelodashboard.jpg"
+import "../../styles/demo.css"
+
 
 export const Demo = () => {
-	const { store, actions } = useContext(Context);
-
 	return (
-		<div className="container">
-			<ul className="list-group">
-				{store.demo.map((item, index) => {
-					return (
-						<li
-							key={index}
-							className="list-group-item d-flex justify-content-between"
-							style={{ background: item.background }}>
-							<Link to={"/single/" + index}>
-								<span>Link to: {item.title}</span>
-							</Link>
-							{// Conditional render example
-							// Check to see if the background is orange, if so, display the message
-							item.background === "orange" ? (
-								<p style={{ color: item.initial }}>
-									Check store/flux.js scroll to the actions to see the code
-								</p>
-							) : null}
-							<button className="btn btn-success" onClick={() => actions.changeColor(index, "orange")}>
-								Change Color
-							</button>
-						</li>
-					);
-				})}
-			</ul>
-			<br />
-			<Link to="/">
-				<button className="btn btn-primary">Back home</button>
-			</Link>
-		</div>
+		<section className="pt-3 pt-lg-5">
+			<div className="container">
+				{/* Content and Image START */}
+				<div className="row g-4 g-lg-5">
+					{/* Content */}
+					<div className="col-lg-6 position-relative mb-4 mb-md-0">
+						{/* Title */}
+						<h1 className="mb-4 mt-md-5 display-5">
+							<div className="custom-heading">Encuentra los mejores</div>
+							<div className="custom-heading position-relative z-index-9">
+								Restaurantes cercanos.
+							</div>
+						</h1>
+						{/* Info */}
+						<p className="mb-4">
+							¡Reserva tu mesa en el mejor restaurante de la ciudad en segundos y sin complicaciones! 🍽️ ¡Haz tu reserva ahora y disfruta de una experiencia única!
+						</p>
+
+						{/* Buttons */}
+						<div className="hstack gap-4 flex-wrap align-items-center">
+							{/* Button */}
+							<a href="#" className="btn btn-primary-soft mb-0">
+								Descubrelo ahora!
+							</a>
+
+						</div>
+					</div>
+
+					{/* Image */}
+					<div className="col-lg-6 position-relative">
+						<img
+							src={modelodashboard}
+							className="img-fluid w-100 custom-rounded hover-effect"
+							alt="restaurante"
+						/>
+
+						{/* Svg decoration */}
+						<figure className="position-absolute end-0 bottom-0">
+							<svg width="163px" height="163px" viewBox="0 0 163 163">
+							</svg>
+						</figure>
+					</div>
+
+				</div>
+			</div>
+		</section>
 	);
 };

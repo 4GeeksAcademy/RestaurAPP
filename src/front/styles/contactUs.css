@@ -1,0 +1,17 @@
+.btn:hover {
+    background-color: #FFC107;  /* Cambia el fondo a amarillo */
+    transform: scale(1.1);  /* Aumenta el tamaño del botón */
+    transition: all 0.3s ease;  /* Suaviza el cambio */
+}
+
+.btn-sm:hover {
+    background-color: #FFC107;  /* Cambia el fondo a amarillo para botones pequeños */
+    transform: scale(1.1);  /* Aumenta el tamaño del botón */
+    transition: all 0.3s ease;  /* Suaviza el cambio */
+}
+
+.hover-zoom:hover {
+    background-color: yellow;  /* Cambia el fondo a amarillo */
+    transform: scale(1.1);  /* Aumenta el tamaño del botón */
+    transition: all 0.3s ease;  /* Suaviza el cambio */
+}

@@ -97,6 +97,7 @@ import ReservationsByRestaurant from './reservationByRestaurant';
 import "../../styles/stateButtons.css";
 
 
+
 const RestaurantDetail = () => {
     const { id } = useParams(); 
     const { store, actions } = useContext(Context);
@@ -136,11 +137,11 @@ const RestaurantDetail = () => {
             <div className="card shadow-lg">
                 <div className="card-body">
                     <div className="row">
-                        <div className="col-md-4 mb-4">
+                        <div className="col-md-4 mb-4 rounded-3">
                             <img 
-                                src={restaurant.image || "https://media.istockphoto.com/id/1428412216/es/foto/un-chef-masculino-vertiendo-salsa-en-la-comida.jpg?s=612x612&w=0&k=20&c=Wze2YwgkFMQOTWoxdiRYsUpa1azCIOm8yRaUEEYOgOU="} 
+                                src={restaurant.image_url || "https://media.istockphoto.com/id/1428412216/es/foto/un-chef-masculino-vertiendo-salsa-en-la-comida.jpg?s=612x612&w=0&k=20&c=Wze2YwgkFMQOTWoxdiRYsUpa1azCIOm8yRaUEEYOgOU="} 
                                 alt={restaurant.name} 
-                                className="img-fluid rounded shadow-sm"
+                                className="img-fluid rounded shadow-sm hover-effect"
                                 style={{ height: "300px", objectFit: "cover" }}
                             />
                         </div>
@@ -159,8 +160,10 @@ const RestaurantDetail = () => {
                         <button className="button-53 me-2" onClick={handleEdit}>
                             ✏️ Editar
                         </button>
-                        <button className="button-27 me-2" onClick={handleDelete}>
-                            🗑️ Eliminar
+
+                        <button className="button-49 me-2" onClick={handleDelete}>
+                            🗑️ Eliminar 
+
                         </button>
                     </div>
 

@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate, Navigate } from "react-router-dom";
+import LogoEnteroRestaurApp from "../../img/LogoEnteroRestaurApp.png"
+import "../../styles/ownerProfile.css";
 
 const OwnerProfile = () => {
     const { store, actions } = useContext(Context);
@@ -35,12 +37,12 @@ const OwnerProfile = () => {
         }
     }, []);
 
-    // Edita perfil
+
     const handleEditProfile = () => {
         navigate(`/owners/${store.ownerId}`);
     };
 
-    // Elimina perfil
+
     const handleDeleteProfile = () => {
         const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar tu cuenta?");
 
@@ -58,18 +60,29 @@ const OwnerProfile = () => {
                     <h1>Bienvenido, {ownerName}</h1>
                     <h2 className="my-4">Detalles del perfil</h2>
                     {store.specificOwner ? (
-                        <div>
-                            <p><strong>Nombre:</strong> {store.specificOwner.name}</p>
-                            <p><strong>Email:</strong> {store.specificOwner.email}</p>
-                            <p><strong>Teléfono:</strong> {store.specificOwner.telephone}</p>
-                            <p><strong>Ubicación:</strong> {store.specificOwner.location}</p>
-                            <div className="d-flex justify-content-end">
-                                <button className="btn border bg-light me-2" onClick={handleEditProfile}>
-                                    ✏️
-                                </button>
-                                <button className="btn border bg-light" onClick={handleDeleteProfile}>
-                                    🗑️
-                                </button>
+                        <div className="row">
+                            <div className="col-md-8">
+                                <p><strong>Nombre:</strong> {store.specificOwner.name}</p>
+                                <p><strong>Email:</strong> {store.specificOwner.email}</p>
+                                <p><strong>Teléfono:</strong> {store.specificOwner.telephone}</p>
+                                <p><strong>Ubicación:</strong> {store.specificOwner.location}</p>
+                                <div className="d-flex justify-content-end">
+                                    <button className="btn border bg-secondary me-2" onClick={handleEditProfile}>
+                                        ✏️
+                                    </button>
+                                    <button className="btn border bg-danger" onClick={handleDeleteProfile}>
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                          
+                            <div className="col-md-4 d-flex justify-content-center align-items-center">
+                                <img 
+                                    src={LogoEnteroRestaurApp} 
+                                    alt="Owner" 
+                                    className="img-fluid rounded-3 hover-effect" 
+                                    style={{ width: "100%", height: "auto" }}
+                                />
                             </div>
                         </div>
                     ) : (

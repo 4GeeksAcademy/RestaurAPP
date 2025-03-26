@@ -1,0 +1,8 @@
+.hover-effect {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-effect:hover {
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Agrega sombra suave */
+}
