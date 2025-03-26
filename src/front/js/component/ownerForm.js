@@ -50,10 +50,10 @@ const OwnerForm = () => {
   return (
     <div className="login-container">
       <div className="login-card">
-        {/*imagen izquierda */}
+        {/* imagen izquierda */}
         <div className="login-image-container">
           <img
-            src={LoginImg}
+            src="https://img.freepik.com/premium-vector/drawing-people-sitting-table-with-lamp-them_1087929-8168.jpg"
             alt="Login Background"
             className="login-image"
           />
@@ -69,50 +69,59 @@ const OwnerForm = () => {
               width: '52px',
               height: 'auto',
               borderRadius: '8px',
-              marginBottom: '2px',
+              marginBottom: '4px',
+              marginTop: '3px'
             }}
           />
-          <h2 className="mb-4" style={{ fontFamily: "Poppins, sans-serif" }}>
+          <h2 className="mb-2" style={{ fontFamily: "Poppins, sans-serif", marginBottom: '20px' }}>
             {ownerId ? "Cambia tus datos" : "Crea una nueva cuenta"}
           </h2>
           <form onSubmit={handleSubmit}>
-            <div className="mb-3">
+            <div className="mb-1">
               <label htmlFor="exampleInputname" className="form-label">Nombre completo</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="form-control"
+                placeholder="Escribe tu nombre completo"
+                style={{ padding: "10px" }}
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-1">
               <label className="form-label">Ubicación</label>
               <input
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 className="form-control"
+                placeholder="Escribe la ubicación"
+                style={{ padding: "10px" }}
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-1">
               <label className="form-label">Teléfono</label>
               <input
                 type="text"
                 value={telephone}
                 onChange={(e) => setTelephone(e.target.value)}
                 className="form-control"
+                placeholder="Escribe tu teléfono"
+                style={{ padding: "10px" }}
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-1">
               <label className="form-label">Correo electrónico</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="form-control"
+                placeholder="Escribe tu correo electrónico"
+                style={{ padding: "10px" }}
               />
             </div>
-            <div className="position-relative">
+            <div className="position-relative mb-1">
               <label className="form-label">Contraseña</label>
               <input
                 type={showPassword ? "text" : "password"}
@@ -120,6 +129,7 @@ const OwnerForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="form-control"
                 placeholder="Escribe aquí tu contraseña"
+                style={{ padding: "10px" }}
               />
               <span
                 className="position-absolute end-0 p-2"
@@ -129,16 +139,28 @@ const OwnerForm = () => {
                   fontSize: "18px",
                   color: "#6c757d",
                   top: "75%",
-                  transform: "translateY(-54%)"
+                  transform: "translateY(-54%)",
                 }}
               >
                 <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
               </span>
             </div>
-            <button type="submit" className="btn btn-primary w-100 mt-3">
+            <button 
+              type="submit" 
+              className="btn btn-warning w-100 mt-3" 
+              style={{
+                padding: '12px 20px', 
+                fontSize: '16px', 
+                fontWeight: 'bold', 
+                borderRadius: '8px', 
+                transition: 'all 0.3s ease',
+              }} 
+              onMouseEnter={(e) => e.target.style.backgroundColor = "#e0a800"}
+              onMouseLeave={(e) => e.target.style.backgroundColor = "#ffc107"}
+            >
               {ownerId ? "Guardar cambios" : "Registrarse"}
             </button>
-            <p className="mt-4">
+            <p className="mt-1">
               ¿Ya tienes una cuenta?{" "}
               <Link to="/owners/login" className="text-primary fw-bold">Inicia sesión aquí</Link>
             </p>

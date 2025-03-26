@@ -3,6 +3,7 @@ import "../../styles/contactUs.css"
 
 const ContactUs = () => {
     return (
+
         <section className="pt-4 pt-md-5">
             <div className="container">
                 <div className="row mb-5">
@@ -12,6 +13,9 @@ const ContactUs = () => {
                             ¡Haz que tu restaurante se destaque! 🍽️✨
                             ¿Sabías que la manera en que promocionas tu restaurante puede ser la clave para atraer más clientes?
                             No dejes que tu restaurante pase desapercibido. ¡Es momento de dar el siguiente paso y hacer crecer tu negocio! Contáctanos hoy y descubre cómo podemos ayudarte a llevar tu restaurante al siguiente nivel.
+
+ 
+   
 
                             ¡Contáctanos ahora y empieza a atraer más comensales!
                         </p>

@@ -96,7 +96,7 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
                                         <button
                                             className="button-82 btn-sm mt-2"
                                             onClick={() => handleCancelMessage(res)}>
-                                            {isCanceling[res.id] ? 'Confirmar cancelación' : 'Cancelar reserva'}
+                                            {isCanceling[res.id] ? 'Cancelar' : 'Cancelar reserva'}
                                         </button>
                                     </>
                                 )}

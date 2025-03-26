@@ -763,7 +763,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     })
                     .catch((error) => {
                         console.error("Error al obtener los restaurantes:", error);
-                        alert("No se pudieron cargar los restaurantes. Inténtalo nuevamente.");
+                        // alert("No se pudieron cargar los restaurantes. Inténtalo nuevamente.");
                     });
             },
 

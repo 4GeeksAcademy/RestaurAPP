@@ -9,6 +9,7 @@ export const Navbar = () => {
     const location = useLocation();
     const token = localStorage.getItem("token");
     const isHome = location.pathname === "/";
+
     const dinerToken = localStorage.getItem("tokenDiner");
     const ownerToken = localStorage.getItem("token");
 
@@ -19,13 +20,16 @@ export const Navbar = () => {
         color: "#000"
     };
 
+
     const handleLogout = () => {
         actions.dinerLogout();
         actions.ownerLogout();
         localStorage.removeItem("dinerFullName");
         localStorage.removeItem("tokenDiner");
         localStorage.removeItem("token");
+
         navigate("/");
+
     };
 
     return (
@@ -40,6 +44,7 @@ export const Navbar = () => {
                         style={{ cursor: "pointer", width: "210px", height: "auto", borderRadius: "8px" }}
                     />
                 </Link>
+
 
                 {/* Botones centrados */}
                 <div className="d-flex align-items-center mx-auto">
@@ -134,8 +139,10 @@ export const Navbar = () => {
                             </Link>
                         </>
                     )}
+
                 </div>
             </div>
         </nav>
     );
 };
+

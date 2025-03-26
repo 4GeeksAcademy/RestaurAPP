@@ -1,0 +1,77 @@
+
+
+
+/* Contenitore del form */
+.recommendation-form {
+    background: white;
+    padding: 30px; /* Aumentato il padding per renderlo più grande */
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Effetto ombra più evidente */
+    width: 100%;
+    max-width: 500px; /* Larghezza maggiore */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Maggior spazio tra gli elementi */
+    margin-top: 50px;
+}
+
+/* Titolo */
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+/* Etichette */
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+/* Input e Select */
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* Area di testo */
+textarea {
+    height: 100px; /* Altezza maggiore */
+    resize: none;
+}
+
+/* Pulsante di invio */
+button {
+    background: #ffd000ea;
+    color: rgb(37, 20, 20);
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    font-weight: bold;
+    margin-top: 10px; /* Aggiunto spazio sopra il bottone */
+}
+
+button:hover {
+    background: #ecc516;
+    transform: scale(1.05); /* Effetto leggero di ingrandimento al passaggio del mouse */
+}
+
+/* Box della risposta */
+div h3 {
+    margin-top: 20px;
+    color: #333;
+}
+
+.OpenAiResponse {
+    background: #eaf7ea;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #2d6a2d;
+}
