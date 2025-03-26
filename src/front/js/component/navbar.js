@@ -34,7 +34,7 @@ export const Navbar = () => {
                 
                 {/* Bottoni centrati */}
                 <div className="d-flex align-items-center mx-auto">
-                    <Link to="/search-restaurants">
+                    <Link to="/restaurants-search">
                         <button type="button" className="btn ms-2" style={{ border: 'none', background: 'transparent', color: '#000' }}>Buscar Restaurantes</button>
                     </Link>
                     
