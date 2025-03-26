@@ -216,22 +216,28 @@ def update_reservation_status_for_diner(reservation_id):
     if reservation.diner_id != diner.id:
         return jsonify({'error': 'Unauthorized action. You can only modify your own reservation.'}), 403
 
-    if reservation.state != 'Pending':
-        return jsonify({'error': 'Only pending reservations can be canceled'}), 400
+    if reservation.state not in ['Pending', 'Accepted']:
+        return jsonify({'error': 'Only reservations in Pending or Accepted state can be canceled'}), 400
 
     data = request.get_json()
     new_status = data.get('status')
     cancel_comment = data.get('cancelComment', "")
 
+    
     if new_status != 'Canceled':
         return jsonify({'error': 'Invalid status. Only "Canceled" is allowed.'}), 400
 
-    reservation.state = new_status
-    reservation.cancelComment = cancel_comment
+    try: 
+        reservation.state = new_status
+        reservation.cancelComment = cancel_comment if cancel_comment else "No comment provided"  #uso el try para manejar mejor los errores que he tenido con este servicio
 
-    db.session.commit()
+        db.session.commit()
 
-    return jsonify({'message': 'Reservation status updated to canceled', 'status': reservation.state, 'cancelComment': reservation.cancelComment}), 200
+        return jsonify({'message': 'Reservation status updated to canceled', 'status': reservation.state, 'cancelComment': reservation.cancelComment}), 200
+
+    except Exception as e:
+        db.session.rollback() 
+        return jsonify({'error': str(e)}), 500
 
 
 

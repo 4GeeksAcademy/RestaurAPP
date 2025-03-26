@@ -98,9 +98,10 @@ export const DinerReservations = () => {
         actions.changeReservationStatusByDiner(reservationId, "Canceled", cancelComments[reservationId]);
 
         setIsCanceling((prevState) => ({ ...prevState, [reservationId]: true }));
+
         setTimeout(() => {
             setIsCanceling((prevState) => ({ ...prevState, [reservationId]: false }));
-            actions.getDinerReserves();
+            actions.getDinerReserves();  
         }, 1500);
     };
 
@@ -108,7 +109,7 @@ export const DinerReservations = () => {
         e.persist();
         setCancelComments((prevState) => ({
             ...prevState,
-            [reservationId]: e.target.value
+            [reservationId]: e.target.value  
         }));
     };
 
@@ -159,13 +160,12 @@ export const DinerReservations = () => {
                                         <p className="card-text hover-text">
                                             <strong>Estado:</strong> {item.state}
                                         </p>
-
                                         {item.state === "Pending" || item.state === "Accepted" ? (
                                             <>
                                                 <textarea
                                                     className="form-control mt-2"
                                                     placeholder="Motivo de la cancelación (opcional)"
-                                                    value={cancelComments[item.id] || ""}
+                                                    value={cancelComments[item.id] || ""}  
                                                     onChange={(e) => handleCancelCommentChange(e, item.id)}
                                                     rows="3"
                                                 />
@@ -192,7 +192,6 @@ export const DinerReservations = () => {
                     <button type="button" className="btn btn-secondary" onClick={() => navigate("/diner/dashboard")}>
                         Volver
                     </button>
-
                 </div>
             </div>
         </>

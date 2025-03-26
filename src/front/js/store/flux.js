@@ -32,13 +32,13 @@ const getState = ({ getStore, getActions, setStore }) => {
             restaurantReservations: [],
             availableRestaurants: [],
             ownerRestaurants: []
-            
+
         },
         actions: {
             exampleFunction: () => {
                 getActions().changeColor(0, "green");
             },
-         
+
             createReservation: (reservationData) => {
                 const { restaurant_id, date, hour, people, name, email, phone } = reservationData;
 
@@ -211,7 +211,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
             changeReservationStatusByDiner: (reservationId, newStatus, cancelComment = "") => {
-                return fetch(`${process.env.BACKEND_URL}/api/update_reservations_by_diner/${reservationId}`, {
+                return fetch(`${process.env.BACKEND_URL}/api/update_reservation_by_diner/${reservationId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -222,33 +222,30 @@ const getState = ({ getStore, getActions, setStore }) => {
                         cancelComment: cancelComment
                     })
                 })
-                .then(response => {
-                    console.log(response)
-                    if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err.error || 'Error al actualizar el estado de la reserva');
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.error || 'Error al actualizar el estado de la reserva');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Estado actualizado:', data);
+                        setStore({
+                            dinerReservations: getStore().dinerReservations.map(res =>
+                                res.id === reservationId
+                                    ? { ...res, state: newStatus, cancelComment: cancelComment }
+                                    : res
+                            )
                         });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Estado actualizado:', data);
-                    
-                    setStore({
-                        dinerReservations: getStore().dinerReservations.map(res =>
-                            res.id === reservationId
-                                ? { ...res, state: newStatus, cancelComment: cancelComment }
-                                : res
-                        )
+                    })
+                    .catch(error => {
+                        console.error('Error al actualizar el estado:', error);
                     });
-            
-                    
-                })
-                .catch(error => {
-                    console.error('Error al actualizar el estado:', error);
-                });
             },
-            
+
+
 
             handleDelete: (id) => {
                 const requestOptions = {
@@ -288,9 +285,11 @@ const getState = ({ getStore, getActions, setStore }) => {
                 };
 
                 fetch(process.env.BACKEND_URL + "/api/diner", requestOptions)
-                    .then((response) => {response.json()
-                        console.log(response)})
-                    
+                    .then((response) => {
+                        response.json()
+                        console.log(response)
+                    })
+
                     .then((data) => {
                         console.log(data)
                         const store = getStore();
@@ -767,30 +766,30 @@ const getState = ({ getStore, getActions, setStore }) => {
                         alert("No se pudieron cargar los restaurantes. Inténtalo nuevamente.");
                     });
             },
-            
+
 
             getRestaurantById: (restaurantId) => {
                 fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId)
                     .then((response) => response.json())
                     .then((data) => {
                         console.log("Datos del restaurante recibidos:", data);
-            
+
                         //  Verifica si store ys tiene los datos
                         const currentData = getStore().specificRestaurant;
                         if (JSON.stringify(currentData) === JSON.stringify(data)) {
                             console.log(" Nessun aggiornamento necessario, i dati sono identici.");
                             return;
                         }
-            
+
                         setStore({ specificRestaurant: data });  // Solo si cambian
-            
+
                         console.log("Estado actualizado:", getStore().specificRestaurant);
                     })
                     .catch((error) => {
                         console.error("Error al obtener el restaurante por ID:", error);
                     });
             },
-            
+
 
             getRestaurantsForLoggedInOwner: () => {
                 const token = localStorage.getItem("token");
@@ -851,7 +850,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             //                 localStorage.setItem("ownerName", data.owner_name);
             //                 console.log("Token aggiornato nel localStorage:", localStorage.getItem("token")); // Verifica se il token viene aggiornato
 
-                            
+
             //                 getActions().getRestaurantsForLoggedInOwner();
             //                 resolve();
             //             })
@@ -864,49 +863,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             createRestaurant: (newRestaurant, token) => {
                 return new Promise((resolve, reject) => {
-                  const requestOptions = {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      "Authorization": `Bearer ${token}`, // Asegura que el token se pase en la cabecera
-                    },
-                    body: JSON.stringify(newRestaurant),
-                  };
-              
-                  // Realiza la petición para crear el restaurante
-                  fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
-                    .then((response) => {
-                      if (!response.ok) {
-                        reject('Error en la creación del restaurante');
-                      }
-                      return response.json();
-                    })
-                    .then((data) => {
-                      // Almacena el nuevo restaurante en el store
-                      const store = getStore();
-                      setStore({ restaurants: [...store.restaurants, data] });
-              
-                      // Actualiza el token en el localStorage (si se obtiene un nuevo token)
-                      if (data.access_token) {
-                        localStorage.setItem("token", data.access_token);
-                        localStorage.setItem("ownerId", data.owner_id);
-                        localStorage.setItem("ownerName", data.owner_name);
-                      }
-              
-                      // Verifica si el token se actualizó correctamente
-                      console.log("Token actualizado en localStorage:", localStorage.getItem("token"));
-              
-                      // Llama a la acción para obtener los restaurantes del dueño
-                      getActions().getRestaurantsForLoggedInOwner();
-                      resolve();
-                    })
-                    .catch((error) => {
-                      console.error("Error al crear restaurante:", error);
-                      reject(error);
-                    });
+                    const requestOptions = {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`, // Asegura que el token se pase en la cabecera
+                        },
+                        body: JSON.stringify(newRestaurant),
+                    };
+
+                    // Realiza la petición para crear el restaurante
+                    fetch(process.env.BACKEND_URL + "/api/create_restaurant", requestOptions)
+                        .then((response) => {
+                            if (!response.ok) {
+                                reject('Error en la creación del restaurante');
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            // Almacena el nuevo restaurante en el store
+                            const store = getStore();
+                            setStore({ restaurants: [...store.restaurants, data] });
+
+                            // Actualiza el token en el localStorage (si se obtiene un nuevo token)
+                            if (data.access_token) {
+                                localStorage.setItem("token", data.access_token);
+                                localStorage.setItem("ownerId", data.owner_id);
+                                localStorage.setItem("ownerName", data.owner_name);
+                            }
+
+                            // Verifica si el token se actualizó correctamente
+                            console.log("Token actualizado en localStorage:", localStorage.getItem("token"));
+
+                            // Llama a la acción para obtener los restaurantes del dueño
+                            getActions().getRestaurantsForLoggedInOwner();
+                            resolve();
+                        })
+                        .catch((error) => {
+                            console.error("Error al crear restaurante:", error);
+                            reject(error);
+                        });
                 });
-              },
-              
+            },
+
 
 
             // modifyRestaurant: (restaurantId, updatedRestaurant) => {
@@ -952,32 +951,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             modifyRestaurant: (restaurantId, updatedRestaurant, token) => {
                 const requestOptions = {
-                  method: "PUT",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                  },
-                  body: JSON.stringify(updatedRestaurant),
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(updatedRestaurant),
                 };
-              
+
                 return fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}`, requestOptions)
-                  .then(response => response.json())
-                  .then(data => {
-                    if (data.error) {
-                      throw new Error(data.error);
-                    }
-                    // Modifica il ristorante nella lista del contesto
-                    const updatedRestaurants = getStore().restaurants.map(restaurant =>
-                      restaurant.id === restaurantId ? data : restaurant
-                    );
-                    setStore({ restaurants: updatedRestaurants });
-                  })
-                  .catch(err => {
-                    console.error("Error al modificar el restaurante:", err);
-                    throw err;
-                  });
-              },
-              
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+                        // Modifica il ristorante nella lista del contesto
+                        const updatedRestaurants = getStore().restaurants.map(restaurant =>
+                            restaurant.id === restaurantId ? data : restaurant
+                        );
+                        setStore({ restaurants: updatedRestaurants });
+                    })
+                    .catch(err => {
+                        console.error("Error al modificar el restaurante:", err);
+                        throw err;
+                    });
+            },
+
 
             deleteRestaurant: (restaurantId) => {
                 const store = getStore();
@@ -1028,7 +1027,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     })
                     .then(data => {
                         console.log("DATI PRENOTAZIONE data", data);
-                        
+
                         setStore({ ownerReservations: data });
                     })
                     .catch(err => {
@@ -1078,7 +1077,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             getReservationsByRestaurant: (restaurantId) => {
                 console.log("*****getReservationsByRestaurant");
-                
+
                 const token = localStorage.getItem('token');
 
                 fetch(process.env.BACKEND_URL + "/api/restaurant/reservations/" + restaurantId, {
@@ -1088,23 +1087,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                     }
                 })
-                .then((response) => {
-                    console.log("Risposta dal server:", response);
-                    if (!response.ok) {
-                        throw new Error(`Errore HTTP: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    console.log("********* dati ricevuti per il rist dal back:", data); 
-                    setStore({ restaurantReservations: data });
-                })
-                .catch((error) => {
-                    setStore({ error: error.message });
-                });
+                    .then((response) => {
+                        console.log("Risposta dal server:", response);
+                        if (!response.ok) {
+                            throw new Error(`Errore HTTP: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log("********* dati ricevuti per il rist dal back:", data);
+                        setStore({ restaurantReservations: data });
+                    })
+                    .catch((error) => {
+                        setStore({ error: error.message });
+                    });
             },
-            
-            
+
+
 
             //             getRestaurantById: (restaurantId) => {
             //     fetch(process.env.BACKEND_URL + "/api/restaurants/" + restaurantId)
@@ -1121,7 +1120,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             //             console.error("Error al obtener el restaurante:", error);
             //         });
             // },
-            
+
             // updateLocalReservationState: (reservationId, newState) => {
             //     const updatedReservations = getStore().restaurantReservations.map(res =>
             //         res.id === reservationId ? { ...res, state: newState } : res
@@ -1136,30 +1135,30 @@ const getState = ({ getStore, getActions, setStore }) => {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         status: newStatus,
                         cancelComment: cancelComment
                     })
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al actualizar el estado de la reserva");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Estado actualizado:', data);
-                    // Aggiorna lo stato nel frontend
-                    setStore({
-                        restaurantReservations: getStore().restaurantReservations.map(res =>
-                            res.id === reservationId ? { ...res, state: newStatus, cancelComment: cancelComment } : res
-                        )
-                    });
-                })
-                .catch(error => console.error('Error al actualizar el estado:', error));
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error al actualizar el estado de la reserva");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Estado actualizado:', data);
+                        // Aggiorna lo stato nel frontend
+                        setStore({
+                            restaurantReservations: getStore().restaurantReservations.map(res =>
+                                res.id === reservationId ? { ...res, state: newStatus, cancelComment: cancelComment } : res
+                            )
+                        });
+                    })
+                    .catch(error => console.error('Error al actualizar el estado:', error));
             },
-            
-            
+
+
 
 
 
