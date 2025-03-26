@@ -210,7 +210,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-            changeReservationStatusByDiner: (reservationId, newStatus, cancelComment = "") => {
+            changeReservationStatusByDiner: (reservationId, newStatus, cancelComment = "") => {   //esta es la funcion para modificar el estado de la reserva por el diner
                 return fetch(`${process.env.BACKEND_URL}/api/update_reservation_by_diner/${reservationId}`, {
                     method: 'PUT',
                     headers: {
