@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import LoginImg from "../../img/LoginImg.jpeg";
+import chef from "../../img/chef.png"
 import logo2 from "../../img/logo2.jpeg";
 import "../../styles/login.css";
 
@@ -53,7 +53,7 @@ const OwnerForm = () => {
         {/* imagen izquierda */}
         <div className="login-image-container">
           <img
-            src="https://img.freepik.com/premium-vector/drawing-people-sitting-table-with-lamp-them_1087929-8168.jpg"
+            src={chef}
             alt="Login Background"
             className="login-image"
           />
@@ -74,7 +74,7 @@ const OwnerForm = () => {
             }}
           />
           <h2 className="mb-2" style={{ fontFamily: "Poppins, sans-serif", marginBottom: '20px' }}>
-            {ownerId ? "Cambia tus datos" : "Crea una nueva cuenta"}
+            {ownerId ? "Cambia tus datos" : "Crea una nueva cuenta como restaurante"}
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-1">
@@ -162,7 +162,7 @@ const OwnerForm = () => {
             </button>
             <p className="mt-1">
               ¿Ya tienes una cuenta?{" "}
-              <Link to="/owners/login" className="text-primary fw-bold">Inicia sesión aquí</Link>
+              <Link to="/owners/login" className="text-warning fw-bold">Inicia sesión aquí</Link>
             </p>
           </form>
         </div>

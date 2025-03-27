@@ -7,16 +7,26 @@ const RestaurantRecommendationForm = () => {
     const [hora, setHora] = useState("");
     const [formalidad, setFormalidad] = useState("");
     const [peticionPersonalizada, setPeticionPersonalizada] = useState("");
+    const [selectedCity, setSelectedCity] = useState("");
     const [respuesta, setRespuesta] = useState("");
+
+    // Lista de ciudades programadas
+    const cities = [
+        "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza",
+        "Málaga", "Murcia", "Palma", "Las Palmas", "Bilbao",
+        "Alicante", "Córdoba", "Valladolid", "Vigo", "Gijón",
+        "Granada", "Elche", "Santander", "Badajoz", "Almería"
+    ];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formData = {
-            occasion: ocasion, 
-            date: fecha,       
-            time: hora,       
-            formality: formalidad,  
+            occasion: ocasion,
+            date: fecha,
+            time: hora,
+            formality: formalidad,
+            city: selectedCity,
             special_requests: peticionPersonalizada,
         };
 
@@ -52,7 +62,7 @@ const RestaurantRecommendationForm = () => {
             <h2>¿Quieres una recomendación sobre un restaurante y el plan del día?</h2>
 
             <div className="form-response-container">
-                {/* Form Card */}
+                {/* Formulario */}
                 <form onSubmit={handleSubmit} className="recommendation-form">
                     <label>Ocasión:</label>
                     <select value={ocasion} onChange={(e) => setOcasion(e.target.value)} required>
@@ -83,7 +93,21 @@ const RestaurantRecommendationForm = () => {
                         <option value="casual">Casual</option>
                     </select>
 
-                    <label>Indicanos la zona y si tienes alguna peticón especifica:</label>
+                    <label>Ciudad:</label>
+                    <select 
+                        value={selectedCity} 
+                        onChange={(e) => setSelectedCity(e.target.value)} 
+                        required
+                    >
+                        <option value="">Selecciona una ciudad</option>
+                        {cities.map((city, index) => (
+                            <option key={index} value={city}>
+                                {city}
+                            </option>
+                        ))}
+                    </select>
+
+                    <label>Indícanos la zona y si tienes alguna petición específica:</label>
                     <textarea 
                         value={peticionPersonalizada} 
                         onChange={(e) => setPeticionPersonalizada(e.target.value)} 
@@ -93,7 +117,7 @@ const RestaurantRecommendationForm = () => {
                     <button type="submit" className="submit-btn">Enviar solicitud</button>
                 </form>
 
-                {/* Response Card */}
+                {/* Tarjeta de respuesta */}
                 {respuesta && (
                     <div className="response-card">
                         <h3>Recomendación para ti:</h3>

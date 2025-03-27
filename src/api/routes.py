@@ -35,7 +35,7 @@ def handle_hello():
 @api.route('/diners', methods=['GET'])
 def get_diners():
     diners = Diner.query.all()
-      
+  
     response_body = [diner.to_dict() for diner in diners]
         
     return jsonify(response_body), 200
@@ -439,50 +439,52 @@ def add_restaurant():
     return jsonify({"message": "Restaurante añadido exitosamente"}), 201
 
 
-@api.route('/create_restaurant', methods=['POST'])         #añade rest a owner logeado
-# @jwt_required()
+    
+
+# @api.route('/create_restaurant', methods=['POST'])  # añade rest a owner loguedo + Cloudinary
+# @jwt_required() 
 # def create_restaurant():
-#     owner_email = get_jwt_identity()  
+#     owner_email = get_jwt_identity()
 
 #     owner = Owner.query.filter_by(email=owner_email).first()
 #     if not owner:
-#         return jsonify({"message": "Owner not found"}), 404  
+#         return jsonify({"message": "Owner not found"}), 404
 
-#     data = request.get_json()
+#     data = request.get_json() 
 
-#     required_fields = ["name", "location", "telephone", "latitude", "longitude", "capacity"]
+#     required_fields = ["name", "location", "telephone", "latitude", "longitude", "capacity", "image_url"]
+    
 #     for field in required_fields:
 #         if not data.get(field):
 #             return jsonify({"error": f"The field {field} is required"}), 400
 
-#     # Verifica si el restaurante ya existe para el owner
 #     existing_restaurant = Restaurant.query.filter_by(name=data["name"], owner_id=owner.id).first()
 #     if existing_restaurant:
-#         return jsonify({"error": "You already have a restaurant with this name"}), 400
+#         return jsonify({"error": "You already have a restaurant with this name"}), 400  # Si ya existe, error 400
 
-#     # Crea nuevo rest
+#     # Crear nuevo restaurante con los datos
 #     new_restaurant = Restaurant(
 #         name=data["name"],
 #         location=data["location"],
 #         telephone=data["telephone"],
-#         latitude=float(data["latitude"]),  # float por decimales
-#         longitude=float(data["longitude"]),  
-#         capacity=int(data["capacity"]),  # por numero
-#         owner_id=owner.id  
+#         latitude=float(data["latitude"]),
+#         longitude=float(data["longitude"]),
+#         capacity=int(data["capacity"]),
+#         image_url=data["image_url"], 
+#         owner_id=owner.id
 #     )
 
 #     try:
-#         db.session.add(new_restaurant)
+#         db.session.add(new_restaurant) 
 #         db.session.commit()
 
 #         return jsonify(new_restaurant.serialize()), 201
 #     except Exception as e:
-#         db.session.rollback()
-#         return jsonify({"error": f"Error saving restaurant: {str(e)}"}), 500  
-# 
-    
+#         db.session.rollback()  # Si ocurre un error, hacer rollback de la sesión
+#         return jsonify({"error": f"Error saving restaurant: {str(e)}"}), 500
 
-@api.route('/create_restaurant', methods=['POST'])  # añade rest a owner loguedo + Cloudinary
+
+@api.route('/create_restaurant', methods=['POST'])  # Añade rest a owner logueado + Cloudinary
 @jwt_required() 
 def create_restaurant():
     owner_email = get_jwt_identity()
@@ -493,7 +495,10 @@ def create_restaurant():
 
     data = request.get_json() 
 
-    required_fields = ["name", "location", "telephone", "latitude", "longitude", "capacity", "image_url"]
+    required_fields = [
+        "name", "location", "telephone", "latitude", "longitude", "capacity", 
+        "image_url", "cuisine_type", "average_price", "description"
+    ]
     
     for field in required_fields:
         if not data.get(field):
@@ -512,6 +517,9 @@ def create_restaurant():
         longitude=float(data["longitude"]),
         capacity=int(data["capacity"]),
         image_url=data["image_url"], 
+        cuisine_type=data["cuisine_type"],  # Nuevo campo
+        average_price=data["average_price"],  # Nuevo campo
+        description=data["description"],  # Nuevo campo
         owner_id=owner.id
     )
 
@@ -1056,6 +1064,7 @@ def restaurant_recommendation():
     time = data.get("time", "")
     formality = data.get("formality", "")
     special_requests = data.get("special_requests", "")
+    city= data.get("city", "")
 
     if not occasion or not date or not time:
         return jsonify({"error": "Missing required fields"}), 400
@@ -1063,12 +1072,17 @@ def restaurant_recommendation():
     prompt = f"""
         Eres un experto en restaurantes, tipos de cocina y planes personalizados. Según los datos recibidos, responde de manera amigable, cálida y fluida. Comienza siempre con un saludo amigable y ofrece una recomendación personalizada. La respuesta debe ser detallada, mencionando tanto el restaurante como la experiencia que se vivirá en él.
 
+        Dame un plan para hacer antes de ir a comer y otro para hacer despues de ir a comer, aproximalo con la zona del restaurante, sugiereme un plato
+
+        No uses formatting de MARKDOWN ni simbolos, no esta soportado, en cambio usa espacios
+
         A continuación te doy los datos que el usuario ha ingresado:
         - Ocasión: {occasion}
         - Fecha: {date}
         - Hora: {time}
         - Nivel de formalidad: {formality}
         - Solicitudes especiales: {special_requests}
+        - Ciudad: {city}
 
         Tu respuesta debe contener:
         1. Un saludo amigable y cálido al principio.
@@ -1076,9 +1090,26 @@ def restaurant_recommendation():
         3. Una sugerencia para completar el día (por ejemplo, qué hacer antes de la cena, qué bebidas pedir, etc.).
         4. Un tono amigable y cercano, dando la sensación de que realmente conoces y te importa la experiencia del usuario.
 
+        NO ALUCINES; A continuacion te proporcionare los datos de los restaurantes que tenemos, no tienes permitido salirte de esta lista de restaurantes y los datos de ellos
+
 
     """
 
+                # Toda tu respuesta, sin expcepcion en este formato JSON:
+
+                #         {{
+                #             \"PlanPrimero\": {{
+                #                 \"plan\": \"Cena romántica en un restaurante con vista al mar\",
+                #                 \"imagen\": \"https://example.com/imagen_cena_romantica.jpg\"
+                #             }},
+                #             \"context\": {{
+                #                 \"texto\": \"Una experiencia inolvidable con velas, vino y música en vivo.\"
+                #             }},
+                #             \"PlanSegundo\": {{
+                #                 \"plan\": \"Cena en un restaurante con espectáculo en vivo\",
+                #                 \"imagen\": \"https://example.com/imagen_espectaculo.jpg\"
+                #             }}
+                #         }}
     try:
         # Call OpenAI to get the response
         # response = openai.ChatCompletion.create(
@@ -1086,10 +1117,13 @@ def restaurant_recommendation():
         #     messages=[{"role": "system", "content": "Eres un experto en restaurantes y planes personalizados."},
         #               {"role": "user", }]
         # )
+        AllRestaurants = str([r.serialize() for r in Restaurant.query.all()])
+
+        print(AllRestaurants)
         response = openai.responses.create(
             model="gpt-4o",
             instructions=prompt,
-            input=" ",
+            input="Aqui va la lista de restaurantes " + AllRestaurants + " ",
 )
 
         # Extract the response
