@@ -982,70 +982,6 @@ def update_reservation_status(reservation_id):
 
 
 
-
-
-# @api.route('/api/recommendation', methods=['POST'])
-# def restaurant_recommendation():
-#     print("Petición recibida en /api/recommendation")
-#     data = request.get_json()
-    
-#     # Estrai i dati inviati nel corpo della richiesta
-#     occasion = data.get("occasion", "")
-#     date = data.get("date", "")
-#     time = data.get("time", "")
-#     formality = data.get("formality", "")
-#     special_requests = data.get("special_requests", "")
-
-#     if not occasion or not date or not time:
-#         return jsonify({"error": "Missing required fields"}), 400
-
-#     # Prompt per OpenAI
-#     prompt = f"""
-#     Eres un experto en restaurantes, tipos de cocina y planes personalizados. Según los datos recibidos, responde de manera amigable, cálida y fluida. Comienza siempre con un saludo amigable y ofrece una recomendación personalizada. La respuesta debe ser detallada, mencionando tanto el restaurante como la experiencia que se vivirá en él.
-    
-#     A continuación te doy los datos que el usuario ha ingresado:
-#     - Ocasión: {occasion}
-#     - Fecha: {date}
-#     - Hora: {time}
-#     - Nivel de formalidad: {formality}
-#     - Solicitudes especiales: {special_requests}
-    
-#     Tu respuesta debe contener:
-#     1. Un saludo amigable y cálido al principio.
-#     2. El nombre del restaurante que recomendarías, con un breve comentario sobre su ambiente, especialidades y tipo de cocina.
-#     3. Una sugerencia para completar el día (por ejemplo, qué hacer antes de la cena, qué bebidas pedir, etc.).
-#     4. Un tono amigable y cercano, dando la sensación de que realmente conoces y te importa la experiencia del usuario.
-    
-#     La respuesta debe ser en formato JSON con los siguientes campos:
-#     ```json
-#     {
-#         "greeting": "Saludo amigable",
-#         "restaurant_recommendation": "Te recomiendo el restaurante [nombre], que ofrece [tipo de cocina]. Es un lugar perfecto para [situación].",
-#         "plan_of_the_day": "Aquí te dejo algunas sugerencias para tu día: [actividades y planes adicionales]."
-#     }
-#     ```
-#     """
-    
-#     try:
-#         # Chiamata a OpenAI per ottenere la risposta
-#         response = client.chat.completions.create(
-#             model="gpt-3.5-turbo",
-#             messages=[{"role": "system", "content": "Eres un experto en restaurantes y planes personalizados."},
-#                       {"role": "user", "content": prompt}]
-#         )
-        
-#         # Estrai la risposta
-#         reply = response.choices[0].message["content"]
-        
-#         # Restituisci la risposta in formato JSON
-#         return jsonify({"reply": reply.strip()}), 200
-    
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-# if __name__ == '__main__':
-#     api.run(debug=True)
-
 import openai
 
 
@@ -1074,7 +1010,7 @@ def restaurant_recommendation():
 
         Dame un plan para hacer antes de ir a comer y otro para hacer despues de ir a comer, aproximalo con la zona del restaurante, sugiereme un plato
 
-        No uses formatting de MARKDOWN ni simbolos, no esta soportado, en cambio usa espacios
+        No uses formatting de MARKDOWN ni simbolos, no esta soportado, en cambio usa espacios, no uses *
 
         A continuación te doy los datos que el usuario ha ingresado:
         - Ocasión: {occasion}
@@ -1095,28 +1031,7 @@ def restaurant_recommendation():
 
     """
 
-                # Toda tu respuesta, sin expcepcion en este formato JSON:
-
-                #         {{
-                #             \"PlanPrimero\": {{
-                #                 \"plan\": \"Cena romántica en un restaurante con vista al mar\",
-                #                 \"imagen\": \"https://example.com/imagen_cena_romantica.jpg\"
-                #             }},
-                #             \"context\": {{
-                #                 \"texto\": \"Una experiencia inolvidable con velas, vino y música en vivo.\"
-                #             }},
-                #             \"PlanSegundo\": {{
-                #                 \"plan\": \"Cena en un restaurante con espectáculo en vivo\",
-                #                 \"imagen\": \"https://example.com/imagen_espectaculo.jpg\"
-                #             }}
-                #         }}
     try:
-        # Call OpenAI to get the response
-        # response = openai.ChatCompletion.create(
-        #     model="gpt-3.5-turbo",
-        #     messages=[{"role": "system", "content": "Eres un experto en restaurantes y planes personalizados."},
-        #               {"role": "user", }]
-        # )
         AllRestaurants = str([r.serialize() for r in Restaurant.query.all()])
 
         print(AllRestaurants)

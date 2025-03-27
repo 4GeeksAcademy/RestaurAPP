@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { SpinnerCircular } from "spinners-react";
 import "../../styles/RestaurantRecommendationForm.css";
 
 const RestaurantRecommendationForm = () => {
@@ -9,8 +10,8 @@ const RestaurantRecommendationForm = () => {
     const [peticionPersonalizada, setPeticionPersonalizada] = useState("");
     const [selectedCity, setSelectedCity] = useState("");
     const [respuesta, setRespuesta] = useState("");
+    const [loading, setLoading] = useState(false); // Stato per lo spinner
 
-    // Lista de ciudades programadas
     const cities = [
         "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza",
         "Málaga", "Murcia", "Palma", "Las Palmas", "Bilbao",
@@ -20,6 +21,7 @@ const RestaurantRecommendationForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Attiva lo spinner
 
         const formData = {
             occasion: ocasion,
@@ -30,20 +32,14 @@ const RestaurantRecommendationForm = () => {
             special_requests: peticionPersonalizada,
         };
 
-        console.log("📩 Enviando datos al backend:", formData);
-
         try {
-            const res = await fetch(process.env.BACKEND_URL + '/api/recommendation', { 
+            const res = await fetch(process.env.BACKEND_URL + '/api/recommendation', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
 
-            console.log("Estado de la respuesta:", res.status);
-
             const responseText = await res.text();
-            console.log("Respuesta completa:", responseText);
-
             const data = JSON.parse(responseText);
 
             if (res.ok) {
@@ -54,16 +50,23 @@ const RestaurantRecommendationForm = () => {
         } catch (error) {
             setRespuesta("Error de conexión al servidor.");
             console.error("Error en la solicitud:", error);
+        } finally {
+            setLoading(false); // Disattiva lo spinner alla fine della richiesta
         }
     };
 
     return (
-        <div className="container">
-            <h2>¿Quieres una recomendación sobre un restaurante y el plan del día?</h2>
+        <div className="container-fluid">
+            <h2 className="mt-5 text-center">"¡Descubre el restaurante perfecto y el plan ideal para tu día!"</h2>
+            <h6 className="text-center">
+                ¿No sabes a qué restaurante ir y quieres ideas para un plan perfecto? 
+                ¡Prueba nuestro formulario inteligente y descubre la mejor recomendación para ti!
+            </h6>
 
-            <div className="form-response-container">
+            <div className="form-response-container d-flex">
                 {/* Formulario */}
                 <form onSubmit={handleSubmit} className="recommendation-form">
+                    <h5 className="text-center">¡Pruebame! 🚀</h5>
                     <label>Ocasión:</label>
                     <select value={ocasion} onChange={(e) => setOcasion(e.target.value)} required>
                         <option value="">Selecciona una ocasión</option>
@@ -94,36 +97,57 @@ const RestaurantRecommendationForm = () => {
                     </select>
 
                     <label>Ciudad:</label>
-                    <select 
-                        value={selectedCity} 
-                        onChange={(e) => setSelectedCity(e.target.value)} 
-                        required
-                    >
+                    <select value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)} required>
                         <option value="">Selecciona una ciudad</option>
                         {cities.map((city, index) => (
-                            <option key={index} value={city}>
-                                {city}
-                            </option>
+                            <option key={index} value={city}>{city}</option>
                         ))}
                     </select>
 
-                    <label>Indícanos la zona y si tienes alguna petición específica:</label>
-                    <textarea 
-                        value={peticionPersonalizada} 
-                        onChange={(e) => setPeticionPersonalizada(e.target.value)} 
-                        placeholder="Ej. En Valencia, prefiero comida vegetariana o una mesa con vista al mar."
+                    <label>Indícanos si tienes alguna petición en particular:</label>
+                    <textarea
+                        value={peticionPersonalizada}
+                        onChange={(e) => setPeticionPersonalizada(e.target.value)}
+                        placeholder="Ej. Tengo ganas de comer marisco y me encantaria una mesa con vista al mar."
                     />
 
-                    <button type="submit" className="submit-btn">Enviar solicitud</button>
+                    {/* Spinner e invio */}
+                    <button type="submit" className="submit-btn" disabled={loading}>
+                        {loading ? <SpinnerCircular size={30} color="#fff" /> : "Enviar solicitud"}
+                    </button>
                 </form>
 
-                {/* Tarjeta de respuesta */}
-                {respuesta && (
-                    <div className="response-card">
-                        <h3>Recomendación para ti:</h3>
-                        <p className="OpenAiResponse">{respuesta}</p>
+                {/* Sección de imágenes y respuesta */}
+                <div className="row g-4 align-items-center">
+                    <div className="photo comida col-md-5">
+                        <img src="https://cdn.prod.website-files.com/6423e8cf97045d0ac6e9ffb9/6565d9491a89f4b7b7915b3e_tipos%20de%20restaurante.webp" className="rounded-3 img-fluid" alt="Comida" />
                     </div>
-                )}
+
+                    <div className="col-md-6">
+                        <div className="row g-4">
+                            <div className="photo playa col-md-8">
+                                <img src="https://us.123rf.com/450wm/maridav/maridav1404/maridav140400434/27940409-pareja-feliz-en-la-playa.jpg" className="rounded-3 img-fluid" alt="Playa" />
+                            </div>
+
+                            {/* Mostramos la respuesta entre las imágenes */}
+                            {loading ? (
+                                <div className="col-12 text-center">
+                                    <SpinnerCircular size={50} color="#007bff" />
+                                    <p>Generando recomendación...</p>
+                                </div>
+                            ) : respuesta && (
+                                <div className="response-box col-12">
+                                    <h3>Recomendación para ti:</h3>
+                                    <p>{respuesta}</p>
+                                </div>
+                            )}
+
+                            <div className="photo drink col-12">
+                                <img src="https://img.freepik.com/fotos-premium/gente-brindando-cocteles-concepto-estilo-vida_641503-161577.jpg" className="rounded-3 img-fluid" alt="Drink" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
