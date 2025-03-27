@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SpinnerCircular } from "spinners-react";
+import { SpinnerDotted } from "spinners-react"; // Importazione dello spinner
 import "../../styles/RestaurantRecommendationForm.css";
 
 const RestaurantRecommendationForm = () => {
@@ -12,6 +12,7 @@ const RestaurantRecommendationForm = () => {
     const [respuesta, setRespuesta] = useState("");
     const [loading, setLoading] = useState(false); // Stato per lo spinner
 
+    // Lista di città disponibili
     const cities = [
         "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza",
         "Málaga", "Murcia", "Palma", "Las Palmas", "Bilbao",
@@ -32,6 +33,8 @@ const RestaurantRecommendationForm = () => {
             special_requests: peticionPersonalizada,
         };
 
+        console.log("📩 Enviando datos al backend:", formData);
+
         try {
             const res = await fetch(process.env.BACKEND_URL + '/api/recommendation', {
                 method: "POST",
@@ -39,7 +42,11 @@ const RestaurantRecommendationForm = () => {
                 body: JSON.stringify(formData),
             });
 
+            console.log("Estado de la respuesta:", res.status);
+
             const responseText = await res.text();
+            console.log("Respuesta completa:", responseText);
+
             const data = JSON.parse(responseText);
 
             if (res.ok) {
@@ -51,18 +58,17 @@ const RestaurantRecommendationForm = () => {
             setRespuesta("Error de conexión al servidor.");
             console.error("Error en la solicitud:", error);
         } finally {
-            setLoading(false); // Disattiva lo spinner alla fine della richiesta
+            setLoading(false); // Disattiva lo spinner
         }
     };
 
     return (
         <div className="container-fluid">
-            <h2 className="mt-5 text-center">"¡Descubre el restaurante perfecto y el plan ideal para tu día!"</h2>
+            <h2 className="mt-5">"¡Descubre el restaurante perfecto y el plan ideal para tu día!"</h2>
             <h6 className="text-center">
                 ¿No sabes a qué restaurante ir y quieres ideas para un plan perfecto? 
                 ¡Prueba nuestro formulario inteligente y descubre la mejor recomendación para ti!
             </h6>
-
             <div className="form-response-container d-flex">
                 {/* Formulario */}
                 <form onSubmit={handleSubmit} className="recommendation-form">
@@ -111,9 +117,10 @@ const RestaurantRecommendationForm = () => {
                         placeholder="Ej. Tengo ganas de comer marisco y me encantaria una mesa con vista al mar."
                     />
 
-                    {/* Spinner e invio */}
                     <button type="submit" className="submit-btn" disabled={loading}>
-                        {loading ? <SpinnerCircular size={30} color="#fff" /> : "Enviar solicitud"}
+                        {loading ? (
+                            <SpinnerDotted size={50} thickness={100} speed={100} color="rgba(172, 164, 57, 1)" />
+                        ) : "Enviar solicitud"}
                     </button>
                 </form>
 
@@ -130,12 +137,7 @@ const RestaurantRecommendationForm = () => {
                             </div>
 
                             {/* Mostramos la respuesta entre las imágenes */}
-                            {loading ? (
-                                <div className="col-12 text-center">
-                                    <SpinnerCircular size={50} color="#007bff" />
-                                    <p>Generando recomendación...</p>
-                                </div>
-                            ) : respuesta && (
+                            {respuesta && (
                                 <div className="response-box col-12">
                                     <h3>Recomendación para ti:</h3>
                                     <p>{respuesta}</p>
