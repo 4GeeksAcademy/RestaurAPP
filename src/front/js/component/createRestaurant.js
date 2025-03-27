@@ -88,7 +88,7 @@ const CreateRestaurant = () => {
 
   return (
     <>
-      <div className="container d-flex justify-content-between align-items-center mt-3">
+      <div className="container d-flex justify-content-between align-items-center mt-3 mb-5">
         <h1>Detalles de tu restaurante</h1>
         <button className="btn btn-primary" onClick={() => navigate("/owners/dashboard")}>
           Vuelva al dashboard
@@ -184,7 +184,7 @@ const CreateRestaurant = () => {
           <input type="hidden" value={longitude} readOnly />
 
           {/* send button */}
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-warning">
 
             {id ? "Guardar Cambios" : "Crear Restaurante"}
 

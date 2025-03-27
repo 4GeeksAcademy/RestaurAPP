@@ -174,7 +174,7 @@ const OwnerLogin = () => {
                     </form>
                     <p className="mt-4 text-center">
                         No tienes una cuenta?
-                        <Link to="/owners/new" className="text-primary fw-bold"> Regístrate aquí</Link>
+                        <Link to="/owners/new" className="text-warning fw-bold"> Regístrate aquí</Link>
                     </p>
                 </div>
             </div>

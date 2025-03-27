@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { Context } from "../store/appContext";
 import { Link, Navigate } from 'react-router-dom';
-import "../../styles/login.css"; // Include your custom styling
-import logo2 from "../../img/logo2.jpeg"; // Your logo
+import "../../styles/login.css"; 
+import logo2 from "../../img/logo2.jpeg"; 
 
 export const DinerLogin = () => {
     const { store, actions } = useContext(Context);
@@ -10,21 +10,20 @@ export const DinerLogin = () => {
     const [password, setPassword] = useState("");
     const [redirect, setRedirect] = useState(false);
 
-    // Function to handle form submission
     function sendData(e) {
         e.preventDefault();
         actions.dinerLogin(email, password).then(() => {
-            setRedirect(true);  // If login is successful, redirect
+            setRedirect(true);  
         });
     }
 
-    // If logged in or redirected, navigate to the diner dashboard
+   
     if (redirect || store.dinerauth === true) {
         return <Navigate to="/diner/dashboard" />;
     }
 
     return (
-        <div className="container mt-5">
+        <div className="container mt-5 mb-5">
             <div className="login-card">
                 <div className="login-image-container">
                     <img
@@ -87,7 +86,7 @@ export const DinerLogin = () => {
                     </form>
                     <p className="mt-4 text-center">
                         Don't have an account?{" "}
-                        <Link to="/dinerform" className="text-primary fw-bold">Sign up here</Link>
+                        <Link to="/dinerform" className="text-warning fw-bold">Sign up here</Link>
                     </p>
                 </div>
             </div>

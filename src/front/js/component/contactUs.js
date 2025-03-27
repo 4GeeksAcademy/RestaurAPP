@@ -4,7 +4,7 @@ import "../../styles/contactUs.css"
 const ContactUs = () => {
     return (
 
-        <section className="pt-4 pt-md-5">
+        <section className="pt-4 pt-md-5 mb-4">
             <div className="container">
                 <div className="row mb-5">
                     <div className="col-xl-10">
@@ -47,7 +47,7 @@ const ContactUs = () => {
                             </div>
                             <h5>Envíanos un correo electrónico</h5>
                             <p>Estaremos atentos a cualquier cosa que desees comunicarnos y te responderemos rapidamente.</p>
-                            <a href="#" className="btn btn-link text-decoration-underline p-0 mb-0">
+                            <a href="#" className="btn btn-link text-decoration-underline text-black p-0 mb-0">
                                 <i className="bi bi-envelope me-1"></i>ejemplo@gmail.com
                             </a>
                         </div>

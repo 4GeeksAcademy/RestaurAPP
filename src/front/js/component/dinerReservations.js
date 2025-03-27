@@ -158,7 +158,10 @@ export const DinerReservations = () => {
                                             <strong>Para {item.people} Personas</strong>
                                         </p>
                                         <p className="card-text hover-text">
-                                            <strong>Estado:</strong> {item.state}
+                                            <strong>Estado:</strong> {item.state}    
+                                        </p>
+                                        <p className="card-text hover-text">
+                                            <strong>Comentario:</strong> {item.cancelComment}
                                         </p>
                                         {item.state === "Pending" || item.state === "Accepted" ? (
                                             <>

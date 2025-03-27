@@ -131,7 +131,7 @@ const RestaurantDetail = () => {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-4 mb-4">
             <h1 className="mb-5 text-center">Detalles del Restaurante</h1>
 
             <div className="card shadow-lg">
@@ -161,7 +161,7 @@ const RestaurantDetail = () => {
                             ✏️ Editar
                         </button>
 
-                        <button className="button-49 me-2" onClick={handleDelete}>
+                        <button className="btn btn-danger" onClick={handleDelete}>
                             🗑️ Eliminar 
 
                         </button>
@@ -175,7 +175,7 @@ const RestaurantDetail = () => {
                 </div>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-5 mb-5">
                 <h2 className="text-center">Reservas de {restaurant.name}</h2>
                 <ReservationsByRestaurant restaurantId={id} restaurantName={restaurant.name} />
             </div>

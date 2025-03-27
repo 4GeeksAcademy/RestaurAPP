@@ -96,6 +96,11 @@ export const Navbar = () => {
                                     Buscar Restaurantes
                                 </button>
                             </Link>
+                            <Link to="/recommendation">
+                                <button type="button" className="btn ms-2" style={buttonStyle}>
+                                    Recomendaciones
+                                </button>
+                            </Link>
                             <Link to="/diner/reservations" className="ms-2">
                                 <button type="button" className="btn" style={buttonStyle}>Mis Reservas</button>
                             </Link>

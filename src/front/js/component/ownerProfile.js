@@ -56,7 +56,7 @@ const OwnerProfile = () => {
     return (
         <>
             {store.auth === true || localStorage.getItem("token") ? (
-                <div className="container mt-4">
+                <div className="container mt-4 mb-5">
                     <h1>Bienvenido, {ownerName}</h1>
                     <h2 className="my-4">Detalles del perfil</h2>
                     {store.specificOwner ? (

@@ -7,6 +7,7 @@
 */
 
 .home-container {
+    position: relative;
     background-image: url('https://tse1.mm.bing.net/th?id=OIG3.gpA6SWak9tyYBZqtV1e2&pid=ImgGn');
     background-size: cover;
     background-position: center;
@@ -18,6 +19,12 @@
     justify-content: center;
     color: white;
     text-shadow: 1px 1px 4px black;
+}
+
+/* cuidado! aqui le damos la oscuridad a la imagen de fondo */
+.home-container {                    
+    --opacidad-negro: 0.5;
+    background-image: linear-gradient(rgba(0, 0, 0, var(--opacidad-negro)), rgba(0, 0, 0, var(--opacidad-negro))), url('https://tse1.mm.bing.net/th?id=OIG3.gpA6SWak9tyYBZqtV1e2&pid=ImgGn');
 }
 
 .toggle-container {

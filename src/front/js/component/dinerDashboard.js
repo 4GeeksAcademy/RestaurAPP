@@ -68,7 +68,6 @@ export const DinerDashboard = () => {
                                 {store.restaurants && store.restaurants.length > 0 ? (
                                     store.restaurants.map((restaurant, index) => (
                                         <div className="col-sm-6 col-xl-3" key={index}>
-                                            {/* Card START */}
                                             <div className="card card-img-scale overflow-hidden bg-transparent">
                                                 <div className="card-img-wrapper rounded-3">
 

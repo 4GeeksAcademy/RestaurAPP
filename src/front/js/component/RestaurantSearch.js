@@ -66,95 +66,100 @@ const RestaurantSearch = ({ onSelect }) => {
   };
 
   return (
-    <LoadScript googleMapsApiKey={process.env.MAP_KEY} libraries={libraries}>
-      <div className="container">
-        <h2>Buscar un Restaurante</h2>
+ 
+    (store.dinerauth === true || localStorage.getItem("tokenDiner")) ? (
+      <LoadScript googleMapsApiKey={process.env.MAP_KEY} libraries={libraries}>
+        <div className="container">
+          <h2>Buscar un Restaurante</h2>
 
-        <div className="search-fields">
-          <div className="input-group">
-            <PlacesAutocomplete value={address} onChange={setAddress} onSelect={handleSelect}>
-              {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                <div className="input-wrapper">
-                  <input {...getInputProps({ placeholder: "Indica la zona de tu búsqueda" })} className="search-input" />
-                  <div className="suggestions">
-                    {loading && <div>Cargando...</div>}
-                    {suggestions.map((suggestion) => (
-                      <div {...getSuggestionItemProps(suggestion)} key={suggestion.placeId}>
-                        {suggestion.description}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </PlacesAutocomplete>
-          </div>
-
-          <div className="input-group">
-            <input type="text" placeholder="Tipo de cocina" value={cuisineType} onChange={(e) => setCuisineType(e.target.value)} className="search-input" />
-          </div>
-
-          <button className="search-btn" onClick={handleSearch}>Buscar</button>
-        </div>
-
-        <div className="row">
-          <div className="col-md-6">
-            <div className="restaurant-list">
-              <h3 className="mt-3">Restaurantes en la zona</h3>
-              {filteredRestaurants.length === 0 ? (
-                <p>No hay restaurante para la zona seleccionada.</p>
-              ) : (
-                <div className="row">
-                  {filteredRestaurants.map((restaurant) => (
-                    <div className="col-md-4 mb-4" key={restaurant.id}>
-                      <div className="card card-img-scale overflow-hidden bg-transparent rounded-3 shadow-sm">
-                        <div className="card-img-wrapper rounded-3">
-                          <img
-                            src={restaurant.image_url || "default_image_url_here"}
-                            className="card-img"
-                            alt="restaurant image"
-                            style={{ height: "200px", objectFit: "cover" }}
-                          />
+          <div className="search-fields">
+            <div className="input-group">
+              <PlacesAutocomplete value={address} onChange={setAddress} onSelect={handleSelect}>
+                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                  <div className="input-wrapper">
+                    <input {...getInputProps({ placeholder: "Indica la zona de tu búsqueda" })} className="search-input" />
+                    <div className="suggestions">
+                      {loading && <div>Cargando...</div>}
+                      {suggestions.map((suggestion) => (
+                        <div {...getSuggestionItemProps(suggestion)} key={suggestion.placeId}>
+                          {suggestion.description}
                         </div>
-                        <div className="card-body px-2">
-                          <h5 className="card-title">
-                            <Link to={`/perfil_restaurant/${restaurant.id}`} className="stretched-link">
-                              {restaurant.name}
-                            </Link>
-                          </h5>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </PlacesAutocomplete>
+            </div>
 
-                          <div className="d-flex justify-content-between align-items-center">
-                            <h6 className="text-success mb-0">
-                              <small className="fw-light">Capacidad {restaurant.capacity} Personas</small>
-                            </h6>
+            <div className="input-group">
+              <input type="text" placeholder="Tipo de cocina" value={cuisineType} onChange={(e) => setCuisineType(e.target.value)} className="search-input" />
+            </div>
 
-                            <h6 className="mb-0 d-flex align-items-center ms-auto">
-                              <i className="fas fa-map-marker-alt me-2"></i>
-                              {restaurant.location}
-                            </h6>
+            <button className="search-btn" onClick={handleSearch}>Buscar</button>
+          </div>
+
+          <div className="row">
+            <div className="col-md-6">
+              <div className="restaurant-list">
+                <h3 className="mt-3">Restaurantes en la zona</h3>
+                {filteredRestaurants.length === 0 ? (
+                  <p>No hay restaurante para la zona seleccionada.</p>
+                ) : (
+                  <div className="row">
+                    {filteredRestaurants.map((restaurant) => (
+                      <div className="col-md-4 mb-4" key={restaurant.id}>
+                        <div className="card card-img-scale overflow-hidden bg-transparent rounded-3 shadow-sm">
+                          <div className="card-img-wrapper rounded-3">
+                            <img
+                              src={restaurant.image_url || "default_image_url_here"}
+                              className="card-img"
+                              alt="restaurant image"
+                              style={{ height: "200px", objectFit: "cover" }}
+                            />
+                          </div>
+                          <div className="card-body px-2">
+                            <h5 className="card-title">
+                              <Link to={`/perfil_restaurant/${restaurant.id}`} className="stretched-link">
+                                {restaurant.name}
+                              </Link>
+                            </h5>
+
+                            <div className="d-flex justify-content-between align-items-center">
+                              <h6 className="text-success mb-0">
+                                <small className="fw-light">Capacidad {restaurant.capacity} Personas</small>
+                              </h6>
+
+                              <h6 className="mb-0 d-flex align-items-center ms-auto">
+                                <i className="fas fa-map-marker-alt me-2"></i>
+                                {restaurant.location}
+                              </h6>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="col-md-6 mb-5">
+              <GoogleMap mapContainerStyle={{ width: "100%", height: "400px" }} center={position} zoom={13}>
+                <Marker position={position} />
+
+                {filteredRestaurants.map((restaurant) => (
+                  <Marker key={restaurant.id} position={{ lat: restaurant.latitude, lng: restaurant.longitude }} label={restaurant.name} />
+                ))}
+              </GoogleMap>
             </div>
           </div>
-
-          <div className="col-md-6">
-            <GoogleMap mapContainerStyle={{ width: "100%", height: "400px" }} center={position} zoom={13}>
-              <Marker position={position} />
-
-              {filteredRestaurants.map((restaurant) => (
-                <Marker key={restaurant.id} position={{ lat: restaurant.latitude, lng: restaurant.longitude }} label={restaurant.name} />
-              ))}
-            </GoogleMap>
-          </div>
         </div>
-      </div>
-    </LoadScript>
+      </LoadScript>
+    ) : (
+      
+      <p>No tienes acceso a esta página. Inicia sesión para continuar.</p>
+    )
   );
 };
 
 export default RestaurantSearch;
-

@@ -71,7 +71,7 @@ const AboutUs = () => {
                 <hr></hr>
                 < Demo />
                 <div className="container">
-                <div className="row g-4 g-lg-5 justify-content-center">
+                <div className="row g-4 g-lg-5 justify-content-center pb-4 pt-4">
                     <div className="col-sm-6 col-md-4 text-center position-relative">
 
                         <figure className="position-absolute top-0 start-100 translate-middle mt-8 d-none d-lg-block">
@@ -84,9 +84,8 @@ const AboutUs = () => {
                         </figure>
 
                         <div className="px-4">
-                            {/* Image */}
+                          
                             <img src="https://booking.webestica.com/assets/images/element/step-3.svg" className="w-150px mb-3" alt="" />
-                            {/* Title */}
                             <h5>Opción de búsqueda</h5>
                             <p className="mb-0">Más de 200 restaurantes con los que trabajamos</p>
                         </div>

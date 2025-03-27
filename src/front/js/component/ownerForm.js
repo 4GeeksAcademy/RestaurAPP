@@ -74,7 +74,7 @@ const OwnerForm = () => {
             }}
           />
           <h2 className="mb-2" style={{ fontFamily: "Poppins, sans-serif", marginBottom: '20px' }}>
-            {ownerId ? "Cambia tus datos" : "Crea una nueva cuenta"}
+            {ownerId ? "Cambia tus datos" : "Crea una nueva cuenta como Restaurante"}
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-1">
@@ -162,7 +162,7 @@ const OwnerForm = () => {
             </button>
             <p className="mt-1">
               ¿Ya tienes una cuenta?{" "}
-              <Link to="/owners/login" className="text-primary fw-bold">Inicia sesión aquí</Link>
+              <Link to="/owners/login" className="text-warning fw-bold">Inicia sesión aquí</Link>
             </p>
           </form>
         </div>

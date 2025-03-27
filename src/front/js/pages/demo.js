@@ -29,7 +29,7 @@ export const Demo = () => {
 						{/* Buttons */}
 						<div className="hstack gap-4 flex-wrap align-items-center">
 							{/* Button */}
-							<a href="#" className="btn btn-primary-soft mb-0">
+							<a href="/restaurants-search" className="btn btn-primary-soft mb-0">
 								Descubrelo ahora!
 							</a>
 
