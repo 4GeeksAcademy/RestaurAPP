@@ -151,6 +151,12 @@ export const DinerReservations = () => {
                                         <p className="card-text hover-text">
                                             <strong>Estado:</strong> {item.state}
                                         </p>
+                                        {item.cancelComment && (
+                                            <p className="card-text hover-text">
+                                                <strong>Cancel msg:</strong> {item.cancelComment}
+                                            </p>
+                                        )}
+
                                         <button
                                             className="btn btn-danger w-100 mt-2 btn-hover"
                                             onClick={() => deleteReservation(item.id)}
