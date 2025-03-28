@@ -399,43 +399,52 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
 
-            getSpecificOwner: () => {
-                // Recupera il token e l'ownerId dal localStorage
+            getSpecificOwner: (id) => {
+                // Recupera il token dal localStorage
                 const token = localStorage.getItem('token');
-                const ownerId = localStorage.getItem('ownerId');
-
-                // Verifica se i dati sono disponibili
-                if (!token || !ownerId) {
-                    console.error("Token o Owner ID non trovato nel localStorage");
-                    return;
+                // Verifica se il token è disponibile
+                if (!token) {
+                    console.error("Token non trovato nel localStorage");
+                    return Promise.reject("Token not found");
                 }
-
+                // Usa l'ID passato come parametro o quello dal localStorage se non passato
+                const ownerId = id || localStorage.getItem('ownerId');
+                // Verifica se l'ID è disponibile
+                if (!ownerId) {
+                    console.error("Owner ID non trovato");
+                    return Promise.reject("Owner ID not found");
+                }
+                console.log("Fetching owner with ID:", ownerId);
                 console.log("Token:", token);
-                console.log("Owner ID:", ownerId);
-
                 // Effettua la richiesta al back-end
-                fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, {
+                return fetch(process.env.BACKEND_URL + "/api/owners/" + ownerId, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     }
                 })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        console.log("Datos recibidos from FRONT specific ownerr:", data);
-
-                        // Salva l'owner nel store (o nella variabile di stato) del front-end
-                        setStore({ specificOwner: data });
-                    })
-                    .catch((error) => {
-                        console.error('Error fetching specific owner:', error);
-                    });
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log("Datos recibidos del propietario específico:", data);
+                    // Inicializa specificOwner como un objeto vacío si es null
+                    if (getStore().specificOwner === null) {
+                        setStore({ specificOwner: {} });
+                    }
+                    // Salva l'owner nel store del front-end
+                    setStore({ specificOwner: data });
+                    // Retorna los datos para poder encadenar promesas
+                    return data;
+                })
+                .catch((error) => {
+                    console.error('Error fetching specific owner:', error);
+                    throw error; // Re-lanza el error para manejarlo en el componente
+                });
             },
 
             addOwner: (newOwner) => {
