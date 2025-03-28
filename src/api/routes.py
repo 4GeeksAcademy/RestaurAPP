@@ -205,44 +205,104 @@ def delete_reservation_by_diner(reservation_id):
         db.session.rollback()
         return jsonify({"message": "Error deleting reservation", "error": str(e)}), 500
     
+# @api.route('/update_reservation_by_diner/<int:reservation_id>', methods=['PUT'])
+# @jwt_required()
+# def update_reservation_status_for_diner(reservation_id):
+#     print("update_reservation_by_diner")
+    
+#     email = get_jwt_identity()
+#     print(f"Email diner aut: {email}")
+#     diner = Diner.query.filter_by(email=email).first()
+
+#     if not diner:
+#         print("Diner no encontrado")
+#         return jsonify({'error': 'Diner not found'}), 404
+
+#     reservation = Reservation.query.get(reservation_id)
+#     if not reservation:
+#         print(f"Reserva {reservation_id} no encontrada")
+#         return jsonify({'error': 'Reservation not found'}), 404
+
+#     if reservation.diner_id != diner.id:
+#         print("se intenta la modifica de una reserva no propia")
+#         return jsonify({'error': 'Unauthorized action. You can only modify your own reservation.'}), 403
+
+#     if reservation.state not in ['Pending', 'Accepted']:
+#         return jsonify({'error': 'Only reservations in Pending or Accepted state can be canceled'}), 400
+
+#     data = request.get_json()
+#     print(f"Dati ricevuti: {data}") 
+#     new_status = data.get('status')
+#     # cancel_comment = data.get('cancelComment', "")
+
+    
+#     if new_status != 'Canceled':
+#         print("Status no valido")
+#         return jsonify({'error': 'Invalid status. Only "Canceled" is allowed.'}), 400
+
+#     try: 
+#         reservation.state = new_status
+#         # reservation.cancelComment = cancel_comment if cancel_comment else "No comment provided"  #uso el try para manejar mejor los errores que he tenido con este servicio
+
+#         db.session.commit()
+
+#         return jsonify({'message': 'Reservation status updated to canceled', 'status': reservation.state, }), 200
+
+#     except Exception as e:
+#         db.session.rollback() 
+#         return jsonify({'error': str(e)}), 500
+
+
 @api.route('/update_reservation_by_diner/<int:reservation_id>', methods=['PUT'])
 @jwt_required()
 def update_reservation_status_for_diner(reservation_id):
+    print("update_reservation_by_diner")
     
     email = get_jwt_identity()
+    print(f"Email diner aut: {email}")
     diner = Diner.query.filter_by(email=email).first()
 
     if not diner:
+        print("Diner non trovato")
         return jsonify({'error': 'Diner not found'}), 404
 
     reservation = Reservation.query.get(reservation_id)
     if not reservation:
+        print(f"Prenotazione {reservation_id} non trovata")
         return jsonify({'error': 'Reservation not found'}), 404
 
     if reservation.diner_id != diner.id:
+        print("Tentativo di modificare una prenotazione non propria")
         return jsonify({'error': 'Unauthorized action. You can only modify your own reservation.'}), 403
 
+    # Verifica che lo stato della prenotazione sia 'Pending' o 'Accepted' prima di procedere con la cancellazione
     if reservation.state not in ['Pending', 'Accepted']:
         return jsonify({'error': 'Only reservations in Pending or Accepted state can be canceled'}), 400
 
     data = request.get_json()
+    print(f"Dati ricevuti: {data}")
     new_status = data.get('status')
-    cancel_comment = data.get('cancelComment', "")
 
-    
     if new_status != 'Canceled':
+        print("Status non valido, solo 'Canceled' è consentito.")
         return jsonify({'error': 'Invalid status. Only "Canceled" is allowed.'}), 400
 
-    try: 
+    try:
         reservation.state = new_status
-        reservation.cancelComment = cancel_comment if cancel_comment else "No comment provided"  #uso el try para manejar mejor los errores que he tenido con este servicio
+        # Si potrebbe opzionalmente aggiungere un commento di cancellazione, ma non è obbligatorio.
+        cancel_comment = data.get('cancelComment', None)
+        if cancel_comment:
+            reservation.cancelComment = cancel_comment
+        else:
+            reservation.cancelComment = "No comment provided"  # Fallback nel caso non venga fornito un commento
 
         db.session.commit()
 
         return jsonify({'message': 'Reservation status updated to canceled', 'status': reservation.state, 'cancelComment': reservation.cancelComment}), 200
 
     except Exception as e:
-        db.session.rollback() 
+        db.session.rollback()
+        print(f"Errore durante la modifica della prenotazione: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 
@@ -497,7 +557,7 @@ def create_restaurant():
 
     required_fields = [
         "name", "location", "telephone", "latitude", "longitude", "capacity", 
-        "image_url", "cuisine_type", "average_price", "description"
+        "image_url", "cuisine_type", "average_price"
     ]
     
     for field in required_fields:
