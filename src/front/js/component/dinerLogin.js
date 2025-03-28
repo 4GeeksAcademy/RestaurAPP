@@ -87,7 +87,7 @@ export const DinerLogin = () => {
                     </form>
                     <p className="mt-4 text-center">
                         Don't have an account?{" "}
-                        <Link to="/dinerform" className="text-primary fw-bold">Sign up here</Link>
+                        <Link to="/dinerform" className="text-warning fw-bold">Sign up here</Link>
                     </p>
                 </div>
             </div>

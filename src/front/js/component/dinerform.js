@@ -122,7 +122,7 @@ export const Dinerform = () => {
             </button>
             <p className="mt-1">
               ¿Ya tienes una cuenta?{" "}
-              <Link to="/diner/login" className="text-primary fw-bold">
+              <Link to="/diner/login" className="text-warning fw-bold">
                 Inicia sesión aquí
               </Link>
             </p>
