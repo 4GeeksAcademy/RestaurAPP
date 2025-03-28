@@ -26,6 +26,17 @@
     --opacidad-negro: 0.5;
     background-image: linear-gradient(rgba(0, 0, 0, var(--opacidad-negro)), rgba(0, 0, 0, var(--opacidad-negro))), url('https://tse1.mm.bing.net/th?id=OIG3.gpA6SWak9tyYBZqtV1e2&pid=ImgGn');
 }
+.bienvenido {
+    color: white; 
+    font-family: 'Poppins', sans-serif; 
+    font-size: 48px; 
+    transition: color 0.3s ease; 
+  }
+  
+  .bienvenido:hover {
+    color: gold; 
+  }
+  
 
 .toggle-container {
     background: rgba(0, 0, 0, 0.7);

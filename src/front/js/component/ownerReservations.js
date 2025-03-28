@@ -169,6 +169,21 @@ const OwnerReservations = () => {
                     </div>
                 </div>
             </div>
+            <div className="fixed-top" style={{ zIndex: 1030 }}>
+                <div className="container">
+                    <div className="col-md-4 mb-4">
+                        <div className="d-flex justify-content-start mt-3">
+                            <button
+                                type="button"
+                                className="btn btn-warning text-light"
+                                onClick={() => navigate("/owners/dashboard")}
+                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
+                                Volver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

@@ -132,10 +132,13 @@ export const Navbar = () => {
                             </div>
                         </div>
                     )}
-
-                    {/* Enlaces adicionales solo si no está logueado ni owner ni diner */}
                     {!dinerToken && !ownerToken && (
                         <>
+                            <Link to="/restaurants-search">
+                                <button type="button" className="btn ms-2" style={buttonStyle}>
+                                    Buscar Restaurantes
+                                </button>
+                            </Link>
                             <Link to="/contact-us" className="ms-2">
                                 <button type="button" className="btn" style={buttonStyle}>Contact Us</button>
                             </Link>

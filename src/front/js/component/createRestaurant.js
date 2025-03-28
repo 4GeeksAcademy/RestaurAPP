@@ -96,7 +96,7 @@ const CreateRestaurant = () => {
       </div>
 
       {store.auth === true ? (
-        <form className="container mt-4" onSubmit={handleSubmit}>
+        <form className="container mt-4 mb-5" onSubmit={handleSubmit}>
           {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
@@ -178,13 +178,10 @@ const CreateRestaurant = () => {
               required
             />
           </div>
-
-          {/* Lat y Long (escondidas) */}
           <input type="hidden" value={latitude} readOnly />
           <input type="hidden" value={longitude} readOnly />
 
-          {/* send button */}
-          <button type="submit" className="btn btn-warning">
+          <button type="submit" className="btn btn-warning text-light">
 
             {id ? "Guardar Cambios" : "Crear Restaurante"}
 

@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import gifcard1 from "../../img/gifcard1.jpeg";
+import gifcard2 from "../../img/gifcard2.jpeg";
+import gifcard3 from "../../img/gifcard3.jpeg";
+import gifcard4 from "../../img/gifcard4.jpeg";
+import "../../styles/giftcards.css";
 
 const Giftcard = () => {
-
 
     return (
         <div className="css-z2ibqq e1qlfvh01">
@@ -9,12 +13,31 @@ const Giftcard = () => {
                 <h1 className="css-1ycxwo2 e7dhrrp0 text-center pt-4 pb-4">
                     <span>Cómpralas para tu empresa</span>
                 </h1>
-                {/* Aquí se agrega la imagen */}
-                <img
-                    src="https://png.pngtree.com/template/20220425/ourmid/pngtree-gift-card-vector-voucher-mockup-illustration-banner-image_1445909.jpg"
-                    alt="Tarjetas Regalo"
-                    className="imagen-tarjeta-regalo hover-effect"
-                />
+                
+                {/* Contenedor de imágenes */}
+                <div className="images-container d-flex justify-content-around mb-5">
+                    <img
+                        src={gifcard1}
+                        alt="Tarjeta Regalo 1"
+                        className="imagen-tarjeta-regalo hover-effect rounded-circle"
+                    />
+                    <img
+                        src={gifcard2}
+                        alt="Tarjeta Regalo 2"
+                        className="imagen-tarjeta-regalo hover-effect rounded-circle"
+                    />
+                    <img
+                        src={gifcard3}
+                        alt="Tarjeta Regalo 3"
+                        className="imagen-tarjeta-regalo hover-effect rounded-circle"
+                    />
+                    <img
+                        src={gifcard4}
+                        alt="Tarjeta Regalo 4"
+                        className="imagen-tarjeta-regalo hover-effect rounded-circle"
+                    />
+                </div>
+
                 <div className="text-black mt-5 mb-5 ">
                     <p className="text-black mt-4">
                         <span>
@@ -34,9 +57,9 @@ const Giftcard = () => {
                     </a>
                 </div>
             </div>
-
         </div>
     );
 };
 
 export default Giftcard;
+

@@ -2,11 +2,13 @@ import React, { useEffect, useContext, useState } from 'react';
 import { Context } from '../store/appContext';
 import "../../styles/buttons.css";
 import "../../styles/stateButtons.css";
+import { useNavigate } from "react-router-dom";
 
 const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
     const { store, actions } = useContext(Context);
     const [cancelComment, setCancelComments] = useState({});
     const [isCanceling, setIsCanceling] = useState({}); 
+     const navigate = useNavigate();
 
     useEffect(() => {
         if (restaurantId) {
@@ -44,8 +46,8 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
     };
 
     return (
-        <div className="container mt-4">
-            <table className="table">
+        <div className="container mt-4 mb-5">
+            <table className="table" style={{ fontFamily: 'Roboto, sans-serif' }}>
                 <thead>
                     <tr>
                         <th>Número de reserva</th>
@@ -69,11 +71,11 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
                             <td>
                                 {res.state === "Pending" && (
                                     <>
-                                        <button className="button-37-invertido btn-sm"
+                                        <button className="btn-warning text-light btn-sm mx-2"
                                             onClick={() => actions.updateReservationStatus(res.id, "Accepted", null, restaurantId)}>
                                             Aceptar
                                         </button>
-                                        <button className="btn-primary-invertido mx-2"
+                                        <button className="btn-danger btn-sm mx-2"
                                             onClick={() => actions.updateReservationStatus(res.id, "Refused", null, restaurantId)}>
                                             Rechazar
                                         </button>
@@ -86,15 +88,14 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
                                                 <textarea
                                                     className="form-control"
                                                     placeholder="Motivo de la cancelación (opcional)"
-                                                    value={cancelComment[res.id] || ""} // Accede al commento per quella prenotazione
-                                                    onChange={(e) => handleCommentChange(e, res.id)} // Gestiasce il cambio del commento
+                                                    value={cancelComment[res.id] || ""} 
+                                                    onChange={(e) => handleCommentChange(e, res.id)} 
                                                     rows="3"
                                                 ></textarea>
                                             </div>
                                         )}
-
                                         <button
-                                            className="button-82 btn-sm mt-2"
+                                            className="btn-danger btn-sm mx-2"
                                             onClick={() => handleCancelMessage(res)}>
                                             {isCanceling[res.id] ? 'Cancelar' : 'Cancelar reserva'}
                                         </button>
@@ -105,10 +106,25 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
                     ))}
                 </tbody>
             </table>
+            <div className="fixed-top" style={{ zIndex: 1030 }}>
+                <div className="container">
+                    <div className="col-md-4 mb-4">
+                        <div className="d-flex justify-content-start mt-3">
+                            <button
+                                type="button"
+                                className="btn btn-warning text-light"
+                                onClick={() => navigate("/owners/dashboard")}
+                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
+                                Volver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     );
-};
-
+};    
 export default ReservationsByRestaurant;
 
 

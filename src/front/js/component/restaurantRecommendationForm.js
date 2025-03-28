@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../../styles/RestaurantRecommendationForm.css";
+import { useNavigate } from "react-router-dom";
 
 const RestaurantRecommendationForm = () => {
     const [ocasion, setOcasion] = useState("");
@@ -8,6 +9,8 @@ const RestaurantRecommendationForm = () => {
     const [formalidad, setFormalidad] = useState("");
     const [peticionPersonalizada, setPeticionPersonalizada] = useState("");
     const [respuesta, setRespuesta] = useState("");
+    const navigate = useNavigate();
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -50,7 +53,7 @@ const RestaurantRecommendationForm = () => {
     return (
         <div className="form-container">
             <h2>Quieres una recomendación sobre un restaurante y el plan del día?</h2>
-            <form onSubmit={handleSubmit} className="recommendation-form">
+            <form onSubmit={handleSubmit} className="recommendation-form mb-5">
                 <label>Ocasión:</label>
                 <select value={ocasion} onChange={(e) => setOcasion(e.target.value)} required>
                     <option value="">Selecciona una ocasión</option>
@@ -88,6 +91,21 @@ const RestaurantRecommendationForm = () => {
                 />
 
                 <button type="submit" className="submit-btn">Enviar solicitud</button>
+                <div className="fixed-top" style={{ zIndex: 1030 }}>
+                    <div className="container">
+                        <div className="col-md-4 mb-4">
+                            <div className="d-flex justify-content-start mt-3">
+                                <button
+                                    type="button"
+                                    className="btn btn-warning text-light"
+                                    onClick={() => navigate("/diner/dashboard")}
+                                    style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
+                                    Volver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
 
             {respuesta && (

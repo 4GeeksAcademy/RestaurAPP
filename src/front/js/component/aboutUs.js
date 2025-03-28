@@ -28,7 +28,7 @@ const AboutUs = () => {
                             />
                             <h1 className="h5 name-text">Flavia Pala</h1>
                             <i className="fab fa-fw fa-facebook-f"></i>
-                            <i className="fab fa-fw fa-instagram"></i>
+                            <a href="https://www.instagram.com/_flavia_pl?igsh=d2FmM3A5emducGV4"><i className="fab fa-fw fa-instagram"></i></a>
                             <i className="fab fa-fw fa-twitter"></i>
                             <i className="fab fa-fw fa-linkedin-in"></i>
                             <p className="description-text">
@@ -43,7 +43,7 @@ const AboutUs = () => {
                             />
                             <h1 className="h5 name-text">Michael Bedoya</h1>
                             <i className="fab fa-fw fa-facebook-f"></i>
-                            <i className="fab fa-fw fa-instagram"></i>
+                            <a href="https://www.instagram.com/bedoyamike30/"><i className="fab fa-fw fa-instagram"></i></a>
                             <i className="fab fa-fw fa-twitter"></i>
                             <i className="fab fa-fw fa-linkedin-in"></i>
                             <p className="description-text">

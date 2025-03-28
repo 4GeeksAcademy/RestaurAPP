@@ -14,8 +14,8 @@ const ContactUs = () => {
                             ¿Sabías que la manera en que promocionas tu restaurante puede ser la clave para atraer más clientes?
                             No dejes que tu restaurante pase desapercibido. ¡Es momento de dar el siguiente paso y hacer crecer tu negocio! Contáctanos hoy y descubre cómo podemos ayudarte a llevar tu restaurante al siguiente nivel.
 
- 
-   
+
+
 
                             ¡Contáctanos ahora y empieza a atraer más comensales!
                         </p>
@@ -29,7 +29,7 @@ const ContactUs = () => {
                                 <i className="bi bi-headset fs-5"></i>
                             </div>
                             <h5>Llámanos</h5>
-                            <p>No hay nada que nos guste mas que escucharte!.</p>
+                            <p>No hay nada que nos guste mas que escucharte!</p>
                             <div className="d-grid gap-3 d-sm-block">
                                 <button className="btn btn-sm btn-primary-soft">
                                     <i className="bi bi-phone me-2"></i>+123 456 789
@@ -47,8 +47,8 @@ const ContactUs = () => {
                             </div>
                             <h5>Envíanos un correo electrónico</h5>
                             <p>Estaremos atentos a cualquier cosa que desees comunicarnos y te responderemos rapidamente.</p>
-                            <a href="#" className="btn btn-link text-decoration-underline text-black p-0 mb-0">
-                                <i className="bi bi-envelope me-1"></i>ejemplo@gmail.com
+                            <a href="mailto:mikebedoya28@gmail.com" className="btn btn-link text-decoration-underline text-black p-0 mb-0">
+                                <i className="bi bi-envelope me-1"></i>Restaurapp@gmail.com
                             </a>
                         </div>
                     </div>
@@ -66,10 +66,11 @@ const ContactUs = () => {
                                     </a>
                                 </li>
                                 <li className="list-inline-item">
-                                    <a className="btn btn-sm bg-instagram px-2 mb-0 hover-zoom" href="#">
+                                    <a className="btn btn-sm bg-instagram px-2 mb-0 hover-zoom" href="https://www.instagram.com/restaurapp2025/" target="_blank" rel="noopener noreferrer">
                                         <i className="fab fa-fw fa-instagram"></i>
                                     </a>
                                 </li>
+
                                 <li className="list-inline-item">
                                     <a className="btn btn-sm bg-twitter px-2 mb-0 hover-zoom" href="#">
                                         <i className="fab fa-fw fa-twitter"></i>
@@ -83,10 +84,9 @@ const ContactUs = () => {
                             </ul>
                         </div>
                     </div>
-                    {/* Contact item END */}
-                    
+
                 </div>
-                
+
             </div>
         </section>
     );
