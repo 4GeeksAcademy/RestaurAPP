@@ -86,6 +86,9 @@ class Restaurant(db.Model):
     longitude = db.Column(db.Float, nullable=True)
     capacity = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(255), nullable=True)
+    cuisine_type = db.Column(db.String(20), nullable=False)
+    average_price = db.Column(db.String(20), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
 
      
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
@@ -109,8 +112,10 @@ class Restaurant(db.Model):
             "longitude": self.longitude,
             "capacity": self.capacity,
             "owner_id": self.owner_id,
-            "image_url": self.image_url
-        
+            "image_url": self.image_url,
+            "cuisine_type": self.cuisine_type,
+            "average_price": self.average_price,
+            "description": self.description
         }
     
 class Origin(db.Model):

@@ -98,6 +98,7 @@ import { Link, Navigate } from 'react-router-dom';
 import "../../styles/login.css";
 import loginr from "../../img/loginr.png";
 import logo2 from "../../img/logo2.jpeg";
+import chef from "../../img/chef.png"
 
 const OwnerLogin = () => {
     const { store, actions } = useContext(Context);
@@ -120,9 +121,9 @@ const OwnerLogin = () => {
                 {/* Sezione immagine a sinistra */}
                 <div className="login-image-container">
                     <img
-                        src="https://img.freepik.com/premium-vector/drawing-people-sitting-table-with-lamp-them_1087929-8168.jpg"
+                        src={chef}
                         alt="Login Background"
-                        className="login-image"
+                        className="login-image cocinero" style={{ width: "450px" }}
                     />
                 </div>
                 {/* Sezione login a destra */}

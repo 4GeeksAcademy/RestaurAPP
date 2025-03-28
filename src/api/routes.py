@@ -35,7 +35,7 @@ def handle_hello():
 @api.route('/diners', methods=['GET'])
 def get_diners():
     diners = Diner.query.all()
-      
+  
     response_body = [diner.to_dict() for diner in diners]
         
     return jsonify(response_body), 200
@@ -205,44 +205,104 @@ def delete_reservation_by_diner(reservation_id):
         db.session.rollback()
         return jsonify({"message": "Error deleting reservation", "error": str(e)}), 500
     
+# @api.route('/update_reservation_by_diner/<int:reservation_id>', methods=['PUT'])
+# @jwt_required()
+# def update_reservation_status_for_diner(reservation_id):
+#     print("update_reservation_by_diner")
+    
+#     email = get_jwt_identity()
+#     print(f"Email diner aut: {email}")
+#     diner = Diner.query.filter_by(email=email).first()
+
+#     if not diner:
+#         print("Diner no encontrado")
+#         return jsonify({'error': 'Diner not found'}), 404
+
+#     reservation = Reservation.query.get(reservation_id)
+#     if not reservation:
+#         print(f"Reserva {reservation_id} no encontrada")
+#         return jsonify({'error': 'Reservation not found'}), 404
+
+#     if reservation.diner_id != diner.id:
+#         print("se intenta la modifica de una reserva no propia")
+#         return jsonify({'error': 'Unauthorized action. You can only modify your own reservation.'}), 403
+
+#     if reservation.state not in ['Pending', 'Accepted']:
+#         return jsonify({'error': 'Only reservations in Pending or Accepted state can be canceled'}), 400
+
+#     data = request.get_json()
+#     print(f"Dati ricevuti: {data}") 
+#     new_status = data.get('status')
+#     # cancel_comment = data.get('cancelComment', "")
+
+    
+#     if new_status != 'Canceled':
+#         print("Status no valido")
+#         return jsonify({'error': 'Invalid status. Only "Canceled" is allowed.'}), 400
+
+#     try: 
+#         reservation.state = new_status
+#         # reservation.cancelComment = cancel_comment if cancel_comment else "No comment provided"  #uso el try para manejar mejor los errores que he tenido con este servicio
+
+#         db.session.commit()
+
+#         return jsonify({'message': 'Reservation status updated to canceled', 'status': reservation.state, }), 200
+
+#     except Exception as e:
+#         db.session.rollback() 
+#         return jsonify({'error': str(e)}), 500
+
+
 @api.route('/update_reservation_by_diner/<int:reservation_id>', methods=['PUT'])
 @jwt_required()
 def update_reservation_status_for_diner(reservation_id):
+    print("update_reservation_by_diner")
     
     email = get_jwt_identity()
+    print(f"Email diner aut: {email}")
     diner = Diner.query.filter_by(email=email).first()
 
     if not diner:
+        print("Diner non trovato")
         return jsonify({'error': 'Diner not found'}), 404
 
     reservation = Reservation.query.get(reservation_id)
     if not reservation:
+        print(f"Prenotazione {reservation_id} non trovata")
         return jsonify({'error': 'Reservation not found'}), 404
 
     if reservation.diner_id != diner.id:
+        print("Tentativo di modificare una prenotazione non propria")
         return jsonify({'error': 'Unauthorized action. You can only modify your own reservation.'}), 403
 
+    # Verifica che lo stato della prenotazione sia 'Pending' o 'Accepted' prima di procedere con la cancellazione
     if reservation.state not in ['Pending', 'Accepted']:
         return jsonify({'error': 'Only reservations in Pending or Accepted state can be canceled'}), 400
 
     data = request.get_json()
+    print(f"Dati ricevuti: {data}")
     new_status = data.get('status')
-    cancel_comment = data.get('cancelComment', "")
 
-    
     if new_status != 'Canceled':
+        print("Status non valido, solo 'Canceled' è consentito.")
         return jsonify({'error': 'Invalid status. Only "Canceled" is allowed.'}), 400
 
-    try: 
+    try:
         reservation.state = new_status
-        reservation.cancelComment = cancel_comment if cancel_comment else "No comment provided"  #uso el try para manejar mejor los errores que he tenido con este servicio
+        # Si potrebbe opzionalmente aggiungere un commento di cancellazione, ma non è obbligatorio.
+        cancel_comment = data.get('cancelComment', None)
+        if cancel_comment:
+            reservation.cancelComment = cancel_comment
+        else:
+            reservation.cancelComment = "No comment provided"  # Fallback nel caso non venga fornito un commento
 
         db.session.commit()
 
         return jsonify({'message': 'Reservation status updated to canceled', 'status': reservation.state, 'cancelComment': reservation.cancelComment}), 200
 
     except Exception as e:
-        db.session.rollback() 
+        db.session.rollback()
+        print(f"Errore durante la modifica della prenotazione: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 
@@ -439,50 +499,52 @@ def add_restaurant():
     return jsonify({"message": "Restaurante añadido exitosamente"}), 201
 
 
-@api.route('/create_restaurant', methods=['POST'])         #añade rest a owner logeado
-# @jwt_required()
+    
+
+# @api.route('/create_restaurant', methods=['POST'])  # añade rest a owner loguedo + Cloudinary
+# @jwt_required() 
 # def create_restaurant():
-#     owner_email = get_jwt_identity()  
+#     owner_email = get_jwt_identity()
 
 #     owner = Owner.query.filter_by(email=owner_email).first()
 #     if not owner:
-#         return jsonify({"message": "Owner not found"}), 404  
+#         return jsonify({"message": "Owner not found"}), 404
 
-#     data = request.get_json()
+#     data = request.get_json() 
 
-#     required_fields = ["name", "location", "telephone", "latitude", "longitude", "capacity"]
+#     required_fields = ["name", "location", "telephone", "latitude", "longitude", "capacity", "image_url"]
+    
 #     for field in required_fields:
 #         if not data.get(field):
 #             return jsonify({"error": f"The field {field} is required"}), 400
 
-#     # Verifica si el restaurante ya existe para el owner
 #     existing_restaurant = Restaurant.query.filter_by(name=data["name"], owner_id=owner.id).first()
 #     if existing_restaurant:
-#         return jsonify({"error": "You already have a restaurant with this name"}), 400
+#         return jsonify({"error": "You already have a restaurant with this name"}), 400  # Si ya existe, error 400
 
-#     # Crea nuevo rest
+#     # Crear nuevo restaurante con los datos
 #     new_restaurant = Restaurant(
 #         name=data["name"],
 #         location=data["location"],
 #         telephone=data["telephone"],
-#         latitude=float(data["latitude"]),  # float por decimales
-#         longitude=float(data["longitude"]),  
-#         capacity=int(data["capacity"]),  # por numero
-#         owner_id=owner.id  
+#         latitude=float(data["latitude"]),
+#         longitude=float(data["longitude"]),
+#         capacity=int(data["capacity"]),
+#         image_url=data["image_url"], 
+#         owner_id=owner.id
 #     )
 
 #     try:
-#         db.session.add(new_restaurant)
+#         db.session.add(new_restaurant) 
 #         db.session.commit()
 
 #         return jsonify(new_restaurant.serialize()), 201
 #     except Exception as e:
-#         db.session.rollback()
-#         return jsonify({"error": f"Error saving restaurant: {str(e)}"}), 500  
-# 
-    
+#         db.session.rollback()  # Si ocurre un error, hacer rollback de la sesión
+#         return jsonify({"error": f"Error saving restaurant: {str(e)}"}), 500
 
-@api.route('/create_restaurant', methods=['POST'])  # añade rest a owner loguedo + Cloudinary
+
+@api.route('/create_restaurant', methods=['POST'])  # Añade rest a owner logueado + Cloudinary
 @jwt_required() 
 def create_restaurant():
     owner_email = get_jwt_identity()
@@ -493,7 +555,10 @@ def create_restaurant():
 
     data = request.get_json() 
 
-    required_fields = ["name", "location", "telephone", "latitude", "longitude", "capacity", "image_url"]
+    required_fields = [
+        "name", "location", "telephone", "latitude", "longitude", "capacity", 
+        "image_url", "cuisine_type", "average_price"
+    ]
     
     for field in required_fields:
         if not data.get(field):
@@ -512,6 +577,9 @@ def create_restaurant():
         longitude=float(data["longitude"]),
         capacity=int(data["capacity"]),
         image_url=data["image_url"], 
+        cuisine_type=data["cuisine_type"],  # Nuevo campo
+        average_price=data["average_price"],  # Nuevo campo
+        description=data["description"],  # Nuevo campo
         owner_id=owner.id
     )
 
@@ -974,73 +1042,9 @@ def update_reservation_status(reservation_id):
 
 
 
-
-
-# @api.route('/api/recommendation', methods=['POST'])
-# def restaurant_recommendation():
-#     print("Petición recibida en /api/recommendation")
-#     data = request.get_json()
-    
-#     # Estrai i dati inviati nel corpo della richiesta
-#     occasion = data.get("occasion", "")
-#     date = data.get("date", "")
-#     time = data.get("time", "")
-#     formality = data.get("formality", "")
-#     special_requests = data.get("special_requests", "")
-
-#     if not occasion or not date or not time:
-#         return jsonify({"error": "Missing required fields"}), 400
-
-#     # Prompt per OpenAI
-#     prompt = f"""
-#     Eres un experto en restaurantes, tipos de cocina y planes personalizados. Según los datos recibidos, responde de manera amigable, cálida y fluida. Comienza siempre con un saludo amigable y ofrece una recomendación personalizada. La respuesta debe ser detallada, mencionando tanto el restaurante como la experiencia que se vivirá en él.
-    
-#     A continuación te doy los datos que el usuario ha ingresado:
-#     - Ocasión: {occasion}
-#     - Fecha: {date}
-#     - Hora: {time}
-#     - Nivel de formalidad: {formality}
-#     - Solicitudes especiales: {special_requests}
-    
-#     Tu respuesta debe contener:
-#     1. Un saludo amigable y cálido al principio.
-#     2. El nombre del restaurante que recomendarías, con un breve comentario sobre su ambiente, especialidades y tipo de cocina.
-#     3. Una sugerencia para completar el día (por ejemplo, qué hacer antes de la cena, qué bebidas pedir, etc.).
-#     4. Un tono amigable y cercano, dando la sensación de que realmente conoces y te importa la experiencia del usuario.
-    
-#     La respuesta debe ser en formato JSON con los siguientes campos:
-#     ```json
-#     {
-#         "greeting": "Saludo amigable",
-#         "restaurant_recommendation": "Te recomiendo el restaurante [nombre], que ofrece [tipo de cocina]. Es un lugar perfecto para [situación].",
-#         "plan_of_the_day": "Aquí te dejo algunas sugerencias para tu día: [actividades y planes adicionales]."
-#     }
-#     ```
-#     """
-    
-#     try:
-#         # Chiamata a OpenAI per ottenere la risposta
-#         response = client.chat.completions.create(
-#             model="gpt-3.5-turbo",
-#             messages=[{"role": "system", "content": "Eres un experto en restaurantes y planes personalizados."},
-#                       {"role": "user", "content": prompt}]
-#         )
-        
-#         # Estrai la risposta
-#         reply = response.choices[0].message["content"]
-        
-#         # Restituisci la risposta in formato JSON
-#         return jsonify({"reply": reply.strip()}), 200
-    
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-# if __name__ == '__main__':
-#     api.run(debug=True)
-
 import openai
 
-# Set your OpenAI API key
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @api.route('/recommendation', methods=['POST'])
@@ -1056,13 +1060,17 @@ def restaurant_recommendation():
     time = data.get("time", "")
     formality = data.get("formality", "")
     special_requests = data.get("special_requests", "")
+    city= data.get("city", "")
 
     if not occasion or not date or not time:
         return jsonify({"error": "Missing required fields"}), 400
 
-    # Prompt for OpenAI
     prompt = f"""
         Eres un experto en restaurantes, tipos de cocina y planes personalizados. Según los datos recibidos, responde de manera amigable, cálida y fluida. Comienza siempre con un saludo amigable y ofrece una recomendación personalizada. La respuesta debe ser detallada, mencionando tanto el restaurante como la experiencia que se vivirá en él.
+
+        Dame un plan para hacer antes de ir a comer y otro para hacer despues de ir a comer, aproximalo con la zona del restaurante, sugiereme un plato
+
+        No uses formatting de MARKDOWN ni simbolos, no esta soportado, en cambio usa espacios, no uses *
 
         A continuación te doy los datos que el usuario ha ingresado:
         - Ocasión: {occasion}
@@ -1070,6 +1078,7 @@ def restaurant_recommendation():
         - Hora: {time}
         - Nivel de formalidad: {formality}
         - Solicitudes especiales: {special_requests}
+        - Ciudad: {city}
 
         Tu respuesta debe contener:
         1. Un saludo amigable y cálido al principio.
@@ -1077,20 +1086,19 @@ def restaurant_recommendation():
         3. Una sugerencia para completar el día (por ejemplo, qué hacer antes de la cena, qué bebidas pedir, etc.).
         4. Un tono amigable y cercano, dando la sensación de que realmente conoces y te importa la experiencia del usuario.
 
+        NO ALUCINES; A continuacion te proporcionare los datos de los restaurantes que tenemos, no tienes permitido salirte de esta lista de restaurantes y los datos de ellos
+
 
     """
 
     try:
-        # Call OpenAI to get the response
-        # response = openai.ChatCompletion.create(
-        #     model="gpt-3.5-turbo",
-        #     messages=[{"role": "system", "content": "Eres un experto en restaurantes y planes personalizados."},
-        #               {"role": "user", }]
-        # )
+        AllRestaurants = str([r.serialize() for r in Restaurant.query.all()])
+
+        print(AllRestaurants)
         response = openai.responses.create(
             model="gpt-4o",
             instructions=prompt,
-            input=" ",
+            input="Aqui va la lista de restaurantes " + AllRestaurants + " ",
 )
 
         # Extract the response

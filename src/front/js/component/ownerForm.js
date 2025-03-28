@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import LoginImg from "../../img/LoginImg.jpeg";
+import chef from "../../img/chef.png"
 import logo2 from "../../img/logo2.jpeg";
 import "../../styles/login.css";
 
@@ -16,25 +16,68 @@ const OwnerForm = () => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
   const { ownerId } = useParams();
+  console.log("Owner ID from useParams:", ownerId);
+
 
   useEffect(() => {
-    if (ownerId) {
-      const owner = store.owners.find((owner) => owner.id === parseInt(ownerId));
-      if (owner) {
-        setName(owner.name || "");
-        setLocation(owner.location || "");
-        setTelephone(owner.telephone || "");
-        setEmail(owner.email || "");
-        setPassword(owner.password || "");
+      // Recupera l'ID dell'owner dal localStorage
+      const storedOwnerId = localStorage.getItem("ownerId");
+      console.log("Owner ID from localStorage:", storedOwnerId);
+  
+      // Se l'ID è presente nel localStorage, usalo, altrimenti prendi quello dalla URL
+      const idToUse = storedOwnerId || ownerId; // Usa storedOwnerId se disponibile, altrimenti ownerId
+  
+      if (idToUse) {
+          // Recupera i dati dell'owner usando l'ID
+          console.log("Fetching details for Owner ID:", idToUse);
+          actions.getSpecificOwner(idToUse); // Recupera i dati dell'owner
+  
+          // Attendi che i dati dell'owner siano nel store
+          const owner = store.owners.find((owner) => owner.id === parseInt(idToUse));
+  
+          // Se trovi l'owner nel store, imposta i dati nel form
+          if (owner) {
+              console.log("Owner data found:", owner);
+              setName(owner.name || "");
+              setLocation(owner.location || "");
+              setTelephone(owner.telephone || "");
+              setEmail(owner.email || "");
+              setPassword(owner.password || "");
+          }
+      } else {
+          // Se l'ID dell'owner non è disponibile, azzera i campi
+          setName("");
+          setLocation("");
+          setTelephone("");
+          setEmail("");
+          setPassword("");
       }
-    } else {
-      setName("");
-      setLocation("");
-      setTelephone("");
-      setEmail("");
-      setPassword("");
-    }
-  }, [ownerId, store.owners]);
+  }, [ownerId, store.owners]); // La dipendenza è sia ownerId che store.owners
+  
+  
+  // useEffect(() => {
+  //   if (ownerId) {
+  //     console.log("Fetching details for Owner ID:", ownerId);
+  //     actions.getSpecificOwner(ownerId);
+  //     const owner = store.owners.find((owner) => owner.id === parseInt(ownerId));
+  //     if (owner) {
+  //       actions.getSpecificOwner(store.ownerId);
+  //       console.log(actions.getSpecificOwner(store.ownerId));
+        
+  //       setName(owner.name || "");
+  //       setLocation(owner.location || "");
+  //       setTelephone(owner.telephone || "");
+  //       setEmail(owner.email || "");
+  //       setPassword(owner.password || "");
+  //     }
+  //   } else {
+  //     setName("");
+  //     setLocation("");
+  //     setTelephone("");
+  //     setEmail("");
+  //     setPassword("");
+  //   }
+  // }, [ownerId, store.owners]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,7 +96,7 @@ const OwnerForm = () => {
         {/* imagen izquierda */}
         <div className="login-image-container">
           <img
-            src="https://img.freepik.com/premium-vector/drawing-people-sitting-table-with-lamp-them_1087929-8168.jpg"
+            src={chef}
             alt="Login Background"
             className="login-image"
           />
@@ -74,7 +117,9 @@ const OwnerForm = () => {
             }}
           />
           <h2 className="mb-2" style={{ fontFamily: "Poppins, sans-serif", marginBottom: '20px' }}>
-            {ownerId ? "Cambia tus datos" : "Crea una nueva cuenta como Restaurante"}
+
+            {ownerId ? "Cambia tus datos" : "Crea una nueva cuenta como restaurante"}
+
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-1">
