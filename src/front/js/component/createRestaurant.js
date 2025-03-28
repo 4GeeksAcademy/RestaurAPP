@@ -365,7 +365,7 @@ const CreateRestaurant = () => {
           <input type="hidden" value={latitude} readOnly />
           <input type="hidden" value={longitude} readOnly />
 
-          <button type="submit" className="btn btn-warning text-light">
+          <button type="submit" className="btn btn-warning text-light"/>
 //check
 
 

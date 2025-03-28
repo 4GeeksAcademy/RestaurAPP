@@ -76,7 +76,7 @@ const RestaurantRecommendationForm = () => {
                 ¿No sabes a qué restaurante ir y quieres ideas para un plan perfecto? 
                 ¡Prueba nuestro formulario inteligente y descubre la mejor recomendación para ti!
             </h6>
-            <div className="form-response-container d-flex">
+            <div className="form-response-container d-flex mb-5">
                 {/* Formulario */}
                 <form onSubmit={handleSubmit} className="recommendation-form">
                     <h5 className="text-center">¡Pruebame! 🚀</h5>

@@ -32,7 +32,7 @@ const OwnerDashboard = () => {
         <>
             {store.auth === true || localStorage.getItem("token") ? (
                 <div className="container mt-4 mb-5">
-          
+
                     <div className="mb-4">
                         <h1>Hola, {ownerName}!</h1>
                         <p>Bienvenido a tu dashboard. Aquí puedes gestionar tus restaurantes y sus reservas.</p>
@@ -59,9 +59,9 @@ const OwnerDashboard = () => {
                                             />
                                         </div>
 
-                            
+
                                         <div className="card-body px-2 d-flex flex-column" style={{ flex: '1 0 auto' }}>
-                                      
+
                                             <h5 className="card-title" style={{ cursor: "pointer" }} onClick={() => handleViewMore(restaurant.id)}>
                                                 {restaurant.name}
                                             </h5>
@@ -71,7 +71,7 @@ const OwnerDashboard = () => {
                                                 {restaurant.location}
                                             </p>
 
-                                       
+
                                             <div className="d-flex justify-content-between align-items-center">
                                                 <h6 className="text-success mb-0">
                                                     <small className="fw-light">Capacidad {restaurant.capacity} Personas</small>
@@ -82,16 +82,14 @@ const OwnerDashboard = () => {
                                                 </h6>
                                             </div>
 
-                                  
+
                                             <div className="d-flex justify-content-end mt-3">
                                                 <button
                                                     className="btn btn-outline-info rounded-3 p-2 mx-1"
                                                     onClick={() => handleViewMore(restaurant.id)}
-                                                    style={{ transition: "background-color 0.3s ease" }}
+                                                    style={{ transition: "background-color 0.3s ease", borderColor: "yellow" }} // Aquí defines el borde amarillo
                                                 >
-
                                                     👁
-
                                                 </button>
                                             </div>
                                         </div>
@@ -103,20 +101,20 @@ const OwnerDashboard = () => {
                         <p>No tienes restaurantes disponibles.</p>
                     )}
                     <div className="fixed-top" style={{ zIndex: 1030 }}>
-                <div className="container">
-                    <div className="col-md-4 mb-4">
-                        <div className="d-flex justify-content-start mt-3">
-                            <button
-                                type="button"
-                                className="btn btn-warning text-light"
-                                onClick={() => navigate("/")}
-                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
-                                Volver
-                            </button>
+                        <div className="container">
+                            <div className="col-md-4 mb-4">
+                                <div className="d-flex justify-content-start mt-3">
+                                    <button
+                                        type="button"
+                                        className="btn btn-warning text-light"
+                                        onClick={() => navigate("/")}
+                                        style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
+                                        Volver
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
                 </div>
             ) : (
                 <Navigate to="/" />

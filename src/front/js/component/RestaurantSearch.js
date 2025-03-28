@@ -194,7 +194,7 @@ const RestaurantSearch = ({ onSelect }) => {
 
   useEffect(() => {
     actions.getAllRestaurants();
-  }, []); // <-- Chiamata solo una volta per evitare il loop infinito
+  }, []); // <-- Chiamata solo una volta per evitare el loop infinito
 
   const handleSelect = (selectedAddress) => {
     setAddress(selectedAddress);
@@ -266,42 +266,8 @@ const RestaurantSearch = ({ onSelect }) => {
                 <p>Seleccione una zona</p>
               ) : (
                 <div className="row">
-
-//                   {filteredRestaurants.map((restaurant) => (
-//                     <div className="col-md-4 mb-4" key={restaurant.id}>
-//                       <div className="card card-img-scale overflow-hidden bg-transparent rounded-3 shadow-sm">
-//                         <div className="card-img-wrapper rounded-3">
-//                           <img
-//                             src={restaurant.image_url || "default_image_url_here"}
-//                             className="card-img"
-//                             alt="restaurant image"
-//                             style={{ height: "200px", objectFit: "cover" }}
-//                           />
-//                         </div>
-//                         <div className="card-body px-2">
-//                           <h5 className="card-title">
-//                             {/* Si el usuario está logueado, mostramos el enlace */}
-//                             {store.dinerauth || localStorage.getItem("tokenDiner") ? (
-//                               <Link to={`/perfil_restaurant/${restaurant.id}`} className="stretched-link">
-//                                 {restaurant.name}
-//                               </Link>
-//                             ) : (
-//                               <span>{restaurant.name}</span> // Solo mostramos el nombre si no está logueado
-//                             )}
-//                           </h5>
-
-//                           <div className="d-flex justify-content-between align-items-center">
-//                             <h6 className="text-success mb-0">
-//                               <small className="fw-light">Capacidad {restaurant.capacity} Personas</small>
-//                             </h6>
-
-//                             <h6 className="mb-0 d-flex align-items-center ms-auto">
-//                               <i className="fas fa-map-marker-alt me-2"></i>
-//                               {restaurant.location}
-//                             </h6>
-
                   {filteredRestaurants.map((restaurant) => {
-                    // Assegna stelle casuali se non già assegnate
+                    // Asigna estrellas aleatorias si no ya se asignaron
                     if (!restaurantStars[restaurant.id]) {
                       setRestaurantStars((prevStars) => ({
                         ...prevStars,
@@ -322,10 +288,15 @@ const RestaurantSearch = ({ onSelect }) => {
                           </div>
                           <div className="card-body px-2">
                             <h5 className="card-title d-flex justify-content-between">
-                              <Link to={`/perfil_restaurant/${restaurant.id}`} className="stretched-link">
-                                {restaurant.name}
-                              </Link>
-                              <h6>{"⭐".repeat(restaurantStars[restaurant.id] || 1)}</h6> {/* Stelle random */}
+                              {/* Verifica si el usuario está logueado */}
+                              {store.dinerauth || localStorage.getItem("tokenDiner") ? (
+                                <Link to={`/perfil_restaurant/${restaurant.id}`} className="stretched-link">
+                                  {restaurant.name}
+                                </Link>
+                              ) : (
+                                <span>{restaurant.name}</span> // Solo muestra el nombre si no está logueado
+                              )}
+                              <h6>{"⭐".repeat(restaurantStars[restaurant.id] || 1)}</h6> {/* Estrellas aleatorias */}
                             </h5>
 
                             <div className="d-flex justify-content-between">
@@ -343,7 +314,6 @@ const RestaurantSearch = ({ onSelect }) => {
                                 {restaurant.location}
                               </h6>
                             </div>
-//hasta aquí
                           </div>
                         </div>
                       </div>
@@ -357,7 +327,6 @@ const RestaurantSearch = ({ onSelect }) => {
           <div className="col-md-6 mb-5">
             <GoogleMap mapContainerStyle={{ width: "100%", height: "400px" }} center={position} zoom={13}>
               <Marker position={position} />
-
               {filteredRestaurants.map((restaurant) => (
                 <Marker key={restaurant.id} position={{ lat: restaurant.latitude, lng: restaurant.longitude }} label={restaurant.name} />
               ))}
@@ -370,3 +339,4 @@ const RestaurantSearch = ({ onSelect }) => {
 };
 
 export default RestaurantSearch;
+

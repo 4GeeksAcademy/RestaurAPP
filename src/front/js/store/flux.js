@@ -190,15 +190,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 
             DinerDeleteReservation: (reservation_id) => {
                 const tokenDiner = localStorage.getItem("tokenDiner");
-                
+
                 // Imprimir el token para verificar que se está obteniendo correctamente
                 console.log("Token de diner:", tokenDiner);
-            
+
                 if (!tokenDiner) {
                     console.log("No hay token de diner en localStorage.");
                     return; // Si no hay token, no proceder con la eliminación
                 }
-            
+
                 const requestOptions = {
                     method: "DELETE",
                     headers: {
@@ -206,33 +206,33 @@ const getState = ({ getStore, getActions, setStore }) => {
                         "Authorization": `Bearer ${tokenDiner}`,
                     },
                 };
-            
+
                 // Imprimir las opciones de la solicitud para depurar
                 console.log("Opciones de la solicitud DELETE:", requestOptions);
-            
+
                 fetch(`${process.env.BACKEND_URL}/api/delete_reservation_by_diner/${reservation_id}`, requestOptions)
                     .then((response) => {
                         // Imprimir el estado de la respuesta para asegurarte de que la solicitud se está realizando correctamente
                         console.log("Respuesta de la solicitud DELETE:", response);
-            
+
                         if (!response.ok) {
                             console.error("Error en la solicitud DELETE:", response.status, response.statusText);
                             throw new Error("Error en la solicitud DELETE");
                         }
-            
+
                         return response.json();
                     })
                     .then((data) => {
                         // Imprimir los datos recibidos de la respuesta para ver qué está devolviendo el servidor
                         console.log("Datos recibidos después de eliminar la reserva:", data);
-            
+
                         // Filtrar las reservas actualizadas
                         const updatedReservations = getStore().dinerReservations.filter(
                             (reservation) => reservation.id !== reservation_id
                         );
-            
+
                         console.log("Reservas actualizadas después de eliminar:", updatedReservations);
-            
+
                         // Actualizar el estado con las reservas filtradas
                         setStore({ dinerReservations: updatedReservations });
                     })
@@ -241,7 +241,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.error("Error al eliminar la reserva:", error);
                     });
             },
-            
+
 
             changeReservationStatusByDiner: (reservationId, newStatus, cancelComment = "") => {   //esta es la funcion para modificar el estado de la reserva por el diner
                 return fetch(`${process.env.BACKEND_URL}/api/update_reservation_by_diner/${reservationId}`, {
@@ -278,21 +278,28 @@ const getState = ({ getStore, getActions, setStore }) => {
                     });
             },
 
-
-
-            handleDelete: (id) => {
+            handleDelete: (especificDinerid) => {
                 const requestOptions = {
                     method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                };
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("tokenDiner")}`
+                    },
+                }
 
-                fetch(process.env.BACKEND_URL + "/api/diner/" + id, requestOptions)
+                fetch(process.env.BACKEND_URL + "/api/diner/" + especificDinerid, requestOptions)
                     .then((response) => response.json())
                     .then(() => {
-                        const updatedDiners = getStore().diners.filter((diner) => diner.id !== id);
-                        setStore({ diners: updatedDiners });
-                    });
+                        const updatedDiners = getStore().especificDiner.filter(
+                            (especificDiner) => especificDiner.id !== especificDinerid
+                        );
+                        setStore({ especificDiner: updatedDiners });
+
+                        navigate("/diner/login");
+                    })
+                    .catch((error) => console.error("Error al eliminar la cuenta:", error));
             },
+
 
             handleEdit: (id, fullname, email, telephone, password) => {
                 fetch(process.env.BACKEND_URL + "/api/diner/" + id, {

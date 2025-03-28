@@ -94,7 +94,7 @@ export const DinerEdit = () => {
                                 <div className="d-flex justify-content-start mt-3">
                                     <button
                                         type="button"
-                                        className="btn btn-warning"
+                                        className="btn btn-warning text-light"
                                         onClick={() => navigate("/diner/dashboard")}
                                         style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
                                         Volver
