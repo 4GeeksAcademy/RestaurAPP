@@ -151,8 +151,8 @@ const RestaurantDetail = () => {
                             <p><strong>Ubicación:</strong> {restaurant.location}</p>
                             <p><strong>Teléfono:</strong> {restaurant.telephone}</p>
                             <p><strong>Capacidad:</strong> {restaurant.capacity}</p>
-                            <p><strong>Latitud:</strong> {restaurant.latitude}</p>
-                            <p><strong>Longitud:</strong> {restaurant.longitude}</p>
+                            <p><strong>Cocina:</strong> {restaurant.cuisine_type}</p>
+                            <p><strong>Precio promedio:</strong> {restaurant.average_price}</p>
                         </div>
                     </div>
 

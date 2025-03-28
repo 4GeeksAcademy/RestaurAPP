@@ -26,32 +26,49 @@ const OwnerForm = () => {
   
       // Se l'ID è presente nel localStorage, usalo, altrimenti prendi quello dalla URL
       const idToUse = storedOwnerId || ownerId; // Usa storedOwnerId se disponibile, altrimenti ownerId
-  
+      console.log("id del owner qu eestamos leyendo:", storedOwnerId);
+      
+
+
       if (idToUse) {
           // Recupera i dati dell'owner usando l'ID
           console.log("Fetching details for Owner ID:", idToUse);
           actions.getSpecificOwner(idToUse); // Recupera i dati dell'owner
-  
+          //actions.getAllOwners()
+
           // Attendi che i dati dell'owner siano nel store
-          const owner = store.owners.find((owner) => owner.id === parseInt(idToUse));
+          const owner = store.specificOwner;
+          console.log(store);
+          console.log("Datos del objeto OWNER: " + store.specificOwner.id);
+          
   
           // Se trovi l'owner nel store, imposta i dati nel form
           if (owner) {
+            console.log("Los datos que usamos para el forms son: " + owner)
               console.log("Owner data found:", owner);
               setName(owner.name || "");
               setLocation(owner.location || "");
               setTelephone(owner.telephone || "");
               setEmail(owner.email || "");
               setPassword(owner.password || "");
-          }
-      } else {
-          // Se l'ID dell'owner non è disponibile, azzera i campi
-          setName("");
-          setLocation("");
-          setTelephone("");
-          setEmail("");
-          setPassword("");
-      }
+          }else {
+                // Se l'ID dell'owner non è disponibile, azzera i campi
+                console.log("No hemos recibido datos del owner");
+                setName("");
+                setLocation("");
+                setTelephone("");
+                setEmail("");
+                setPassword("");
+            }
+    } else {
+      // Se l'ID dell'owner non è disponibile, azzera i campi
+      console.log("Owner esta undefined");
+      setName("");
+      setLocation("");
+      setTelephone("");
+      setEmail("");
+      setPassword("");
+  }
   }, [ownerId, store.owners]); // La dipendenza è sia ownerId che store.owners
   
   

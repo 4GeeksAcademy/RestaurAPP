@@ -8,7 +8,7 @@
   letter-spacing: 1px;
   padding: 14px 30px; /* Adjusted padding */
   outline: 0;
-  border: 2px solid #ffd000; /* Thicker border with yellow color */
+  border: 2px solid #ffc400; /* Thicker border with yellow color */
   border-radius: 15px; /* Slightly less rounded corners */
   cursor: pointer;
   position: relative;
@@ -16,13 +16,13 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  color: #2f4f4f; /* Dark green text */
+  color: #101111; /* Dark green text */
   transition: 0.3s; /* Smooth transition */
 }
 
 .button-52:after {
   content: "";
-  background-color: #fad946; /* Yellow background */
+  background-color: #ffc400; /* Yellow background */
   width: 100%;
   z-index: -1;
   position: absolute;

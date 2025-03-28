@@ -365,8 +365,6 @@ const CreateRestaurant = () => {
           <input type="hidden" value={latitude} readOnly />
           <input type="hidden" value={longitude} readOnly />
 
-          <button type="submit" className="btn btn-warning text-light">
-//check
 
 
           <div className="mb-3">
@@ -402,7 +400,7 @@ const CreateRestaurant = () => {
 
 
 
-          <button type="submit" className="btn btn-primary">{id ? "Guardar Cambios" : "Crear Restaurante"}</button>
+          <button type="submit" className="btn btn-warning text-light">{id ? "Guardar Cambios" : "Crear Restaurante"}</button>
         </form>
       ) : (
         <Navigate to="/owners/login" />
