@@ -295,7 +295,7 @@ const CreateRestaurant = () => {
 
   return (
     <>
-      <div className="container d-flex justify-content-between align-items-center mt-3">
+      <div className="container d-flex justify-content-between align-items-center mt-3 mb-5">
         <h1>Detalles de tu restaurante</h1>
         <button className="btn btn-primary" onClick={() => navigate("/owners/dashboard")}>
           Volver al dashboard
@@ -303,7 +303,7 @@ const CreateRestaurant = () => {
       </div>
 
       {store.auth === true ? (
-        <form className="container mt-4" onSubmit={handleSubmit}>
+        <form className="container mt-4 mb-5" onSubmit={handleSubmit}>
           {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
@@ -362,6 +362,12 @@ const CreateRestaurant = () => {
             />
           </div>
 
+          <input type="hidden" value={latitude} readOnly />
+          <input type="hidden" value={longitude} readOnly />
+
+          <button type="submit" className="btn btn-warning text-light">
+//check
+
 
           <div className="mb-3">
             <label className="form-label">Tipo de cocina</label>
@@ -393,6 +399,7 @@ const CreateRestaurant = () => {
             <label className="form-label">Añade una breve descripción (opcional)</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="form-control" />
           </div>
+
 
 
           <button type="submit" className="btn btn-primary">{id ? "Guardar Cambios" : "Crear Restaurante"}</button>

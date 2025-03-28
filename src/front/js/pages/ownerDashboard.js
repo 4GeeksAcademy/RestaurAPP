@@ -31,7 +31,7 @@ const OwnerDashboard = () => {
     return (
         <>
             {store.auth === true || localStorage.getItem("token") ? (
-                <div className="container mt-4">
+                <div className="container mt-4 mb-5">
           
                     <div className="mb-4">
                         <h1>Hola, {ownerName}!</h1>
@@ -102,6 +102,21 @@ const OwnerDashboard = () => {
                     ) : (
                         <p>No tienes restaurantes disponibles.</p>
                     )}
+                    <div className="fixed-top" style={{ zIndex: 1030 }}>
+                <div className="container">
+                    <div className="col-md-4 mb-4">
+                        <div className="d-flex justify-content-start mt-3">
+                            <button
+                                type="button"
+                                className="btn btn-warning text-light"
+                                onClick={() => navigate("/")}
+                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
+                                Volver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
                 </div>
             ) : (
                 <Navigate to="/" />

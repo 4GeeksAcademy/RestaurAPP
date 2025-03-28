@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SpinnerDotted } from "spinners-react"; // Importazione dello spinner
 import "../../styles/RestaurantRecommendationForm.css";
+import { useNavigate } from "react-router-dom";
 
 const RestaurantRecommendationForm = () => {
     const [ocasion, setOcasion] = useState("");
@@ -10,6 +11,10 @@ const RestaurantRecommendationForm = () => {
     const [peticionPersonalizada, setPeticionPersonalizada] = useState("");
     const [selectedCity, setSelectedCity] = useState("");
     const [respuesta, setRespuesta] = useState("");
+
+    const navigate = useNavigate();
+    
+
     const [loading, setLoading] = useState(false); // Stato per lo spinner
 
     // Lista di città disponibili
@@ -19,6 +24,7 @@ const RestaurantRecommendationForm = () => {
         "Alicante", "Córdoba", "Valladolid", "Vigo", "Gijón",
         "Granada", "Elche", "Santander", "Badajoz", "Almería"
     ];
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -63,6 +69,7 @@ const RestaurantRecommendationForm = () => {
     };
 
     return (
+
         <div className="container-fluid">
             <h2 className="mt-5">"¡Descubre el restaurante perfecto y el plan ideal para tu día!"</h2>
             <h6 className="text-center">
@@ -149,6 +156,7 @@ const RestaurantRecommendationForm = () => {
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

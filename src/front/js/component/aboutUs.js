@@ -28,7 +28,7 @@ const AboutUs = () => {
                             />
                             <h1 className="h5 name-text">Flavia Pala</h1>
                             <i className="fab fa-fw fa-facebook-f"></i>
-                            <i className="fab fa-fw fa-instagram"></i>
+                            <a href="https://www.instagram.com/_flavia_pl?igsh=d2FmM3A5emducGV4"><i className="fab fa-fw fa-instagram"></i></a>
                             <i className="fab fa-fw fa-twitter"></i>
                             <i className="fab fa-fw fa-linkedin-in"></i>
                             <p className="description-text">
@@ -43,7 +43,7 @@ const AboutUs = () => {
                             />
                             <h1 className="h5 name-text">Michael Bedoya</h1>
                             <i className="fab fa-fw fa-facebook-f"></i>
-                            <i className="fab fa-fw fa-instagram"></i>
+                            <a href="https://www.instagram.com/bedoyamike30/"><i className="fab fa-fw fa-instagram"></i></a>
                             <i className="fab fa-fw fa-twitter"></i>
                             <i className="fab fa-fw fa-linkedin-in"></i>
                             <p className="description-text">
@@ -71,7 +71,7 @@ const AboutUs = () => {
                 <hr></hr>
                 < Demo />
                 <div className="container">
-                <div className="row g-4 g-lg-5 justify-content-center">
+                <div className="row g-4 g-lg-5 justify-content-center pb-4 pt-4">
                     <div className="col-sm-6 col-md-4 text-center position-relative">
 
                         <figure className="position-absolute top-0 start-100 translate-middle mt-8 d-none d-lg-block">
@@ -84,9 +84,8 @@ const AboutUs = () => {
                         </figure>
 
                         <div className="px-4">
-                            {/* Image */}
+                          
                             <img src="https://booking.webestica.com/assets/images/element/step-3.svg" className="w-150px mb-3" alt="" />
-                            {/* Title */}
                             <h5>Opción de búsqueda</h5>
                             <p className="mb-0">Más de 200 restaurantes con los que trabajamos</p>
                         </div>

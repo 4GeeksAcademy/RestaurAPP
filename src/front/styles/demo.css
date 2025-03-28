@@ -5,14 +5,10 @@
 
 .custom-heading {
     font-weight: 700;
-    /* Hace la letra más gruesa */
     transition: all 0.3s ease;
-    /* Suaviza la transición del hover */
 }
 
 .custom-heading:hover {
     color: #FF6347;
-    /* Cambia el color cuando se hace hover, puedes usar cualquier color */
-    transform: scale(1.1);
-    /* Aumenta ligeramente el tamaño del texto */
+    transform: scale(1.1);   
 }

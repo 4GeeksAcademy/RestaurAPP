@@ -41,7 +41,7 @@
 }
 
 .nav-link.active {
-    color: #ffc107 !important;
+    color: #0c0a06 !important;
     font-weight: bold !important;
 }
 
@@ -56,7 +56,7 @@
 
 .destacados {
     text-decoration: none;
-    color: inherit;
+    color:#0c0a06;
     font-family: "Poppins", sans-serif;
     font-weight: 1000;
     font-size: 2.5rem;
@@ -92,6 +92,6 @@
 }
 
 .card:hover {
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Añade sombra cuando pasas el ratón sobre la tarjeta */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); 
 }
 

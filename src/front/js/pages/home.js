@@ -8,14 +8,17 @@ export const Home = () => {
 
     return (
         <div className="home-container text-center">
-            <h1 className="mb-4">Bienvenido a RestaurAPP</h1>
+            <h1 className="bienvenido mb-4" 
+             style={{
+                fontSize: '3rem',             
+              }}>Bienvenido a RestaurApp</h1>
 
             <div className="toggle-container">
                 <button 
                     className="toggle-btn" 
                     onClick={() => setShowOwnerOptions(!showOwnerOptions)}
                 >
-                    Soy Propietario
+                    Quieres crear tu Restaurante?
                 </button>
                 <div className={`dropdown-container ${showOwnerOptions ? "show" : ""}`}>
                     <Link to="/owners/new">
@@ -32,7 +35,7 @@ export const Home = () => {
                     className="toggle-btn" 
                     onClick={() => setShowDinerOptions(!showDinerOptions)}
                 >
-                    Soy Comensal
+                    Quieres Reservar una mesa?
                 </button>
                 <div className={`dropdown-container ${showDinerOptions ? "show" : ""}`}>
                     <Link to="/diner/login">

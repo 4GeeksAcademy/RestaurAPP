@@ -56,7 +56,7 @@ const OwnerProfile = () => {
     return (
         <>
             {store.auth === true || localStorage.getItem("token") ? (
-                <div className="container mt-4">
+                <div className="container mt-4 mb-5">
                     <h1>Bienvenido, {ownerName}</h1>
                     <h2 className="my-4">Detalles del perfil</h2>
                     {store.specificOwner ? (
@@ -99,6 +99,21 @@ const OwnerProfile = () => {
             ) : (
                 <Navigate to="/" />
             )}
+            <div className="fixed-top" style={{ zIndex: 1030 }}>
+                <div className="container">
+                    <div className="col-md-4 mb-4">
+                        <div className="d-flex justify-content-start mt-3">
+                            <button 
+                                type="button" 
+                                className="btn btn-primary text-light" 
+                                onClick={() => navigate("/owner/dashboard")}
+                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
+                                Volver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

@@ -22,7 +22,7 @@ export const DinerAccount = () => {
         if (localStorage.getItem("tokenDiner")) {
             const dinerID = localStorage.getItem("dinerId");
             if (dinerID) {
-                actions.getSpecifidiner(dinerID); 
+                actions.getSpecifidiner(dinerID);
                 console.log("Datos del diner cargados");
             }
         } else {
@@ -49,10 +49,10 @@ export const DinerAccount = () => {
     const { fullname, email, telephone, password } = store.especificDiner;
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-4 mb-5">
             <div className="row justify-content-center">
                 <div className="col-lg-6 col-md-8 d-flex">
-                    <div className="card-body">
+                    <div className="card-body" style={{ fontFamily: 'var(--bs-body-font-family)' }}>
                         <h1 className="h3 mb-3 fw-normal text-center"><strong>Mi Cuenta</strong></h1>
                         <div className="mb-3">
                             <strong>Full Name:</strong> {fullname}
@@ -79,29 +79,33 @@ export const DinerAccount = () => {
                     <div className="ms-4 d-none d-md-block">
                         <img
                             className="img-fluid profile-img"
-                            src={dinerAccountpng}  
+                            src={dinerAccountpng}
                             alt="Profile"
                             style={{
-                                maxWidth: '150%', 
+                                maxWidth: '150%',
                                 height: 'auto',
-                                transition: 'transform 0.3s ease', 
+                                transition: 'transform 0.3s ease',
                             }}
                         />
                     </div>
                 </div>
             </div>
-
-            <div className="mt-5 d-flex justify-content-between">
-                <button type="button" className="btn btn-secondary" onClick={() => navigate("/diner/dashboard")}>
-                    Volver
-                </button>
+            <div className="fixed-top" style={{ zIndex: 1030 }}>
+                <div className="container">
+                    <div className="col-md-4 mb-4">
+                        <div className="d-flex justify-content-start mt-3">
+                            <button
+                                type="button"
+                                className="btn btn-warning text-light"
+                                onClick={() => navigate("/diner/dashboard")}
+                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
+                                Volver
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {store.dinerReservations.length === 0 && (
-                <div className="alert alert-warning text-center mt-4" role="alert">
-                    No tienes reservas.
-                </div>
-            )}
         </div>
     );
 };

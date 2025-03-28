@@ -111,12 +111,11 @@ export const PerfilRestaurant = () => {
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary">Reservar</button>
+            <button type="submit" className="btn btn-warning text-light">Reservar</button>
           </form>
         </div>
       </div>
 
-      {/* Mostrar el alert de éxito si la reserva fue exitosa */}
       {showSuccessMessage && (
         <div className="alert alert-success mt-3" role="alert">
           ¡Reserva realizada con éxito!

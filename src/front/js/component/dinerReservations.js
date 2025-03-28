@@ -73,7 +73,7 @@
 //         </>
 //     );
 // };
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import "../../styles/dinerReservations.css";
@@ -82,41 +82,24 @@ export const DinerReservations = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
 
-    const [cancelComments, setCancelComments] = useState({});
-    const [isCanceling, setIsCanceling] = useState({});
-
     useEffect(() => {
         if (localStorage.getItem("tokenDiner")) {
             actions.getDinerReserves();
-            console.log("cargado el componente");
+            console.log("cargado el componente")
         }
     }, []);
 
-    const changeReservationStatusByDiner = (reservationId) => {
-        console.log("Cancelar reserva con id: ", reservationId);
-
-        actions.changeReservationStatusByDiner(reservationId, "Canceled", cancelComments[reservationId]);
-
-        setIsCanceling((prevState) => ({ ...prevState, [reservationId]: true }));
-
-        setTimeout(() => {
-            setIsCanceling((prevState) => ({ ...prevState, [reservationId]: false }));
-            actions.getDinerReserves();  
-        }, 1500);
-    };
-
-    const handleCancelCommentChange = (e, reservationId) => {
-        e.persist();
-        setCancelComments((prevState) => ({
-            ...prevState,
-            [reservationId]: e.target.value  
-        }));
-    };
+    const deleteReservation = (reservation_id) => {
+        console.log("Eliminando reserva con id: ", reservation_id);
+        actions.DinerDeleteReservation(reservation_id);
+        actions.getDinerReserves(); 
+      };
+      
 
     return (
         <>
-            <div className="container mt-5">
-                <h1 className="text-center mb-4">Tienes {store.dinerReservations.length} Reservas!</h1>
+            <div className="container mt-5 mb-5">
+                <h1 className="text-center mb-4 mt-4">Tienes {store.dinerReservations.length} Reservas!</h1>
                 {store.dinerReservations.length > 0 ? (
                     <div className="row">
                         {store.dinerReservations.map((item, index) => (
@@ -160,24 +143,12 @@ export const DinerReservations = () => {
                                         <p className="card-text hover-text">
                                             <strong>Estado:</strong> {item.state}
                                         </p>
-                                        {item.state === "Pending" || item.state === "Accepted" ? (
-                                            <>
-                                                <textarea
-                                                    className="form-control mt-2"
-                                                    placeholder="Motivo de la cancelación (opcional)"
-                                                    value={cancelComments[item.id] || ""}  
-                                                    onChange={(e) => handleCancelCommentChange(e, item.id)}
-                                                    rows="3"
-                                                />
-                                                <button
-                                                    className="btn btn-danger w-100 mt-2 btn-hover"
-                                                    onClick={() => changeReservationStatusByDiner(item.id)}
-                                                    disabled={isCanceling[item.id]}
-                                                >
-                                                    {isCanceling[item.id] ? "Cancelando..." : "Cancelar Reserva"}
-                                                </button>
-                                            </>
-                                        ) : null}
+                                        <button
+                                            className="btn btn-danger w-100 mt-2 btn-hover"
+                                            onClick={() => deleteReservation(item.id)}
+                                        >
+                                            Cancelar Reserva
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -188,10 +159,27 @@ export const DinerReservations = () => {
                         No tienes reservas.
                     </div>
                 )}
-                <div className="mt-5 d-flex justify-content-between">
-                    <button type="button" className="btn btn-secondary" onClick={() => navigate("/diner/dashboard")}>
-                        Volver
-                    </button>
+
+                <div className="fixed-top" style={{ zIndex: 1030 }}>
+                    <div className="container">
+                        <div className="col-md-4 mb-4">
+                            <div className="d-flex justify-content-start mt-3">
+                                <button
+                                    type="button"
+                                    className="btn btn-warning text-light"
+                                    onClick={() => navigate("/diner/dashboard")}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '10px',
+                                        left: '10px',
+                                        zIndex: 1050
+                                    }}
+                                >
+                                    Volver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

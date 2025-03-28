@@ -1,11 +1,11 @@
 
-/* Estilos para la imagen con bordes redondeados */
+
 .profile-img {
-    border-radius: 15px;  /* Aplica bordes redondeados a la imagen (ajusta el valor según el estilo que prefieras) */
+    border-radius: 15px;  
 }
 
-/* Estilos para la imagen en hover */
+
 .profile-img:hover {
-    transform: scale(1.1);  /* Aumenta el tamaño de la imagen al pasar el mouse */
-    cursor: pointer;  /* Cambia el cursor al pasar sobre la imagen */
+    transform: scale(1.1);  
+    cursor: pointer;  
 }

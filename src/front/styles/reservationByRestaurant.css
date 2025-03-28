@@ -1,0 +1,9 @@
+
+.table {
+    font-family: 'Roboto', sans-serif; 
+}
+
+.table th, .table td {
+    font-size: 16px; 
+    font-weight: 400; 
+}

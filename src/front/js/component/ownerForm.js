@@ -117,7 +117,9 @@ const OwnerForm = () => {
             }}
           />
           <h2 className="mb-2" style={{ fontFamily: "Poppins, sans-serif", marginBottom: '20px' }}>
+
             {ownerId ? "Cambia tus datos" : "Crea una nueva cuenta como restaurante"}
+
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-1">
