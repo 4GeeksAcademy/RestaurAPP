@@ -77,6 +77,7 @@ import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import "../../styles/dinerReservations.css";
+import { Link } from "react-router-dom";
 
 export const DinerReservations = () => {
     const { store, actions } = useContext(Context);
@@ -92,9 +93,9 @@ export const DinerReservations = () => {
     const deleteReservation = (reservation_id) => {
         console.log("Eliminando reserva con id: ", reservation_id);
         actions.DinerDeleteReservation(reservation_id);
-        actions.getDinerReserves(); 
-      };
-      
+        actions.getDinerReserves();
+    };
+
 
     return (
         <>
@@ -113,12 +114,19 @@ export const DinerReservations = () => {
                                     />
                                     <div className="card-body px-2">
                                         <h5 className="card-title">
-                                            <a
+                                            {/* <div>
+                                            <link
                                                 href={`/perfil_restaurant/${item.restaurant.id}`}
                                                 className="stretched-link"
-                                            >
+                                            > 
                                                 {item.restaurant.name}
-                                            </a>
+                                            </a> */}
+                                            <Link to={`/perfil_restaurant/${item.restaurant.id}`}>
+                                                {item.restaurant.name}
+                                            </Link>
+
+                                            {/* </div> */}
+
                                         </h5>
 
                                         <div className="d-flex justify-content-between align-items-center">

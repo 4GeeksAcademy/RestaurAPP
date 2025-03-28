@@ -30,7 +30,7 @@ const OwnerProfile = () => {
 
     useEffect(() => {
         const storedOwnerId = localStorage.getItem("ownerId");
-        console.log("Owner ID from localStorage:", storedOwnerId);
+        console.log("Owner ID from localStorage:" + storedOwnerId);
 
         if (storedOwnerId) {
             actions.getSpecificOwner(storedOwnerId);
@@ -39,7 +39,7 @@ const OwnerProfile = () => {
 
 
     const handleEditProfile = () => {
-        navigate(`/owners/${store.ownerId}`);
+        navigate(`/owners/${store.specificOwner.id}`);
     };
 
 
