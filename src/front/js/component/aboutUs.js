@@ -58,7 +58,7 @@ const AboutUs = () => {
                         <h1 className="h3 mt-4 text-start">Nuestra Tecnología</h1>
                         <p className="text-start" style={{ fontSize: "1.3rem" }}>
                             Gracias a la integración de <strong>geolocalización</strong>, <strong>gestión de imágenes con Cloudinary</strong> y una
-                            <strong> interfaz fácil de usar</strong>, <strong>RestaurAPP</strong> ofrece una solución innovadora para los propietarios de restaurantes.
+                            <strong> interfaz fácil de usar</strong>, <strong>RestaurAPP</strong> ofrece una solución innovadora para los propietarios de restaurantes. Además, gracias a la tecnología de <strong>OpenAI,</strong> ofrece un <strong>asistente inteligente que recomienda el restaurante perfecto para cada ocasión y crea un plan del día personalizado para los comensales</strong>. ¡La forma más fácil y eficiente de conectar restaurantes con clientes ideales!
                         </p>
                         <p className="text-start" style={{ fontSize: "1.2rem" }}>
                             🔗 Síguenos en GitHub:{" "}
