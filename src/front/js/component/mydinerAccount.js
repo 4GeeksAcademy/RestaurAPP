@@ -48,6 +48,11 @@ export const DinerAccount = () => {
 
     const { fullname, email, telephone, password } = store.especificDiner;
 
+    const handleDelete = (id) => {
+        actions.handleDelete(id);  
+        console.log("Eliminar cuenta de diner", id);
+        navigate("/diner/login");  
+    };
     return (
         <div className="container mt-4 mb-5">
             <div className="row justify-content-center">
@@ -68,14 +73,21 @@ export const DinerAccount = () => {
                         </div>
                         <div className="d-flex justify-content-center mt-4">
                             <button
-                                className="btn btn-primary"
+                                className="btn btn-primary mx-auto"
                                 onClick={() => handleEdit(store.especificDiner.id, fullname, email, telephone, password)}
                             >
                                 Editar Cuenta
                             </button>
+                            <button
+                                className="btn btn-danger"
+                                onClick={() => handleDelete(store.especificDiner.id)}
+                            >
+                                🗑️ Eliminar Cuenta
+                            </button>
                         </div>
                     </div>
 
+                    {/* Imagen del perfil a la derecha */}
                     <div className="ms-4 d-none d-md-block">
                         <img
                             className="img-fluid profile-img"
@@ -90,6 +102,8 @@ export const DinerAccount = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Botón de "Volver" en la parte superior */}
             <div className="fixed-top" style={{ zIndex: 1030 }}>
                 <div className="container">
                     <div className="col-md-4 mb-4">
@@ -98,14 +112,14 @@ export const DinerAccount = () => {
                                 type="button"
                                 className="btn btn-warning text-light"
                                 onClick={() => navigate("/diner/dashboard")}
-                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
+                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}
+                            >
                                 Volver
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };

@@ -90,17 +90,26 @@ export const DinerReservations = () => {
         }
     }, []);
 
-    const deleteReservation = (reservation_id) => {
+    const deleteReservation = ( reservation_id) => {
+        const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta reserva de tu historial?");
+        if(confirmDelete){
         console.log("Eliminando reserva con id: ", reservation_id);
         actions.DinerDeleteReservation(reservation_id);
         actions.getDinerReserves();
+
+    }
     };
+
+//     };
+
 
 
     return (
         <>
             <div className="container mt-5 mb-5">
-                <h1 className="text-center mb-4 mt-4">Tienes {store.dinerReservations.length} Reservas!</h1>
+                <h1 className="text-center mb-4 mt-4">
+                    Tienes {store.dinerReservations.length} {store.dinerReservations.length === 1 ? "Reserva" : "Reservas"}!
+                </h1>
                 {store.dinerReservations.length > 0 ? (
                     <div className="row">
                         {store.dinerReservations.map((item, index) => (
@@ -159,7 +168,10 @@ export const DinerReservations = () => {
 
                                         <button
                                             className="btn btn-danger w-100 mt-2 btn-hover"
-                                            onClick={() => deleteReservation(item.id)}
+                                            onClick={() => {
+                                                console.log("Botón de eliminar clickeado");
+                                                deleteReservation(item.id);
+                                            }}
                                         >
                                             Cancelar Reserva
                                         </button>

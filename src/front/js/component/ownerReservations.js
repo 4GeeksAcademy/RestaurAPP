@@ -51,7 +51,7 @@ const OwnerReservations = () => {
     };
 
     return (
-        <div className="container mt-4">
+        <div className="container mt-4 mb-5">
             <h2>Todas mis Reservas</h2>
             <table className="table">
                 <thead>
