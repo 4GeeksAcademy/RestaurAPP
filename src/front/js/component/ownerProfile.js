@@ -74,11 +74,11 @@ const OwnerProfile = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex justify-content-end">
-                                    <button className="btn border bg-secondary me-2" onClick={handleEditProfile}>
-                                        ✏️
+                                    <button className="btn border bg-secondary text-light rounded-pill shadow-sm me-2 fw-bold" onClick={handleEditProfile}>
+                                        ✏️ Editar Cuenta
                                     </button>
-                                    <button className="btn border bg-danger" onClick={handleDeleteProfile}>
-                                        🗑️
+                                    <button className="btn border text-light bg-danger rounded-pill shadow-sm fw-bold" onClick={handleDeleteProfile}>
+                                        🗑️ Eliminar Cuenta
                                     </button>
                                 </div>
                             </div>
@@ -105,10 +105,10 @@ const OwnerProfile = () => {
                         <div className="d-flex justify-content-start mt-3">
                             <button 
                                 type="button" 
-                                className="btn btn-primary text-light" 
+                                className="btn btn-primary text-dark rounded-pill shadow-sm fw-bold" 
                                 onClick={() => navigate("/owner/dashboard")}
                                 style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
-                                Volver
+                                <i class="fas fa-arrow-left me-2"></i> Volver
                             </button>
                         </div>
                     </div>

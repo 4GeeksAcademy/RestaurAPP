@@ -77,8 +77,7 @@ const OwnerDashboard = () => {
                                                     <small className="fw-light">Capacidad {restaurant.capacity} Personas</small>
                                                 </h6>
                                                 <h6 className="mb-0">
-                                                    {restaurant.rating || "N/A"}
-                                                    <i className="fa-solid fa-star text-warning ms-1"></i>
+                                                    {restaurant.cuisine_type}
                                                 </h6>
                                             </div>
 
@@ -106,10 +105,10 @@ const OwnerDashboard = () => {
                                 <div className="d-flex justify-content-start mt-3">
                                     <button
                                         type="button"
-                                        className="btn btn-warning text-light"
+                                        className="btn btn-warning text-dark rounded-pill shadow-sm" 
                                         onClick={() => navigate("/")}
-                                        style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
-                                        Volver
+                                        style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050, fontWeight: 'bold'}}>
+                                        <i class="fas fa-arrow-left me-2"></i> Volver
                                     </button>
                                 </div>
                             </div>

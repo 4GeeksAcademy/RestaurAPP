@@ -203,11 +203,11 @@ export const DinerDashboard = () => {
                                 <div className="d-flex justify-content-start mt-3">
                                     <button
                                         type="button"
-                                        className="btn btn-primary"
+                                        className="btn btn-primary text-dark rounded-pill shadow-sm fw-bold fw-bold"
                                         onClick={() => navigate("/")}
                                         style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}
                                     >
-                                        Volver
+                                        <i class="fas fa-arrow-left me-2"></i> Volver
                                     </button>
                                 </div>
                             </div>

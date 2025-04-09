@@ -57,9 +57,9 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
                         <h3 className="fw-light">No hay reservas disponibles</h3>
                         <p className="text-muted">No tienes reservas registradas para este restaurante.</p>
                         <button
-                            className="btn btn-warning text-white mt-3"
+                            className="btn btn-warning text-dark rounded-pill fw-bold shadow-sm mt-3"
                             onClick={() => navigate("/owners/dashboard")}>
-                            <i className="fas fa-arrow-left me-2"></i>Volver al panel
+                            <i className="fas fa-arrow-left me-2"></i>Volver
                         </button>
                     </div>
                 </div>
@@ -72,7 +72,7 @@ const ReservationsByRestaurant = ({ restaurantId, restaurantName }) => {
             <div className="position-fixed top-0 start-0 m-4" style={{ zIndex: 1050 }}>
                 <button
                     type="button"
-                    className="btn btn-warning text-white rounded-pill shadow-sm"
+                    className="btn btn-warning text-dark rounded-pill shadow-sm fw-bold"
                     onClick={() => navigate("/owners/dashboard")}>
                     <i className="fas fa-arrow-left me-2"></i>Volver
                 </button>

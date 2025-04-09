@@ -157,11 +157,11 @@ const RestaurantDetail = () => {
                     </div>
 
                     <div className="d-flex justify-content-start mt-4">
-                        <button className="button-53 me-2" onClick={handleEdit}>
+                        <button className="btn btn-secondary rounded-pill shadow-sm me-2 fw-bold" onClick={handleEdit}>
                             ✏️ Editar
                         </button>
 
-                        <button className="btn btn-danger" onClick={handleDelete}>
+                        <button className="btn btn-danger rounded-pill shadow-sm fw-bold" onClick={handleDelete}>
                             🗑️ Eliminar 
 
                         </button>

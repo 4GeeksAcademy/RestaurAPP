@@ -459,11 +459,9 @@ const RestaurantSearch = ({ onSelect }) => {
                         <img src={restaurant.image_url || "default_image_url_here"} className="card-img" alt="restaurant" style={{ height: "200px", objectFit: "cover" }} />
                         <div className="card-body px-2">
                           <h5 className="card-title d-flex justify-content-between">
-                            {store.dinerauth || localStorage.getItem("tokenDiner") ? (
+                            {/* {store.dinerauth || localStorage.getItem("tokenDiner") ? ( */}
                               <Link to={`/perfil_restaurant/${restaurant.id}`} className="stretched-link">{restaurant.name}</Link>
-                            ) : (
-                              <span>{restaurant.name}</span>
-                            )}
+  
                             <h6>{"⭐".repeat(restaurantStars[restaurant.id] || 1)}</h6>
                           </h5>
                           <div className="d-flex justify-content-between">

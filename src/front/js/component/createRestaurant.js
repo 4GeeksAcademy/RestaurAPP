@@ -297,8 +297,8 @@ const CreateRestaurant = () => {
     <>
       <div className="container d-flex justify-content-between align-items-center mt-3 mb-5">
         <h1>Detalles de tu restaurante</h1>
-        <button className="btn btn-primary" onClick={() => navigate("/owners/dashboard")}>
-          Volver al dashboard
+        <button className="btn btn-primary text-dark rounded-pill shadow-sm fw-bold" onClick={() => navigate("/owners/dashboard")}>
+        <i class="fas fa-arrow-left me-2"></i> Volver al dashboard
         </button>
       </div>
 
@@ -400,7 +400,7 @@ const CreateRestaurant = () => {
 
 
 
-          <button type="submit" className="btn btn-warning text-light">{id ? "Guardar Cambios" : "Crear Restaurante"}</button>
+          <button type="submit" className="btn btn-primary text-dark rounded-pill shadow-sm fw-bold">{id ? "Guardar Cambios" : "Crear Restaurante"}</button>
         </form>
       ) : (
         <Navigate to="/owners/login" />

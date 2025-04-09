@@ -130,10 +130,12 @@ export const DinerReservations = () => {
                                             > 
                                                 {item.restaurant.name}
                                             </a> */}
-                                            <Link to={`/perfil_restaurant/${item.restaurant.id}`}>
-                                                {item.restaurant.name}
-                                            </Link>
-
+                                            <div className="d-flex justify-content-between">
+                                                <Link to={`/perfil_restaurant/${item.restaurant.id}`}>
+                                                    {item.restaurant.name}
+                                                </Link>
+                                                <h6>{item.restaurant.cuisine_type}</h6>
+                                            </div>
                                             {/* </div> */}
 
                                         </h5>
@@ -192,7 +194,7 @@ export const DinerReservations = () => {
                             <div className="d-flex justify-content-start mt-3">
                                 <button
                                     type="button"
-                                    className="btn btn-warning text-light"
+                                    className="btn btn-primary text-dark rounded-pill shadow-sm fw-bold fw-bold"
                                     onClick={() => navigate("/diner/dashboard")}
                                     style={{
                                         position: 'absolute',
@@ -201,7 +203,7 @@ export const DinerReservations = () => {
                                         zIndex: 1050
                                     }}
                                 >
-                                    Volver
+                                    <i class="fas fa-arrow-left me-2"></i> Volver
                                 </button>
                             </div>
                         </div>

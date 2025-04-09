@@ -175,10 +175,10 @@ const OwnerReservations = () => {
                         <div className="d-flex justify-content-start mt-3">
                             <button
                                 type="button"
-                                className="btn btn-warning text-light"
+                                className="btn btn-warning text-dark rounded-pill shadow-sm"
                                 onClick={() => navigate("/owners/dashboard")}
-                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1050 }}>
-                                Volver
+                                style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 105, fontWeight: 'bolder' }}>
+                                <i class="fas fa-arrow-left me-2"></i> Volver
                             </button>
                         </div>
                     </div>

@@ -111,7 +111,7 @@ export const PerfilRestaurant = () => {
                 required
               />
             </div>
-            <button type="submit" className="btn btn-warning text-light">Reservar</button>
+            <button type="submit" className="btn btn-warning text-dark rounded-pill shadow-sm fw-bold">Reservar</button>
           </form>
         </div>
       </div>
